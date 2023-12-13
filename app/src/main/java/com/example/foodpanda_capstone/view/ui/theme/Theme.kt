@@ -1,4 +1,4 @@
-package com.example.foodpanda_capstone.ui.theme
+package com.example.foodpanda_capstone.view.ui.theme
 
 import android.R
 import android.app.Activity
