@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -20,8 +21,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.example.foodpanda_capstone.model.Playlist
 import com.example.foodpanda_capstone.model.playlistList
 import com.example.foodpanda_capstone.view.ui.composable.ImageHolder
@@ -39,7 +43,9 @@ fun PlaylistScreen() {
         PlaylistSection(playlistList)
         PlaylistSection(playlistList)
 
-        Column (modifier = Modifier.fillMaxWidth().padding(top = 25.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        Column (modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 25.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Text(text = "Can't decide?", style = Typography.titleMedium)
             Spacer(modifier = Modifier.size(10.dp))
             PrimaryButton(name = "Create your own", null) {
@@ -63,11 +69,35 @@ fun PlaylistSection(dataList: List<Playlist>) {
             Log.i("Panda", "See all btn clicked")
         }
 
-        LazyRow(modifier = Modifier.wrapContentHeight()) {
-            items(dataList) { data ->
-                PlaylistCard(data)
+        Box (modifier = Modifier.layout() {
+                measurable, constraints ->
+            // calculate end padding
+            val placeable = measurable.measure(constraints.copy(
+                maxWidth = constraints.maxWidth + 20.dp.roundToPx(),
+            ))
+            layout(placeable.width, placeable.height) {
+                placeable.place(0.dp.roundToPx(), 0)
+            }
+        }) {
+            LazyRow(modifier = Modifier
+                .wrapContentHeight(),
+                horizontalArrangement = Arrangement.spacedBy(15.dp)
+            ) {
+                items(dataList.size) { index ->
+                    if(index == 0) {
+                        Spacer(modifier = Modifier.width(10.dp))
+                        PlaylistCard(dataList[index])
+                    } else if (index < dataList.size - 1) {
+                        PlaylistCard(dataList[index])
+                    } else {
+                        PlaylistCard(dataList[index])
+                        Spacer(modifier = Modifier.width(15.dp))
+                    }
+                }
             }
         }
+
+
     }
 }
 
@@ -77,7 +107,6 @@ fun PlaylistCard(playlist: Playlist) {
     Column(
         modifier = Modifier
             .width(150.dp)
-            .padding(end = 10.dp)
     ) {
         ImageHolder(playlist.imageUrl, 140, "Test")
         Row(
