@@ -1,20 +1,20 @@
 package com.example.foodpanda_capstone.ui.theme
 
+import android.R
 import android.app.Activity
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat
+
 
 private val DarkColorScheme = darkColorScheme(
     primary = BrandPrimary,
@@ -25,8 +25,8 @@ private val DarkColorScheme = darkColorScheme(
 private val LightColorScheme = lightColorScheme(
     primary = BrandPrimary,
     secondary = BrandSecondary,
-    onPrimary = Color.Black,
-    onPrimaryContainer = Color.Black
+    onPrimary = Color.White,
+    onPrimaryContainer = Color.White
 //    tertiary = Pink40
 
     /* Other default colors to override
