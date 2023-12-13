@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Surface
@@ -31,8 +33,18 @@ import com.example.foodpanda_capstone.view.ui.theme.Typography
 
 @Composable
 fun PlaylistScreen() {
+    Column (modifier = Modifier.verticalScroll(rememberScrollState())) {
+        PlaylistSection(playlistList)
+        PlaylistSection(playlistList)
+        PlaylistSection(playlistList)
+        PlaylistSection(playlistList)
+    }
+}
+
+@Composable
+fun PlaylistSection(dataList: List<Playlist>) {
     Column(modifier = Modifier
-        .fillMaxHeight()
+        .wrapContentHeight()
         .padding(10.dp)) {
 
         SectionTitleAndBtn(title = "Subscribed", btnTitle = "See all", icon = null) {
@@ -40,8 +52,8 @@ fun PlaylistScreen() {
         }
 
         LazyRow(modifier = Modifier.wrapContentHeight()) {
-            items(playlistList) { playlist ->
-                PlaylistCard(playlist)
+            items(dataList) { data ->
+                PlaylistCard(data)
             }
         }
     }
@@ -52,16 +64,16 @@ fun PlaylistScreen() {
 fun PlaylistCard(playlist: Playlist) {
     Column(
         modifier = Modifier
-            .width(200.dp)
+            .width(150.dp)
             .padding(end = 10.dp)
     ) {
-        ImageHolder(playlist.imageUrl, 180,"Test")
+        ImageHolder(playlist.imageUrl, 140,"Test")
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = playlist.name, style = Typography.titleSmall)
-            Text(text = "S$ ${"%.2f".format(playlist.cost)}", style = Typography.titleSmall, fontWeight = FontWeight.Normal)
+            Text(text = playlist.name, style = Typography.headlineLarge)
+            Text(text = "S$ ${"%.2f".format(playlist.cost)}", style = Typography.headlineLarge, fontWeight = FontWeight.Normal)
         }
         Text(text = "Deliver every ${playlist.deliverDay}", style = Typography.bodyMedium, color = BrandSecondary)
     }
