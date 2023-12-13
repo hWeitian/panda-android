@@ -2,9 +2,14 @@ package com.example.foodpanda_capstone.view.ui.composable
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -26,7 +31,7 @@ import com.example.foodpanda_capstone.view.ui.theme.Typography
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InnerAppBar(title: String, backBtnClick: () -> Unit, content: @Composable () -> Unit) {
+fun InnerTopAppBar(title: String, backBtnClick: () -> Unit, content: @Composable () -> Unit) {
     Scaffold(
         topBar = {
             Surface(modifier = Modifier.drawBehind {
@@ -60,7 +65,11 @@ fun InnerAppBar(title: String, backBtnClick: () -> Unit, content: @Composable ()
         },
     ) { innerPadding ->
         Column(Modifier.padding(innerPadding)) {
-            content()
+            Column(modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .padding(bottom = 25.dp, start = 15.dp, end = 15.dp)) {
+                content()
+            }
         }
 
     }
