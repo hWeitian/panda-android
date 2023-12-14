@@ -20,7 +20,6 @@ import androidx.navigation.NavController
 import com.example.foodpanda_capstone.model.Playlist
 import com.example.foodpanda_capstone.model.playlistList
 import com.example.foodpanda_capstone.view.ui.composable.ImageHolder
-import com.example.foodpanda_capstone.view.ui.composable.InnerTopAppBar
 import com.example.foodpanda_capstone.view.ui.composable.PrimaryButton
 import com.example.foodpanda_capstone.view.ui.composable.SectionTitleAndBtn
 import com.example.foodpanda_capstone.view.ui.theme.BrandSecondary
@@ -28,7 +27,6 @@ import com.example.foodpanda_capstone.view.ui.theme.Typography
 
 @Composable
 fun PlaylistScreen(navController: NavController) {
-    InnerTopAppBar(title = "Food Playlist", backBtnClick = { Log.i("Panda", "Back Btn Clicked") }) {
 
         Column(
             modifier = Modifier
@@ -47,14 +45,10 @@ fun PlaylistScreen(navController: NavController) {
                 Text(text = "Can't decide?", style = Typography.titleMedium)
                 Spacer(modifier = Modifier.size(10.dp))
                 PrimaryButton(name = "Create your own", null) {
-                   navController.navigate("playlist-form")
+                   navController.navigate("Playlist Form")
                 }
             }
         }
-
-
-
-    }
 
 }
 
