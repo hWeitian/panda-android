@@ -12,10 +12,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.foodpanda_capstone.view.ui.screen.PlaylistFormScreen
 import com.example.foodpanda_capstone.view.ui.screen.PlaylistScreen
+import com.example.foodpanda_capstone.view.ui.theme.BrandPrimary
 import com.example.foodpanda_capstone.view.ui.theme.FoodpandaCapstoneTheme
 import com.example.foodpanda_capstone.view.ui.theme.Typography
 
@@ -24,8 +26,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             FoodpandaCapstoneTheme {
-                PlaylistFormScreen()
-//                PlaylistScreen()
+//                PlaylistFormScreen()
+                PlaylistScreen()
             }
         }
     }

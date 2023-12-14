@@ -42,7 +42,7 @@ fun PlaylistFormScreen() {
                     CustomTextInputField("Max Budget", viewModel.maxBudget)
 
                 }
-                PrimaryButton(name = "Generate Ideas", null) {
+                PrimaryButton(name = "Generate ideas", null) {
                     Log.i("Panda", "Create ideas btn clicked")
                 }
             }
