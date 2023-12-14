@@ -1,8 +1,11 @@
 package com.example.foodpanda_capstone.view.ui.composable
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -63,13 +66,16 @@ fun InnerTopAppBar(title: String, backBtnClick: () -> Unit, content: @Composable
             }
 
         },
+        modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
-        Column(Modifier.padding(innerPadding)) {
-            Column(modifier = Modifier
-                .verticalScroll(rememberScrollState())
-                .padding(bottom = 25.dp, start = 15.dp, end = 15.dp)) {
-                content()
-            }
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(bottom = 25.dp, start = 15.dp, end = 15.dp)
+        )
+        {
+            content()
         }
 
     }
