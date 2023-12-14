@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.foodpanda_capstone.view.ui.screen.PlaylistScreen
 import com.example.foodpanda_capstone.view.ui.theme.FoodpandaCapstoneTheme
 import com.example.foodpanda_capstone.view.ui.theme.Typography
 
@@ -23,8 +24,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             FoodpandaCapstoneTheme {
                 // A surface container using the 'background' color from the theme
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    Greeting("Android1312312312123")
+                Surface(modifier = Modifier.fillMaxSize(), color = Color.White) {
+//                    Greeting("Android1312312312123")
+                    PlaylistScreen()
                 }
             }
         }
