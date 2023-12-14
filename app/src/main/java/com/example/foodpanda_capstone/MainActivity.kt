@@ -69,7 +69,7 @@ class MainActivity : ComponentActivity() {
                     topBar = {
                         when (currentRoute) {
                             "home" -> {
-                                /* Put Home page TopAppBar here */
+                                // TODO: Put Home page TopAppBar here
                             }
 
                             else -> {
@@ -106,7 +106,7 @@ class MainActivity : ComponentActivity() {
                 ) { innerPadding ->
                     when (currentRoute) {
                         "home" -> {
-                            /* Put Home page Composable here */
+                            // TODO: Put Home page Composable here
                         }
 
                         else -> {
@@ -120,6 +120,7 @@ class MainActivity : ComponentActivity() {
                                 NavHost(
                                     navController = navController,
                                     startDestination = "Playlist"
+                                    // TODO: Update to Home page when home page is ready
 
                                 ) {
                                     composable("Playlist") {
