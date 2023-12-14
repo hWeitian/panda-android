@@ -15,6 +15,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.foodpanda_capstone.view.ui.screen.PlaylistFormScreen
 import com.example.foodpanda_capstone.view.ui.screen.PlaylistScreen
 import com.example.foodpanda_capstone.view.ui.theme.BrandPrimary
@@ -25,9 +30,19 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+
             FoodpandaCapstoneTheme {
-//                PlaylistFormScreen()
-                PlaylistScreen()
+                val navController = rememberNavController()
+
+                NavHost(navController = navController, startDestination = "home") {
+                    composable("home") {
+                        PlaylistScreen(navController)
+                    }
+                    composable("playlist-form") {
+                        PlaylistFormScreen(navController)
+                    }
+                }
+
             }
         }
     }

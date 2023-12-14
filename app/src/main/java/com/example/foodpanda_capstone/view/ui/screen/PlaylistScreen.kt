@@ -16,6 +16,7 @@ import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.navigation.NavController
 import com.example.foodpanda_capstone.model.Playlist
 import com.example.foodpanda_capstone.model.playlistList
 import com.example.foodpanda_capstone.view.ui.composable.ImageHolder
@@ -26,7 +27,7 @@ import com.example.foodpanda_capstone.view.ui.theme.BrandSecondary
 import com.example.foodpanda_capstone.view.ui.theme.Typography
 
 @Composable
-fun PlaylistScreen() {
+fun PlaylistScreen(navController: NavController) {
     InnerTopAppBar(title = "Food Playlist", backBtnClick = { Log.i("Panda", "Back Btn Clicked") }) {
 
         Column(
@@ -46,7 +47,7 @@ fun PlaylistScreen() {
                 Text(text = "Can't decide?", style = Typography.titleMedium)
                 Spacer(modifier = Modifier.size(10.dp))
                 PrimaryButton(name = "Create your own", null) {
-                    Log.i("Panda", "Create btn clicked")
+                   navController.navigate("playlist-form")
                 }
             }
         }
