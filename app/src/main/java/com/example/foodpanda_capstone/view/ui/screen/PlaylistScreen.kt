@@ -1,17 +1,7 @@
 package com.example.foodpanda_capstone.view.ui.screen
 
 import android.util.Log
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -26,34 +16,39 @@ import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.navigation.NavController
 import com.example.foodpanda_capstone.model.Playlist
 import com.example.foodpanda_capstone.model.playlistList
 import com.example.foodpanda_capstone.view.ui.composable.ImageHolder
-import com.example.foodpanda_capstone.view.ui.composable.InnerTopAppBar
 import com.example.foodpanda_capstone.view.ui.composable.PrimaryButton
 import com.example.foodpanda_capstone.view.ui.composable.SectionTitleAndBtn
 import com.example.foodpanda_capstone.view.ui.theme.BrandSecondary
 import com.example.foodpanda_capstone.view.ui.theme.Typography
 
 @Composable
-fun PlaylistScreen() {
-    InnerTopAppBar(title = "Food Playlist", backBtnClick = { Log.i("Panda", "Back Btn Clicked") }) {
-        PlaylistSection(playlistList)
-        PlaylistSection(playlistList)
-        PlaylistSection(playlistList)
-        PlaylistSection(playlistList)
+fun PlaylistScreen(navController: NavController) {
 
-        Column (modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 25.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(text = "Can't decide?", style = Typography.titleMedium)
-            Spacer(modifier = Modifier.size(10.dp))
-            PrimaryButton(name = "Create your own", null) {
-                Log.i("Panda", "Create btn clicked")
+        Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+        ) {
+            PlaylistSection(playlistList)
+            PlaylistSection(playlistList)
+            PlaylistSection(playlistList)
+            PlaylistSection(playlistList)
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 25.dp), horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "Can't decide?", style = Typography.titleMedium)
+                Spacer(modifier = Modifier.size(10.dp))
+                PrimaryButton(name = "Create your own", null) {
+                   navController.navigate("Playlist Form")
+                }
             }
         }
-
-    }
 
 }
 
