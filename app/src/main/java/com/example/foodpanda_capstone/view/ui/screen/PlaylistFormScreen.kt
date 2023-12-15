@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.foodpanda_capstone.view.ui.composable.CustomTextInputField
 import com.example.foodpanda_capstone.view.ui.composable.PrimaryButton
 import com.example.foodpanda_capstone.viewmodel.PlaylistFormViewModel
 
@@ -45,17 +46,4 @@ fun PlaylistFormScreen(navController: NavController) {
                 }
             }
         }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun CustomTextInputField (label: String, inputState: MutableState<String>) {
-
-    OutlinedTextField(value = inputState.value,
-        onValueChange = {inputState.value = it},
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 10.dp),
-        label = { Text(text = label) }
-        )
 }
