@@ -1,5 +1,6 @@
 package com.example.foodpanda_capstone.view.ui.screen
 
+import android.annotation.SuppressLint
 import android.util.Log
 import android.widget.Space
 import androidx.compose.foundation.layout.Arrangement
