@@ -72,6 +72,10 @@ dependencies {
     // LiveData
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
 
+    implementation("androidx.compose.runtime:runtime:1.5.4")
+    implementation("androidx.compose.runtime:runtime-livedata:1.5.4")
+    implementation("androidx.compose.runtime:runtime-rxjava2:1.5.4")
+
     // Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
 

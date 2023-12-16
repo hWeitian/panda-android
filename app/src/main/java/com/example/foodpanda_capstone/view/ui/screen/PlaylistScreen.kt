@@ -1,41 +1,58 @@
 package com.example.foodpanda_capstone.view.ui.screen
 
+import android.app.Application
 import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.foodpanda_capstone.model.Playlist
-import com.example.foodpanda_capstone.model.playlistList
+import com.example.foodpanda_capstone.model.PlaylistCategory
+import com.example.foodpanda_capstone.model.PlaylistRepository
 import com.example.foodpanda_capstone.view.ui.composable.ImageHolder
 import com.example.foodpanda_capstone.view.ui.composable.PrimaryButton
 import com.example.foodpanda_capstone.view.ui.composable.SectionTitleAndBtn
 import com.example.foodpanda_capstone.view.ui.theme.BrandSecondary
 import com.example.foodpanda_capstone.view.ui.theme.Typography
+import com.example.foodpanda_capstone.viewmodel.AllPlaylistViewModel
+import com.example.foodpanda_capstone.viewmodel.AllPlaylistViewModelFactory
 
 @Composable
 fun PlaylistScreen(navController: NavController) {
+
+    val repository = PlaylistRepository()
+    val viewModelFactory = AllPlaylistViewModelFactory(repository)
+    val viewModel: AllPlaylistViewModel = viewModel(factory = viewModelFactory)
+
+    val publicPlaylists: List<PlaylistCategory> = viewModel.publicPlaylists.observeAsState(initial = emptyList()).value
+    val userPlaylists: List<Playlist> = viewModel.userPlaylists.observeAsState(initial = emptyList()).value
+
+    LaunchedEffect(viewModel) {
+        viewModel.getAllPlaylist()
+    }
 
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
         ) {
-            PlaylistSection(playlistList)
-            PlaylistSection(playlistList)
-            PlaylistSection(playlistList)
-            PlaylistSection(playlistList)
+            publicPlaylists.map {
+                PlaylistSection(it.list, it.categoryTitle)
+            }
+
+            PlaylistSection(userPlaylists, "Subscribed")
 
             Column(
                 modifier = Modifier
@@ -53,14 +70,14 @@ fun PlaylistScreen(navController: NavController) {
 }
 
 @Composable
-fun PlaylistSection(dataList: List<Playlist>) {
+fun PlaylistSection(dataList: List<Playlist>, title: String) {
     Column(
         modifier = Modifier
             .wrapContentHeight()
             .padding(vertical = 10.dp)
     ) {
 
-        SectionTitleAndBtn(title = "Subscribed", btnTitle = "See all", icon = null) {
+        SectionTitleAndBtn(title = title, btnTitle = "See all", icon = null) {
             Log.i("Panda", "See all btn clicked")
         }
 
