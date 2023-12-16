@@ -18,7 +18,11 @@ class AllPlaylistViewModel(private val repository: PlaylistRepository): ViewMode
     private val _userPlaylists = MutableLiveData<List<Playlist>>()
     val userPlaylists: LiveData<List<Playlist>> = _userPlaylists
 
-    fun getAllPlaylist() {
+    init {
+        getAllPlaylist()
+    }
+
+    private fun getAllPlaylist() {
         viewModelScope.launch(Dispatchers.IO) {
             repository.fetchAllPlaylist().collect { playlists ->
                 _publicPlaylists.postValue(playlists.publicPlaylist)

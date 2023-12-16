@@ -42,32 +42,28 @@ fun PlaylistListScreen(navController: NavController) {
     val publicPlaylists: List<PlaylistCategory> = viewModel.publicPlaylists.observeAsState(initial = emptyList()).value
     val userPlaylists: List<Playlist> = viewModel.userPlaylists.observeAsState(initial = emptyList()).value
 
-    LaunchedEffect(viewModel) {
-        viewModel.getAllPlaylist()
-    }
+    Column(
+        modifier = Modifier
+            .verticalScroll(rememberScrollState())
+    ) {
+        publicPlaylists.map {
+            PlaylistSection(it.list, it.categoryTitle, navController)
+        }
+
+        PlaylistSection(userPlaylists, "Subscribed", navController)
 
         Column(
             modifier = Modifier
-                .verticalScroll(rememberScrollState())
+                .fillMaxWidth()
+                .padding(top = 25.dp), horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            publicPlaylists.map {
-                PlaylistSection(it.list, it.categoryTitle, navController)
-            }
-
-            PlaylistSection(userPlaylists, "Subscribed", navController)
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 25.dp), horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(text = "Searching for a tasty twist?", style = Typography.titleMedium)
-                Spacer(modifier = Modifier.size(10.dp))
-                PrimaryButton(name = "Surprise me!", null) {
-                   navController.navigate("Playlist Form")
-                }
+            Text(text = "Searching for a tasty twist?", style = Typography.titleMedium)
+            Spacer(modifier = Modifier.size(10.dp))
+            PrimaryButton(name = "Surprise me!", null) {
+               navController.navigate("Playlist Form")
             }
         }
+    }
 
 }
 

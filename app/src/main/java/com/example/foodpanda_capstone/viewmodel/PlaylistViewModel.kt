@@ -9,16 +9,30 @@ import com.example.foodpanda_capstone.model.PlaylistCategory
 import com.example.foodpanda_capstone.model.PlaylistRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 
-class PlaylistViewModel(private val repository: PlaylistRepository): ViewModel() {
+class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel() {
 
-    private val _playlist = MutableLiveData<Playlist>()
-    val publicPlaylist: LiveData<Playlist> = _playlist
+    private val _currentPlaylist = MutableLiveData<Playlist>()
+    val currentPlaylist: LiveData<Playlist> = _currentPlaylist
 
-    fun getOnePlaylist(playlistId: Int){
+    private val _isLoading = MutableLiveData(false)
+    val isLoading: LiveData<Boolean> = _isLoading
+
+    fun getOnePlaylist(playlistId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.fetchOnePlaylist(0).collect { playlist ->
-                _playlist.postValue(playlist)
+
+            withContext(Dispatchers.Main) {
+                _isLoading.value = true
+            }
+
+            repository.fetchOnePlaylist(playlistId).collect { playlist ->
+                _currentPlaylist.postValue(playlist)
+            }
+
+            withContext(Dispatchers.Main) {
+                _isLoading.value = false
             }
         }
     }
