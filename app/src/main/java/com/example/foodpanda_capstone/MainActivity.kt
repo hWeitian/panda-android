@@ -5,9 +5,14 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -18,7 +23,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -27,13 +31,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navOptions
 import com.example.foodpanda_capstone.view.ui.screen.PlaylistFormScreen
 import com.example.foodpanda_capstone.view.ui.screen.PlaylistScreen
 import com.example.foodpanda_capstone.view.ui.theme.BrandSecondary
@@ -122,10 +127,21 @@ class MainActivity : ComponentActivity() {
                                     navController = navController,
                                     startDestination = "Playlist", // TODO: Update to Home page when home page is ready
                                 ) {
-                                    composable("Playlist") {
+                                    composable(
+                                        "Playlist",
+                                        enterTransition = { scaleIntoContainer() },
+                                        exitTransition = {scaleOutOfContainer(targetScale = 0.9f)},
+                                        popEnterTransition = {scaleIntoContainer(initialScale = 1.1f)},
+                                        popExitTransition = {scaleOutOfContainer()}
+                                    ) {
                                         PlaylistScreen(navController)
                                     }
-                                    composable("Playlist Form") {
+                                    composable("Playlist Form",
+                                        enterTransition = { scaleIntoContainer() },
+                                        exitTransition = {scaleOutOfContainer(targetScale = 0.9f)},
+                                        popEnterTransition = {scaleIntoContainer(initialScale = 1.1f)},
+                                        popExitTransition = {scaleOutOfContainer()}
+                                        ) {
                                         PlaylistFormScreen(navController)
                                     }
                                 }
@@ -137,4 +153,25 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+private fun scaleIntoContainer(
+    initialScale: Float = 0.9f
+): EnterTransition {
+    return scaleIn(
+        animationSpec = tween(220, delayMillis = 90),
+        initialScale = initialScale
+    ) + fadeIn(animationSpec = tween(220, delayMillis = 90))
+}
+
+private fun scaleOutOfContainer(
+    targetScale: Float = 1.1f
+): ExitTransition {
+    return scaleOut(
+        animationSpec = tween(
+            durationMillis = 220,
+            delayMillis = 90
+        ), targetScale = targetScale
+    ) + fadeOut(tween(delayMillis = 90))
+}
+
 }
