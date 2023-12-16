@@ -26,13 +26,17 @@ import com.example.foodpanda_capstone.view.ui.composable.SectionTitleAndBtn
 import com.example.foodpanda_capstone.view.ui.theme.BrandSecondary
 import com.example.foodpanda_capstone.view.ui.theme.Typography
 import com.example.foodpanda_capstone.viewmodel.AllPlaylistViewModel
-import com.example.foodpanda_capstone.viewmodel.AllPlaylistViewModelFactory
+import com.example.foodpanda_capstone.viewmodel.GeneralViewModelFactory
 
 @Composable
 fun PlaylistListScreen(navController: NavController) {
 
     val repository = PlaylistRepository()
-    val viewModelFactory = AllPlaylistViewModelFactory(repository)
+    val viewModelFactory = GeneralViewModelFactory(
+        viewModelClass = AllPlaylistViewModel::class.java,
+        repository = repository,
+        factory = ::AllPlaylistViewModel // This refers to the constructor of AllPlaylistViewModel
+    )
     val viewModel: AllPlaylistViewModel = viewModel(factory = viewModelFactory)
 
     val publicPlaylists: List<PlaylistCategory> = viewModel.publicPlaylists.observeAsState(initial = emptyList()).value
