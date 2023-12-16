@@ -34,12 +34,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import androidx.navigation.navOptions
 import com.example.foodpanda_capstone.view.ui.screen.PlaylistFormScreen
+import com.example.foodpanda_capstone.view.ui.screen.PlaylistListScreen
 import com.example.foodpanda_capstone.view.ui.screen.PlaylistScreen
 import com.example.foodpanda_capstone.view.ui.theme.BrandSecondary
 import com.example.foodpanda_capstone.view.ui.theme.FoodpandaCapstoneTheme
@@ -53,6 +56,8 @@ class MainActivity : ComponentActivity() {
             FoodpandaCapstoneTheme {
                 val navController = rememberNavController()
                 val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route ?: ""
+                val currentArguments = navController.currentBackStackEntryAsState().value?.arguments
+                val pageTitle = currentArguments?.getString("title")
 
                 // Get the current activity and window insets
                 val activity = LocalView.current.context as Activity
@@ -93,7 +98,7 @@ class MainActivity : ComponentActivity() {
                                             titleContentColor = Color.Black,
                                         ),
                                         title = {
-                                            Text(text = currentRoute, style = Typography.titleMedium)
+                                            Text(text = pageTitle ?: currentRoute, style = Typography.titleMedium)
                                         },
                                         navigationIcon = {
                                             IconButton(onClick = { navController.popBackStack() }) {
@@ -126,23 +131,28 @@ class MainActivity : ComponentActivity() {
                                 NavHost(
                                     navController = navController,
                                     startDestination = "Playlist", // TODO: Update to Home page when home page is ready
+                                    enterTransition = { scaleIntoContainer() },
+                                    exitTransition = {scaleOutOfContainer(targetScale = 0.9f)},
+                                    popEnterTransition = {scaleIntoContainer(initialScale = 1.1f)},
+                                    popExitTransition = {scaleOutOfContainer()}
                                 ) {
                                     composable(
                                         "Playlist",
-                                        enterTransition = { scaleIntoContainer() },
-                                        exitTransition = {scaleOutOfContainer(targetScale = 0.9f)},
-                                        popEnterTransition = {scaleIntoContainer(initialScale = 1.1f)},
-                                        popExitTransition = {scaleOutOfContainer()}
                                     ) {
-                                        PlaylistScreen(navController)
+                                        PlaylistListScreen(navController)
                                     }
                                     composable("Playlist Form",
-                                        enterTransition = { scaleIntoContainer() },
-                                        exitTransition = {scaleOutOfContainer(targetScale = 0.9f)},
-                                        popEnterTransition = {scaleIntoContainer(initialScale = 1.1f)},
-                                        popExitTransition = {scaleOutOfContainer()}
                                         ) {
                                         PlaylistFormScreen(navController)
+                                    }
+                                    composable("Playlist/{playlistId}/{title}",
+                                        arguments = listOf(
+                                            navArgument("playlistId") {type = NavType.IntType},
+                                            navArgument("title") {type = NavType.StringType}
+                                        ),
+                                        ) {backStackEntry ->
+                                        val playlistId = backStackEntry.arguments?.getInt("playlistId")
+                                        PlaylistScreen(navController, playlistId)
                                     }
                                 }
                             }
