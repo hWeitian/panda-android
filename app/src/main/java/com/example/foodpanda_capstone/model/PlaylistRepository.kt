@@ -1,6 +1,7 @@
 package com.example.foodpanda_capstone.model
 
 import android.util.Log
+import com.example.foodpanda_capstone.model.mock_data.playlist
 import com.example.foodpanda_capstone.model.mock_data.playlistList
 import com.example.foodpanda_capstone.model.mock_data.userPlaylist
 import kotlinx.coroutines.delay
@@ -22,6 +23,6 @@ class PlaylistRepository {
         // TODO: Add retrofit call here when backend is ready
 
         delay(2000L)
-        return userPlaylist[playlistId]
+        return playlist
     }
 }
