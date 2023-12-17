@@ -9,6 +9,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,8 +41,8 @@ fun PlaylistListScreen(navController: NavController) {
     )
     val viewModel: AllPlaylistViewModel = viewModel(factory = viewModelFactory)
 
-    val publicPlaylists: List<PlaylistCategory> = viewModel.publicPlaylists.observeAsState(initial = emptyList()).value
-    val userPlaylists: List<Playlist> = viewModel.userPlaylists.observeAsState(initial = emptyList()).value
+    val publicPlaylists by viewModel.publicPlaylists.collectAsState()
+    val userPlaylists by viewModel.userPlaylists.collectAsState()
 
     Column(
         modifier = Modifier

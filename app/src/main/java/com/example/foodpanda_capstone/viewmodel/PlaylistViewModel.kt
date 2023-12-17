@@ -18,7 +18,7 @@ import kotlinx.coroutines.withTimeout
 class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel() {
 
     private val _currentPlaylist = MutableStateFlow<Playlist?>(null)
-    val currentPlaylist: MutableStateFlow<Playlist?> = _currentPlaylist
+    val currentPlaylist: StateFlow<Playlist?> = _currentPlaylist
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading

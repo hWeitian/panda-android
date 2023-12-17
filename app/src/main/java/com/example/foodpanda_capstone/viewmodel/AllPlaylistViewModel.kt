@@ -8,15 +8,17 @@ import com.example.foodpanda_capstone.model.Playlist
 import com.example.foodpanda_capstone.model.PlaylistCategory
 import com.example.foodpanda_capstone.model.PlaylistRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class AllPlaylistViewModel(private val repository: PlaylistRepository): ViewModel() {
 
-    private val _publicPlaylists = MutableLiveData<List<PlaylistCategory>>()
-    val publicPlaylists: LiveData<List<PlaylistCategory>> = _publicPlaylists
+    private val _publicPlaylists = MutableStateFlow<List<PlaylistCategory>>(emptyList())
+    val publicPlaylists: StateFlow<List<PlaylistCategory>> = _publicPlaylists
 
-    private val _userPlaylists = MutableLiveData<List<Playlist>>()
-    val userPlaylists: LiveData<List<Playlist>> = _userPlaylists
+    private val _userPlaylists = MutableStateFlow<List<Playlist>>(emptyList())
+    val userPlaylists: StateFlow<List<Playlist>> = _userPlaylists
 
     init {
         getAllPlaylist()
@@ -25,8 +27,8 @@ class AllPlaylistViewModel(private val repository: PlaylistRepository): ViewMode
     private fun getAllPlaylist() {
         viewModelScope.launch(Dispatchers.IO) {
             repository.fetchAllPlaylist().collect { playlists ->
-                _publicPlaylists.postValue(playlists.publicPlaylist)
-                _userPlaylists.postValue(playlists.userPlaylist)
+                _publicPlaylists.value = playlists.publicPlaylist
+                _userPlaylists.value = playlists.userPlaylist
             }
         }
     }
