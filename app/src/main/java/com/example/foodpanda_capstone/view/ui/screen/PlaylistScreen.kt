@@ -10,6 +10,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
@@ -32,8 +33,8 @@ fun PlaylistScreen(navController: NavController, id: Int?) {
     )
     val viewModel: PlaylistViewModel = viewModel(factory = viewModelFactory)
 
-    val currentPlaylist: Playlist? = viewModel.currentPlaylist.observeAsState().value
-    val isLoading: Boolean = viewModel.isLoading.observeAsState(initial = false).value
+    val currentPlaylist by viewModel.currentPlaylist.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
 
     LaunchedEffect(id) {
         if (id != null) {
@@ -59,8 +60,6 @@ fun PlaylistScreen(navController: NavController, id: Int?) {
         } else {
             Text(text = "Loading...")
         }
-
-        
 
     }
 

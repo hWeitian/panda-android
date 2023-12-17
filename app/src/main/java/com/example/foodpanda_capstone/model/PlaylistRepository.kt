@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 
 class PlaylistRepository {
-    suspend fun fetchAllPlaylist(): Flow<AllPlaylist> = flow {
+    fun fetchAllPlaylist(): Flow<AllPlaylist> = flow {
         // TODO: Add retrofit call here when backend is ready
 
         emit(playlistList)
@@ -17,11 +17,11 @@ class PlaylistRepository {
         Log.e("PdError", "Error at fetchAllPlaylist - ${e.message}")
     }
 
-    suspend fun fetchOnePlaylist(playlistId: Int): Flow<Playlist> = flow {
+    suspend fun fetchOnePlaylist(playlistId: Int): Playlist {
+
         // TODO: Add retrofit call here when backend is ready
+
         delay(2000L)
-        emit(userPlaylist[playlistId])
-    }.catch { e ->
-        Log.e("PdError", "Error at fetchOnePlaylist - ${e.message}")
+        return userPlaylist[playlistId]
     }
 }
