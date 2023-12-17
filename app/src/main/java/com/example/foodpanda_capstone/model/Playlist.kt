@@ -3,10 +3,10 @@ package com.example.foodpanda_capstone.model
 data class Playlist (
     val id: Int,
     val name: String,
-    val imageUrl: String,
+    val imageUrl: String?,
     val cost: Float,
     val deliverDay: String,
-    val foodItems: List<FoodItem>?
+    val foodItems: List<RestaurantFoodItems>?
 )
 
 data class PlaylistCategory (

@@ -62,7 +62,7 @@ fun PlaylistListScreen(navController: NavController) {
             Text(text = "Searching for a tasty twist?", style = Typography.titleMedium)
             Spacer(modifier = Modifier.size(10.dp))
             PrimaryButton(name = "Surprise me!", null) {
-               navController.navigate("Playlist Form")
+                navController.navigate("Playlist Form")
             }
         }
     }
@@ -81,26 +81,28 @@ fun PlaylistSection(dataList: List<Playlist>, title: String, navController: NavC
             Log.i("Panda", "See all btn clicked")
         }
 
-        Box (modifier = Modifier.layout() {
-                measurable, constraints ->
+        Box(modifier = Modifier.layout() { measurable, constraints ->
             // calculate end padding
-            val placeable = measurable.measure(constraints.copy(
-                maxWidth = constraints.maxWidth + 20.dp.roundToPx(),
-            ))
+            val placeable = measurable.measure(
+                constraints.copy(
+                    maxWidth = constraints.maxWidth + 20.dp.roundToPx(),
+                )
+            )
             layout(placeable.width, placeable.height) {
                 placeable.place(0.dp.roundToPx(), 0)
             }
         }) {
-            LazyRow(modifier = Modifier
-                .wrapContentHeight(),
+            LazyRow(
+                modifier = Modifier
+                    .wrapContentHeight(),
                 horizontalArrangement = Arrangement.spacedBy(15.dp)
             ) {
                 items(dataList.size) { index ->
-                    if(index == 0){
+                    if (index == 0) {
                         Spacer(modifier = Modifier.width(10.dp))
                     }
-                    PlaylistCard(dataList[index]) {navController.navigate("Playlist/${dataList[index].id}/${dataList[index].name}")}
-                    if(index == dataList.size - 1){
+                    PlaylistCard(dataList[index]) { navController.navigate("Playlist/${dataList[index].id}/${dataList[index].name}") }
+                    if (index == dataList.size - 1) {
                         Spacer(modifier = Modifier.width(15.dp))
                     }
                 }
@@ -119,7 +121,9 @@ fun PlaylistCard(playlist: Playlist, cardClicked: () -> Unit) {
             .width(150.dp)
             .clickable { cardClicked() }
     ) {
-        ImageHolder(playlist.imageUrl, 140, "Test")
+
+        playlist.imageUrl?.let { it1 -> ImageHolder(it1, 140, "Playlist Image") }
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()

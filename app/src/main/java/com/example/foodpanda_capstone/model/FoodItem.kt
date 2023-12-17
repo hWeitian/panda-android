@@ -7,3 +7,8 @@ data class FoodItem(
     val price: Double,
     val imageUrl: String,
 )
+
+data class RestaurantFoodItems(
+    val restaurantName: String,
+    val foodItems: List<FoodItem>
+)
