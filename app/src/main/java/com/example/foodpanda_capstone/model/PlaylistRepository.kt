@@ -1,8 +1,9 @@
 package com.example.foodpanda_capstone.model
 
 import android.util.Log
-import com.example.foodpanda_capstone.model.mock_data.playlist
 import com.example.foodpanda_capstone.model.mock_data.playlistList
+import com.example.foodpanda_capstone.model.mock_data.privatePlaylist
+import com.example.foodpanda_capstone.model.mock_data.publicPlaylist1
 import com.example.foodpanda_capstone.model.mock_data.userPlaylist
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -23,6 +24,6 @@ class PlaylistRepository {
         // TODO: Add retrofit call here when backend is ready
 
 //        delay(2000L)
-        return playlist
+        return publicPlaylist1 // privatePlaylist or publicPlaylist1 for testing
     }
 }

@@ -6,7 +6,8 @@ data class Playlist (
     val imageUrl: String?,
     val cost: Float,
     val deliverDay: String,
-    val foodItems: List<RestaurantFoodItems>?
+    val foodItems: List<RestaurantFoodItems>?,
+    val isPublic: Boolean?
 )
 
 data class PlaylistCategory (

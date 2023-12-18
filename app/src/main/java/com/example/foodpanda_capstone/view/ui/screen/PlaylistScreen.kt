@@ -93,22 +93,14 @@ fun PlaylistScreen(navController: NavController, id: Int?, entryRoute: String) {
                             Spacer(modifier = Modifier.size(20.dp))
                             RestaurantSection(restaurantFoodItems)
                         }
-                        CustomTextBtn(
-                            name = "Edit Playlist",
-                            iconVector = null,
-                            iconImgId = R.drawable.baseline_edit_24_white) { Log.i("Panda", "Edit playlist btn clicked")}
 
-                        Spacer(modifier = Modifier.size(40.dp))
-
-                        CustomOutlinedBtn(name = "Not Happy? Regenerate", width = null) {
-                            Log.i("Panda", "Regenerate playlist btn clicked")
+                        if(it.isPublic == true){
+                            PublicPlaylistButtons()
+                        } else {
+                            PrivatePlayListButtons()
                         }
 
-                        Spacer(modifier = Modifier.size(10.dp))
 
-                        PrimaryButton(name = "Subscribe", width = null) {
-                            Log.i("Panda", "Subscribe playlist btn clicked")
-                        }
                     }
 
                 }
@@ -194,4 +186,38 @@ fun FoodItemContainer(foodItem: FoodItem) {
         }
     }
 
+}
+
+@Composable
+fun PublicPlaylistButtons() {
+    CustomTextBtn(
+        name = "Edit Playlist",
+        iconVector = null,
+        iconImgId = R.drawable.baseline_edit_24_white) { Log.i("Panda", "Edit playlist btn clicked")}
+
+    Spacer(modifier = Modifier.size(40.dp))
+
+    CustomOutlinedBtn(name = "Not Happy? Regenerate", width = null) {
+        Log.i("Panda", "Regenerate playlist btn clicked")
+    }
+
+    Spacer(modifier = Modifier.size(10.dp))
+
+    PrimaryButton(name = "Subscribe", width = null) {
+        Log.i("Panda", "Subscribe playlist btn clicked")
+    }
+}
+
+@Composable
+fun PrivatePlayListButtons() {
+    CustomTextBtn(
+        name = "Cancel Subscription",
+        iconVector = null,
+        iconImgId = R.drawable.baseline_cancel_24_white) { Log.i("Panda", "Edit playlist btn clicked")}
+
+    Spacer(modifier = Modifier.size(40.dp))
+
+    PrimaryButton(name = "Edit", width = null) {
+        Log.i("Panda", "Edit playlist btn clicked")
+    }
 }

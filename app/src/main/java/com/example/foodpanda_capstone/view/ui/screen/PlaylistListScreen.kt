@@ -140,4 +140,3 @@ fun PlaylistCard(playlist: Playlist, cardClicked: () -> Unit) {
         Text(text = "Deliver every ${playlist.deliverDay}", style = Typography.bodyMedium, color = BrandSecondary)
     }
 }
-

@@ -86,11 +86,24 @@ val restaurantsFoodItems = listOf(
 )
 
 
-val playlist = Playlist(
+val publicPlaylist1 = Playlist(
     id = 1,
     name = "K-pop 1",
     imageUrl = null,
     cost = 30.00F,
     deliverDay = "Thu",
-    foodItems = restaurantsFoodItems
+    foodItems = restaurantsFoodItems,
+    isPublic = true
 )
+
+
+val privatePlaylist = Playlist(
+    id = 1,
+    name = "K-pop 1",
+    imageUrl = null,
+    cost = 30.00F,
+    deliverDay = "Thu",
+    foodItems = restaurantsFoodItems,
+    isPublic = false
+)
+

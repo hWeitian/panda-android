@@ -14,7 +14,8 @@ val publicPlaylist = listOf(
                 imageUrl = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=3160&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                 cost = 30.00F,
                 deliverDay = "Thu",
-                foodItems= null
+                foodItems= null,
+                isPublic = true
             ),
             Playlist(
                 id = 2,
@@ -22,7 +23,8 @@ val publicPlaylist = listOf(
                 imageUrl = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=3160&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                 cost = 50.00F,
                 deliverDay = "Fri",
-                foodItems= null
+                foodItems= null,
+                isPublic = true
             ),
             Playlist(
                 id = 3,
@@ -30,7 +32,8 @@ val publicPlaylist = listOf(
                 imageUrl = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=3160&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                 cost = 15.90F,
                 deliverDay = "Tue",
-                foodItems= null
+                foodItems= null,
+                isPublic = true
             )
         )
     ),
@@ -43,7 +46,8 @@ val publicPlaylist = listOf(
                 imageUrl = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=3160&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                 cost = 20.90F,
                 deliverDay = "Wed",
-                foodItems= null
+                foodItems= null,
+                isPublic = true
             ),
             Playlist(
                 id = 5,
@@ -51,7 +55,8 @@ val publicPlaylist = listOf(
                 imageUrl = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=3160&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                 cost = 10.00F,
                 deliverDay = "Sun",
-                foodItems= null
+                foodItems= null,
+                isPublic = true
             ),
             Playlist(
                 id = 6,
@@ -59,7 +64,8 @@ val publicPlaylist = listOf(
                 imageUrl = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=3160&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                 cost = 20.00F,
                 deliverDay = "Sun",
-                foodItems= null
+                foodItems= null,
+                isPublic = true
             )
         )
     )
@@ -72,7 +78,8 @@ val userPlaylist = listOf(
         imageUrl = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=3160&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         cost = 10.00F,
         deliverDay = "Wed",
-        foodItems= null
+        foodItems= null,
+        isPublic = false
     ),
     Playlist(
         id = 8,
@@ -80,7 +87,8 @@ val userPlaylist = listOf(
         imageUrl = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=3160&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         cost = 30.00F,
         deliverDay = "Fri",
-        foodItems= null
+        foodItems= null,
+        isPublic = false
     ),
     Playlist(
         id = 9,
@@ -88,7 +96,8 @@ val userPlaylist = listOf(
         imageUrl = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=3160&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         cost = 70.00F,
         deliverDay = "Sun",
-        foodItems= null
+        foodItems= null,
+        isPublic = false
     ),
     Playlist(
         id = 10,
@@ -96,7 +105,8 @@ val userPlaylist = listOf(
         imageUrl = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=3160&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         cost = 50.00F,
         deliverDay = "Sat",
-        foodItems= null
+        foodItems= null,
+        isPublic = false
     ),
 )
 
