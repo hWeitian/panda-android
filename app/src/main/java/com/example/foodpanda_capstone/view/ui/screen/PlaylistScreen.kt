@@ -23,6 +23,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.foodpanda_capstone.R
 import com.example.foodpanda_capstone.model.FoodItem
 import com.example.foodpanda_capstone.model.Playlist
 import com.example.foodpanda_capstone.model.PlaylistRepository
@@ -40,7 +42,9 @@ import com.example.foodpanda_capstone.viewmodel.PlaylistViewModel
 import kotlinx.coroutines.runBlocking
 
 @Composable
-fun PlaylistScreen(navController: NavController, id: Int?) {
+fun PlaylistScreen(navController: NavController, id: Int?, entryRoute: String) {
+
+    Log.i("WT", entryRoute)
 
     val repository = PlaylistRepository()
     val viewModelFactory = GeneralViewModelFactory(
@@ -91,11 +95,12 @@ fun PlaylistScreen(navController: NavController, id: Int?) {
                         }
                         CustomTextBtn(
                             name = "Edit Playlist",
-                            icon = Icons.Default.Edit) { Log.i("Panda", "Edit playlist btn clicked")}
+                            iconVector = null,
+                            iconImgId = R.drawable.baseline_edit_24_white) { Log.i("Panda", "Edit playlist btn clicked")}
 
                         Spacer(modifier = Modifier.size(40.dp))
 
-                        CustomOutlinedBtn(name = "Regenerate", width = null) {
+                        CustomOutlinedBtn(name = "Not Happy? Regenerate", width = null) {
                             Log.i("Panda", "Regenerate playlist btn clicked")
                         }
 

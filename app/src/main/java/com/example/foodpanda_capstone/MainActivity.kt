@@ -154,7 +154,7 @@ class MainActivity : ComponentActivity() {
                                         ),
                                         ) {backStackEntry ->
                                         val playlistId = backStackEntry.arguments?.getInt("playlistId")
-                                        PlaylistScreen(navController, playlistId)
+                                        PlaylistScreen(navController, playlistId, currentRoute)
                                     }
                                 }
                             }
