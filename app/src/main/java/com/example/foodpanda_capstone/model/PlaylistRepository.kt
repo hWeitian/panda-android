@@ -22,7 +22,7 @@ class PlaylistRepository {
 
         // TODO: Add retrofit call here when backend is ready
 
-        delay(2000L)
+//        delay(2000L)
         return playlist
     }
 }

@@ -27,6 +27,7 @@ import com.example.foodpanda_capstone.model.FoodItem
 import com.example.foodpanda_capstone.model.Playlist
 import com.example.foodpanda_capstone.model.PlaylistRepository
 import com.example.foodpanda_capstone.model.RestaurantFoodItems
+import com.example.foodpanda_capstone.view.ui.composable.CustomOutlinedBtn
 import com.example.foodpanda_capstone.view.ui.composable.CustomTextBtn
 import com.example.foodpanda_capstone.view.ui.composable.ImageHolder
 import com.example.foodpanda_capstone.view.ui.composable.PrimaryButton
@@ -94,7 +95,7 @@ fun PlaylistScreen(navController: NavController, id: Int?) {
 
                         Spacer(modifier = Modifier.size(40.dp))
 
-                        PrimaryButton(name = "Regenerate", width = null) {
+                        CustomOutlinedBtn(name = "Regenerate", width = null) {
                             Log.i("Panda", "Regenerate playlist btn clicked")
                         }
 
