@@ -47,7 +47,7 @@ fun PlaylistFormScreen(navController: NavController) {
 
             }
             PrimaryButton(name = "Generate ideas", null) {
-                Log.i("Panda", "Create ideas btn clicked")
+                Log.i("Panda", "Create ideas btn clicked")  // TODO: Add Generate Ideas button logic
             }
         }
     }

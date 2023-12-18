@@ -24,6 +24,6 @@ class PlaylistRepository {
         // TODO: Add retrofit call here when backend is ready
 
 //        delay(2000L)
-        return publicPlaylist1 // privatePlaylist or publicPlaylist1 for testing
+        return privatePlaylist // privatePlaylist or publicPlaylist1 for testing
     }
 }

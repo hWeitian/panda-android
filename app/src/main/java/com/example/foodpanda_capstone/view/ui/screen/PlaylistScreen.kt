@@ -13,9 +13,12 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -32,6 +35,7 @@ import com.example.foodpanda_capstone.model.RestaurantFoodItems
 import com.example.foodpanda_capstone.view.ui.composable.CustomOutlinedBtn
 import com.example.foodpanda_capstone.view.ui.composable.CustomTextBtn
 import com.example.foodpanda_capstone.view.ui.composable.ImageHolder
+import com.example.foodpanda_capstone.view.ui.composable.Modal
 import com.example.foodpanda_capstone.view.ui.composable.PrimaryButton
 import com.example.foodpanda_capstone.view.ui.theme.BrandDark
 import com.example.foodpanda_capstone.view.ui.theme.BrandPrimary
@@ -42,9 +46,9 @@ import com.example.foodpanda_capstone.viewmodel.PlaylistViewModel
 import kotlinx.coroutines.runBlocking
 
 @Composable
-fun PlaylistScreen(navController: NavController, id: Int?, entryRoute: String) {
+fun PlaylistScreen(navController: NavController, id: Int?) {
 
-    Log.i("WT", entryRoute)
+    val openModal = remember { mutableStateOf(false) }
 
     val repository = PlaylistRepository()
     val viewModelFactory = GeneralViewModelFactory(
@@ -97,7 +101,7 @@ fun PlaylistScreen(navController: NavController, id: Int?, entryRoute: String) {
                         if(it.isPublic == true){
                             PublicPlaylistButtons()
                         } else {
-                            PrivatePlayListButtons()
+                            PrivatePlayListButtons(openModal)
                         }
 
 
@@ -108,6 +112,17 @@ fun PlaylistScreen(navController: NavController, id: Int?, entryRoute: String) {
 
         } else {
             Text(text = "Loading...")
+        }
+
+        if(openModal.value){
+            // TODO: Logic to cancel subscription
+            Modal (
+                title = "Cancel Subscription",
+                description = "Cancellation of playlist subscription will start next week.\r\n\nAre you sure you want to cancel?",
+                buttonTitle = "Confirm",
+                onDismissRequest = { openModal.value = false},
+                onConfirmation = { Log.i("Panda", "Cancel Subscription button clicked.") } // TODO: Add cancel subscription logic}
+            )
         }
 
     }
@@ -193,31 +208,31 @@ fun PublicPlaylistButtons() {
     CustomTextBtn(
         name = "Edit Playlist",
         iconVector = null,
-        iconImgId = R.drawable.baseline_edit_24_white) { Log.i("Panda", "Edit playlist btn clicked")}
+        iconImgId = R.drawable.baseline_edit_24_white) { Log.i("Panda", "Edit playlist btn clicked")} // TODO: Link to edit playlist page
 
     Spacer(modifier = Modifier.size(40.dp))
 
     CustomOutlinedBtn(name = "Not Happy? Regenerate", width = null) {
-        Log.i("Panda", "Regenerate playlist btn clicked")
+        Log.i("Panda", "Regenerate playlist btn clicked") // TODO: Add regenerate playlist logic
     }
 
     Spacer(modifier = Modifier.size(10.dp))
 
     PrimaryButton(name = "Subscribe", width = null) {
-        Log.i("Panda", "Subscribe playlist btn clicked")
+        Log.i("Panda", "Subscribe playlist btn clicked") // TODO: Link to subscribe playlist logic
     }
 }
 
 @Composable
-fun PrivatePlayListButtons() {
+fun PrivatePlayListButtons(openModal: MutableState<Boolean>) {
     CustomTextBtn(
         name = "Cancel Subscription",
         iconVector = null,
-        iconImgId = R.drawable.baseline_cancel_24_white) { Log.i("Panda", "Edit playlist btn clicked")}
+        iconImgId = R.drawable.baseline_cancel_24_white) { openModal.value = true }
 
     Spacer(modifier = Modifier.size(40.dp))
 
     PrimaryButton(name = "Edit", width = null) {
-        Log.i("Panda", "Edit playlist btn clicked")
+        Log.i("Panda", "Edit playlist btn clicked") // TODO: Link to edit playlist page
     }
 }

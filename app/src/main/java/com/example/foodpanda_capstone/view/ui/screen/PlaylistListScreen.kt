@@ -78,7 +78,7 @@ fun PlaylistSection(dataList: List<Playlist>, title: String, navController: NavC
     ) {
 
         SectionTitleAndBtn(title = title, btnTitle = "See all", icon = null) {
-            Log.i("Panda", "See all btn clicked")
+            Log.i("Panda", "See all btn clicked") // TODO: Add See All playlist page and navigation
         }
 
         Box(modifier = Modifier.layout() { measurable, constraints ->
