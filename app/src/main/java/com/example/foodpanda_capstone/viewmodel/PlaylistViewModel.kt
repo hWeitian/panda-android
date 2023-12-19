@@ -11,6 +11,7 @@ import com.example.foodpanda_capstone.model.PlaylistRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
@@ -18,7 +19,7 @@ import kotlinx.coroutines.withTimeout
 class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel() {
 
     private val _currentPlaylist = MutableStateFlow<Playlist?>(null)
-    val currentPlaylist: StateFlow<Playlist?> = _currentPlaylist
+    val currentPlaylist: StateFlow<Playlist?> = _currentPlaylist.asStateFlow()
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading

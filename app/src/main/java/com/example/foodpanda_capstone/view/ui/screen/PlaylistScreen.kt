@@ -34,9 +34,13 @@ import com.example.foodpanda_capstone.model.PlaylistRepository
 import com.example.foodpanda_capstone.model.RestaurantFoodItems
 import com.example.foodpanda_capstone.view.ui.composable.CustomOutlinedBtn
 import com.example.foodpanda_capstone.view.ui.composable.CustomTextBtn
+import com.example.foodpanda_capstone.view.ui.composable.FoodItemDescriptionText
+import com.example.foodpanda_capstone.view.ui.composable.FoodItemNameText
 import com.example.foodpanda_capstone.view.ui.composable.ImageHolder
 import com.example.foodpanda_capstone.view.ui.composable.Modal
 import com.example.foodpanda_capstone.view.ui.composable.PrimaryButton
+import com.example.foodpanda_capstone.view.ui.composable.RestaurantNameText
+import com.example.foodpanda_capstone.view.ui.composable.RestaurantSection
 import com.example.foodpanda_capstone.view.ui.theme.BrandDark
 import com.example.foodpanda_capstone.view.ui.theme.BrandPrimary
 import com.example.foodpanda_capstone.view.ui.theme.BrandSecondary
@@ -46,17 +50,9 @@ import com.example.foodpanda_capstone.viewmodel.PlaylistViewModel
 import kotlinx.coroutines.runBlocking
 
 @Composable
-fun PlaylistScreen(navController: NavController, id: Int?) {
+fun PlaylistScreen(navController: NavController, id: Int?, viewModel: PlaylistViewModel) {
 
     val openModal = remember { mutableStateOf(false) }
-
-    val repository = PlaylistRepository()
-    val viewModelFactory = GeneralViewModelFactory(
-        viewModelClass = PlaylistViewModel::class.java,
-        repository = repository,
-        factory = ::PlaylistViewModel
-    )
-    val viewModel: PlaylistViewModel = viewModel(factory = viewModelFactory)
 
     val currentPlaylist by viewModel.currentPlaylist.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
@@ -101,12 +97,9 @@ fun PlaylistScreen(navController: NavController, id: Int?) {
                         if(it.isPublic == true){
                             PublicPlaylistButtons()
                         } else {
-                            PrivatePlayListButtons(openModal)
+                            PrivatePlayListButtons(openModal, navController)
                         }
-
-
                     }
-
                 }
             }
 
@@ -125,19 +118,6 @@ fun PlaylistScreen(navController: NavController, id: Int?) {
             )
         }
 
-    }
-}
-
-@Composable
-fun RestaurantSection(restaurant: RestaurantFoodItems) {
-    Column {
-        Text(
-            text = restaurant.restaurantName,
-            style = Typography.titleSmall
-        )
-        restaurant.foodItems.map { item ->
-            FoodItemContainer(foodItem = item)
-        }
     }
 }
 
@@ -167,15 +147,8 @@ fun FoodItemContainer(foodItem: FoodItem) {
                 verticalArrangement = Arrangement.SpaceBetween
                 ) {
                 Column {
-                    Text(
-                        text = foodItem.name,
-                        style = Typography.bodyLarge
-                    )
-                    Text(
-                        text = foodItem.description,
-                        style = Typography.bodyMedium,
-                        color = BrandSecondary
-                    )
+                    FoodItemNameText(foodItem.name)
+                    FoodItemDescriptionText(foodItem.description)
                 }
 
                 Row(
@@ -224,7 +197,7 @@ fun PublicPlaylistButtons() {
 }
 
 @Composable
-fun PrivatePlayListButtons(openModal: MutableState<Boolean>) {
+fun PrivatePlayListButtons(openModal: MutableState<Boolean>, navController: NavController) {
     CustomTextBtn(
         name = "Cancel Subscription",
         iconVector = null,
@@ -233,6 +206,6 @@ fun PrivatePlayListButtons(openModal: MutableState<Boolean>) {
     Spacer(modifier = Modifier.size(40.dp))
 
     PrimaryButton(name = "Edit", width = null) {
-        Log.i("Panda", "Edit playlist btn clicked") // TODO: Link to edit playlist page
+        navController.navigate("EditPlaylist")
     }
 }
