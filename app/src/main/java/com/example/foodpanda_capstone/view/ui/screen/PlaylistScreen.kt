@@ -53,7 +53,6 @@ import kotlinx.coroutines.runBlocking
 fun PlaylistScreen(navController: NavController, id: Int?, viewModel: PlaylistViewModel) {
 
     val openModal = remember { mutableStateOf(false) }
-
     val currentPlaylist by viewModel.currentPlaylist.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
 

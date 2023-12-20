@@ -49,4 +49,14 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
 
     }
 
+    override fun onCleared() {
+        super.onCleared()
+
+        // Here, you can write the logic for what should be done when ViewModel is cleared.
+        // For example you can log it:
+
+        Log.d("WT", "Playlist ViewModel has been cleared.")
+    }
+
+
 }

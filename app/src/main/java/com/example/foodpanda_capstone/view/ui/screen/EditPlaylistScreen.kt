@@ -31,13 +31,16 @@ fun EditPlaylistScreen(navController: NavController, viewModel: PlaylistViewMode
 
     val currentPlaylist by viewModel.currentPlaylist.collectAsState()
 
+    Log.i("WT", currentPlaylist.toString())
+    
+//    Text(text = "Ehllo")
+
     Box(
         modifier = Modifier
             .padding(top = 5.dp)
             .fillMaxSize()
             .background(Color.White)
     ) {
-
             Column(
                 modifier = Modifier
                     .verticalScroll(rememberScrollState())

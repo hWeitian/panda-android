@@ -39,6 +39,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
@@ -109,6 +110,7 @@ fun Navigation() {
 
     val navController = rememberNavController()
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route ?: ""
+    val routeOfPreviousEntry = navController.previousBackStackEntry?.destination?.route
     val currentArguments = navController.currentBackStackEntryAsState().value?.arguments
     val pageTitle = currentArguments?.getString("title")
 
@@ -126,16 +128,16 @@ fun Navigation() {
         // Change status bar background colour
         activity.window.statusBarColor = statusBarBackgroundArgb
         // If status bar is white, change icons and text to black
-        windowInsets.isAppearanceLightStatusBars = statusBarBackgroundArgb ==  Color.White.toArgb()
+        windowInsets.isAppearanceLightStatusBars = statusBarBackgroundArgb == Color.White.toArgb()
     }
 
-    val repository = PlaylistRepository()
-    val viewModelFactory = GeneralViewModelFactory(
+    val playlistRepository = PlaylistRepository()
+    val playlistViewModelFactory = GeneralViewModelFactory(
         viewModelClass = PlaylistViewModel::class.java,
-        repository = repository,
+        repository = playlistRepository,
         factory = ::PlaylistViewModel
     )
-    val playlistViewModel: PlaylistViewModel = viewModel(factory = viewModelFactory)
+    val playlistViewModel: PlaylistViewModel = viewModel(factory = playlistViewModelFactory)
 
     Scaffold(
         containerColor = Color.White,
@@ -194,9 +196,9 @@ fun Navigation() {
                         navController = navController,
                         startDestination = "Playlist List", // TODO: Update to Home page when home page is ready
                         enterTransition = { scaleIntoContainer() },
-                        exitTransition = {scaleOutOfContainer(targetScale = 0.9f)},
-                        popEnterTransition = {scaleIntoContainer(initialScale = 1.1f)},
-                        popExitTransition = {scaleOutOfContainer()}
+                        exitTransition = { scaleOutOfContainer(targetScale = 0.9f) },
+                        popEnterTransition = { scaleIntoContainer(initialScale = 1.1f) },
+                        popExitTransition = { scaleOutOfContainer() }
                     ) {
                         composable(
                             "Playlist List",
@@ -208,28 +210,19 @@ fun Navigation() {
                         ) {
                             PlaylistFormScreen(navController)
                         }
-
-                        navigation(
-                            startDestination = "Playlist/{playlistId}/{title}",
-                            route = "NestedPlaylist"
-                        ) {
-
-                            composable(
-                                "Playlist/{playlistId}/{title}",
-                                arguments = listOf(
-                                    navArgument("playlistId") { type = NavType.IntType },
-                                    navArgument("title") { type = NavType.StringType }
-                                ),
-                            ) { backStackEntry ->
-
-                                val playlistId = backStackEntry.arguments?.getInt("playlistId")
-                                PlaylistScreen(navController, playlistId, playlistViewModel)
-                            }
-                            composable("EditPlaylist") { backStackEntry ->
-                                EditPlaylistScreen(navController, playlistViewModel)
-                            }
+                        composable(
+                            "Playlist/{playlistId}/{title}",
+                            arguments = listOf(
+                                navArgument("playlistId") { type = NavType.IntType },
+                                navArgument("title") { type = NavType.StringType }
+                            ),
+                        ) { backStackEntry ->
+                            val playlistId = backStackEntry.arguments?.getInt("playlistId")
+                            PlaylistScreen(navController, playlistId, playlistViewModel)
                         }
-
+                        composable("EditPlaylist") { backStackEntry ->
+                            EditPlaylistScreen(navController, playlistViewModel)
+                        }
                     }
                 }
             }
