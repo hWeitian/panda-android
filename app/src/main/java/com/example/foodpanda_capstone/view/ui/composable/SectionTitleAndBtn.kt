@@ -36,6 +36,6 @@ fun SectionTitleAndBtn(title: String, btnTitle: String, icon: ImageVector?, btnC
             }
             Text(text = title, style = Typography.titleSmall)
         }
-        CustomTextBtn(btnTitle) { btnClicked() }
+        CustomTextBtn(btnTitle, null, null) { btnClicked() }
     }
 }

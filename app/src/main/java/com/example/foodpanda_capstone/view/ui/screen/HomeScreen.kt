@@ -41,13 +41,14 @@ import com.example.foodpanda_capstone.view.ui.theme.NeutralDivider
 
 @Composable
 fun HomeScreen(navController: NavController) {
-    navController.navigate("home")
     Surface(modifier = Modifier.fillMaxSize(),
         color = NeutralDivider) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 26.dp, top = 120.dp, end = 16.dp),
+                .padding(start = 26.dp,
+                    top = 20.dp,
+                    end = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             item {
@@ -115,7 +116,7 @@ fun CustomCard(width: Dp, height: Dp, text: String, content: String, imgResource
             .border(16.dp, Color.White, shape = RoundedCornerShape(16.dp))
             .clickable {
             // Navigate to the desired destination when the card is clicked
-            navController.navigate("Playlist") // Replace with your destination name
+            navController.navigate("Playlist List") // Replace with your destination name
         },
         elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
     ) {

@@ -18,6 +18,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,19 +33,22 @@ import com.example.foodpanda_capstone.viewmodel.PlaylistFormViewModel
 fun PlaylistFormScreen(navController: NavController) {
     val viewModel = PlaylistFormViewModel()
 
-        Box(modifier = Modifier.fillMaxSize()) {
-            Column (
-                modifier = Modifier.fillMaxSize().padding(top = 10.dp),
-                verticalArrangement = Arrangement.SpaceBetween) {
-                Column {
-                    CustomTextInputField("Cuisines", viewModel.cuisines)
-                    CustomTextInputField("Num of Dishes", viewModel.numOfDish)
-                    CustomTextInputField("Max Budget", viewModel.maxBudget)
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 10.dp),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column {
+                CustomTextInputField("Cuisines", viewModel.cuisines)
+                CustomTextInputField("Num of Dishes", viewModel.numOfDish)
+                CustomTextInputField("Max Budget", viewModel.maxBudget)
 
-                }
-                PrimaryButton(name = "Generate ideas", null) {
-                    Log.i("Panda", "Create ideas btn clicked")
-                }
+            }
+            PrimaryButton(name = "Generate ideas", null) {
+                Log.i("Panda", "Create ideas btn clicked")  // TODO: Add Generate Ideas button logic
             }
         }
+    }
 }
