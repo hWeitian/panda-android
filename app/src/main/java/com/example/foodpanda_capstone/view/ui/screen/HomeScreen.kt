@@ -41,13 +41,14 @@ import com.example.foodpanda_capstone.view.ui.theme.NeutralDivider
 
 @Composable
 fun HomeScreen(navController: NavController) {
-    navController.navigate("home")
     Surface(modifier = Modifier.fillMaxSize(),
         color = NeutralDivider) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 26.dp, top = 120.dp, end = 16.dp),
+                .padding(start = 26.dp,
+                    top = 20.dp,
+                    end = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             item {
