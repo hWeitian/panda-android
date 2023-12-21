@@ -98,7 +98,7 @@ fun PlaylistScreen(navController: NavController, id: Int?, viewModel: PlaylistVi
                         if(it.isPublic == true){
                             PublicPlaylistButtons()
                         } else {
-                            PrivatePlayListButtons(openModal, navController)
+                            PrivatePlayListButtons(openModal, navController, it.name)
                         }
                         ScreenBottomSpacer()
                     }
@@ -149,7 +149,7 @@ fun PublicPlaylistButtons() {
 }
 
 @Composable
-fun PrivatePlayListButtons(openModal: MutableState<Boolean>, navController: NavController) {
+fun PrivatePlayListButtons(openModal: MutableState<Boolean>, navController: NavController, playlistName: String) {
     CustomTextBtn(
         name = "Cancel Subscription",
         iconVector = null,
@@ -158,7 +158,7 @@ fun PrivatePlayListButtons(openModal: MutableState<Boolean>, navController: NavC
     Spacer(modifier = Modifier.size(40.dp))
 
     PrimaryButton(name = "Edit", width = null) {
-        navController.navigate("EditPlaylist")
+        navController.navigate("EditPlaylist/Editing $playlistName")
     }
 }
 

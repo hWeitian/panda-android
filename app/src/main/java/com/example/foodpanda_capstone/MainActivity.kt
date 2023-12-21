@@ -455,7 +455,11 @@ fun Navigation() {
                         val playlistId = backStackEntry.arguments?.getInt("playlistId")
                         PlaylistScreen(navController, playlistId, playlistViewModel)
                     }
-                    composable("EditPlaylist") { backStackEntry ->
+                    composable("EditPlaylist/{title}",
+                        arguments = listOf(
+                            navArgument("title") { type = NavType.StringType }
+                        )
+                        ) { backStackEntry ->
                         EditPlaylistScreen(navController, playlistViewModel)
                     }
                 }

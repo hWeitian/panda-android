@@ -55,20 +55,7 @@ fun EditPlaylistScreen(navController: NavController, viewModel: PlaylistViewMode
                 .verticalScroll(rememberScrollState())
         ) {
             currentPlaylist?.let {
-                Column(Modifier.padding(top = 10.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            text = it.name,
-                            style = Typography.titleMedium
-                        )
-                        Text(
-                            text = "S$ ${"%.2f".format(it.cost)}",
-                            style = Typography.titleMedium
-                        )
-                    }
+                Column {
                     it.foodItems?.map { restaurantFoodItems ->
                         Spacer(modifier = Modifier.size(20.dp))
                         RestaurantSection(restaurantFoodItems, true)
