@@ -115,10 +115,10 @@ fun EditableFoodItemContent(foodItem: FoodItem) {
     Row(
         Modifier
             .fillMaxWidth()
-            .height(90.dp),
+            .height(82.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        EditQuantityButtons(20) // TODO: Change to dynamic quantity
+        EditQuantityButtons(foodItem.quantity)
         Column(
             Modifier
                 .width(220.dp)
@@ -136,7 +136,7 @@ fun EditableFoodItemContent(foodItem: FoodItem) {
             )
         }
         Spacer(modifier = Modifier.size(15.dp))
-        ImageHolder(imageUrl = foodItem.imageUrl, height = 90, description = foodItem.name)
+        ImageHolder(imageUrl = foodItem.imageUrl, height = 70, description = foodItem.name)
     }
 }
 

@@ -17,9 +17,12 @@ import coil.compose.AsyncImage
 
 @Composable
 fun ImageHolder(imageUrl: String, height: Int, description: String?) {
+
+    val calWidth: Int = height + 10
+
     Card(
         modifier = Modifier
-            .fillMaxWidth()
+            .width(calWidth.dp)
             .height(height.dp),
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
