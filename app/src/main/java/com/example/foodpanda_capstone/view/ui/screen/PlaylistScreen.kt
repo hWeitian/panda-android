@@ -42,6 +42,7 @@ import com.example.foodpanda_capstone.view.ui.composable.Modal
 import com.example.foodpanda_capstone.view.ui.composable.PrimaryButton
 import com.example.foodpanda_capstone.view.ui.composable.RestaurantNameText
 import com.example.foodpanda_capstone.view.ui.composable.RestaurantSection
+import com.example.foodpanda_capstone.view.ui.composable.ScreenBottomSpacer
 import com.example.foodpanda_capstone.view.ui.theme.BrandDark
 import com.example.foodpanda_capstone.view.ui.theme.BrandPrimary
 import com.example.foodpanda_capstone.view.ui.theme.BrandSecondary
@@ -99,6 +100,7 @@ fun PlaylistScreen(navController: NavController, id: Int?, viewModel: PlaylistVi
                         } else {
                             PrivatePlayListButtons(openModal, navController)
                         }
+                        ScreenBottomSpacer()
                     }
                 }
             }

@@ -24,6 +24,7 @@ import com.example.foodpanda_capstone.model.PlaylistCategory
 import com.example.foodpanda_capstone.model.PlaylistRepository
 import com.example.foodpanda_capstone.view.ui.composable.ImageHolder
 import com.example.foodpanda_capstone.view.ui.composable.PrimaryButton
+import com.example.foodpanda_capstone.view.ui.composable.ScreenBottomSpacer
 import com.example.foodpanda_capstone.view.ui.composable.SectionTitleAndBtn
 import com.example.foodpanda_capstone.view.ui.theme.BrandSecondary
 import com.example.foodpanda_capstone.view.ui.theme.Typography
@@ -65,6 +66,7 @@ fun PlaylistListScreen(navController: NavController) {
                 navController.navigate("Playlist Form")
             }
         }
+        ScreenBottomSpacer()
     }
 
 }

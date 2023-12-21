@@ -421,7 +421,7 @@ fun Navigation() {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
-                    .padding(bottom = 25.dp, start = 15.dp, end = 15.dp)
+                    .padding(bottom = 0.dp, start = 15.dp, end = 15.dp)
             )
             {
                 NavHost(

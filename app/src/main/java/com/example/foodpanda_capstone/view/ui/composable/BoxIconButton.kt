@@ -1,6 +1,5 @@
 package com.example.foodpanda_capstone.view.ui.composable
 
-import android.graphics.drawable.Icon
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -8,7 +7,6 @@ import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -18,10 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.example.foodpanda_capstone.R
-import com.example.foodpanda_capstone.view.ui.theme.InteractionPrimary
 
 @Composable
 fun BoxIconButton(icon: @Composable () -> Unit, onClicked: () -> Unit) {
@@ -31,7 +26,7 @@ fun BoxIconButton(icon: @Composable () -> Unit, onClicked: () -> Unit) {
             .bounceClick()
             .clickable(
                 indication = null,
-                interactionSource = remember { MutableInteractionSource() } // This is mandatory
+                interactionSource = remember { MutableInteractionSource() } // Remove click ripple effect
             ) {
                 onClicked()
             }
