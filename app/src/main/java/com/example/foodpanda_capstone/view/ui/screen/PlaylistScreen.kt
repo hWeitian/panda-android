@@ -96,7 +96,7 @@ fun PlaylistScreen(navController: NavController, id: Int?, viewModel: PlaylistVi
                         }
 
                         if(it.isPublic == true){
-                            PublicPlaylistButtons()
+                            PublicPlaylistButtons(navController, it.name)
                         } else {
                             PrivatePlayListButtons(openModal, navController, it.name)
                         }
@@ -129,11 +129,11 @@ fun FoodItemContainer(foodItem: FoodItem) {
 }
 
 @Composable
-fun PublicPlaylistButtons() {
+fun PublicPlaylistButtons(navController: NavController, playlistName: String) {
     CustomTextBtn(
         name = "Edit Playlist",
         iconVector = null,
-        iconImgId = R.drawable.baseline_edit_24_white) { Log.i("Panda", "Edit playlist btn clicked")} // TODO: Link to edit playlist page
+        iconImgId = R.drawable.baseline_edit_24_white) { navController.navigate("EditPlaylist/Editing $playlistName")}
 
     Spacer(modifier = Modifier.size(40.dp))
 
