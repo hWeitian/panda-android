@@ -1,6 +1,7 @@
 package com.example.foodpanda_capstone.model
 
 import android.util.Log
+import com.example.foodpanda_capstone.model.mock_data.categoryPlaylists
 import com.example.foodpanda_capstone.model.mock_data.playlistList
 import com.example.foodpanda_capstone.model.mock_data.privatePlaylist
 import com.example.foodpanda_capstone.model.mock_data.publicPlaylist1
@@ -25,5 +26,9 @@ class PlaylistRepository {
 
 //        delay(2000L)
         return privatePlaylist // privatePlaylist or publicPlaylist1 for testing
+    }
+
+    suspend fun fetchCategoryPlaylist(category: String): List<PlaylistCategory> {
+        return categoryPlaylists
     }
 }

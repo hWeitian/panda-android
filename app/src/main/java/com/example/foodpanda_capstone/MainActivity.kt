@@ -81,6 +81,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.SemanticsProperties.ImeAction
 import androidx.compose.ui.text.input.ImeAction
@@ -122,6 +123,7 @@ import com.example.foodpanda_capstone.view.ui.screen.EditPlaylistScreen
 import com.example.foodpanda_capstone.view.ui.screen.PlaylistFormScreen
 import com.example.foodpanda_capstone.view.ui.screen.PlaylistListScreen
 import com.example.foodpanda_capstone.view.ui.screen.PlaylistScreen
+import com.example.foodpanda_capstone.view.ui.screen.PlaylistSectionScreen
 import com.example.foodpanda_capstone.view.ui.theme.BrandPrimary
 import com.example.foodpanda_capstone.view.ui.theme.BrandSecondary
 import com.example.foodpanda_capstone.view.ui.theme.FoodpandaCapstoneTheme
@@ -421,7 +423,11 @@ fun Navigation() {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
-                    .padding(bottom = 25.dp, start = 15.dp, end = 15.dp)
+                    .padding(
+                        bottom = 0.dp,
+                        start = dimensionResource(R.dimen.base_side_padding),
+                        end = dimensionResource(R.dimen.base_side_padding)
+                    )
             )
             {
                 NavHost(
@@ -455,8 +461,21 @@ fun Navigation() {
                         val playlistId = backStackEntry.arguments?.getInt("playlistId")
                         PlaylistScreen(navController, playlistId, playlistViewModel)
                     }
-                    composable("EditPlaylist") { backStackEntry ->
+                    composable("EditPlaylist/{title}",
+                        arguments = listOf(
+                            navArgument("title") { type = NavType.StringType }
+                        )
+                    ) { backStackEntry ->
                         EditPlaylistScreen(navController, playlistViewModel)
+                    }
+                    composable("ViewCategoryPlaylist/{categoryName}/{title}",
+                        arguments = listOf(
+                            navArgument("title") { type = NavType.StringType },
+                            navArgument("categoryName") { type = NavType.StringType }
+                        )
+                    ) { backStackEntry ->
+                        val categoryName = backStackEntry.arguments?.getString("categoryName")
+                        PlaylistSectionScreen(navController, categoryName)
                     }
                 }
 

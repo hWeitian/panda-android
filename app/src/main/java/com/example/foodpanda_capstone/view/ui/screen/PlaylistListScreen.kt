@@ -24,6 +24,7 @@ import com.example.foodpanda_capstone.model.PlaylistCategory
 import com.example.foodpanda_capstone.model.PlaylistRepository
 import com.example.foodpanda_capstone.view.ui.composable.ImageHolder
 import com.example.foodpanda_capstone.view.ui.composable.PrimaryButton
+import com.example.foodpanda_capstone.view.ui.composable.ScreenBottomSpacer
 import com.example.foodpanda_capstone.view.ui.composable.SectionTitleAndBtn
 import com.example.foodpanda_capstone.view.ui.theme.BrandSecondary
 import com.example.foodpanda_capstone.view.ui.theme.Typography
@@ -65,6 +66,7 @@ fun PlaylistListScreen(navController: NavController) {
                 navController.navigate("Playlist Form")
             }
         }
+        ScreenBottomSpacer()
     }
 
 }
@@ -78,7 +80,7 @@ fun PlaylistSection(dataList: List<Playlist>, title: String, navController: NavC
     ) {
 
         SectionTitleAndBtn(title = title, btnTitle = "See all", icon = null) {
-            Log.i("Panda", "See all btn clicked") // TODO: Add See All playlist page and navigation
+            navController.navigate("ViewCategoryPlaylist/$title/$title")
         }
 
         Box(modifier = Modifier.layout() { measurable, constraints ->
@@ -122,7 +124,7 @@ fun PlaylistCard(playlist: Playlist, cardClicked: () -> Unit) {
             .clickable { cardClicked() }
     ) {
 
-        playlist.imageUrl?.let { it1 -> ImageHolder(it1, 140, "Playlist Image") }
+        playlist.imageUrl?.let { ImageHolder(it, 140, "Playlist Image") }
 
         Row(
             modifier = Modifier
