@@ -104,9 +104,16 @@ fun EditPlaylistScreen(navController: NavController, viewModel: PlaylistViewMode
                     )
                 }
                 Spacer(modifier = Modifier.size(20.dp))
-                PrimaryButton(name = "Subscribed", width = null) {
-                    // navController.navigate("EditPlaylist")  TODO: Add navigate to confirmation page
+                if(currentPlaylist?.isPublic == true){
+                    PrimaryButton(name = "Subscribe", width = null) {
+                        // navController.navigate("EditPlaylist")  TODO: Add navigate to confirmation page
+                    }
+                } else {
+                    PrimaryButton(name = "Update", width = null) {
+                        // navController.navigate("EditPlaylist")  TODO: Add navigate to confirmation page
+                    }
                 }
+
             }
         }
     }
