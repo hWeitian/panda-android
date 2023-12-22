@@ -80,7 +80,7 @@ fun PlaylistSection(dataList: List<Playlist>, title: String, navController: NavC
     ) {
 
         SectionTitleAndBtn(title = title, btnTitle = "See all", icon = null) {
-            Log.i("Panda", "See all btn clicked") // TODO: Add See All playlist page and navigation
+            navController.navigate("ViewCategoryPlaylist/$title/$title")
         }
 
         Box(modifier = Modifier.layout() { measurable, constraints ->
@@ -124,7 +124,7 @@ fun PlaylistCard(playlist: Playlist, cardClicked: () -> Unit) {
             .clickable { cardClicked() }
     ) {
 
-        playlist.imageUrl?.let { it1 -> ImageHolder(it1, 140, "Playlist Image") }
+        playlist.imageUrl?.let { ImageHolder(it, 140, "Playlist Image") }
 
         Row(
             modifier = Modifier

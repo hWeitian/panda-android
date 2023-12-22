@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -43,6 +44,8 @@ fun EditPlaylistScreen(navController: NavController, viewModel: PlaylistViewMode
     val currentPlaylist by viewModel.currentPlaylist.collectAsState()
     val totalAmountCardHeight: Int = 130
     val endOfPageSpace: Int = totalAmountCardHeight + 30
+
+    val offsetPadding = dimensionResource(R.dimen.base_side_padding) * 2
 
     Box(
         modifier = Modifier
@@ -76,7 +79,7 @@ fun EditPlaylistScreen(navController: NavController, viewModel: PlaylistViewMode
                 .layout() { measurable, constraints ->
                     val placeable = measurable.measure(
                         constraints.copy(
-                            maxWidth = constraints.maxWidth + 30.dp.roundToPx(), // add padding to offset parent's padding
+                            maxWidth = constraints.maxWidth + offsetPadding.roundToPx(), // add padding to offset parent's padding
                         )
                     )
                     layout(placeable.width, placeable.height) {
@@ -86,7 +89,7 @@ fun EditPlaylistScreen(navController: NavController, viewModel: PlaylistViewMode
             colors = CardDefaults.cardColors(containerColor = Color.White)
         ) {
             Column(
-                modifier = Modifier.padding(15.dp),
+                modifier = Modifier.padding(dimensionResource(R.dimen.base_side_padding)),
             ) {
                 Row(
                     modifier = Modifier

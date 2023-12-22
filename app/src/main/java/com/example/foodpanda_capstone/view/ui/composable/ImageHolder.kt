@@ -1,5 +1,6 @@
 package com.example.foodpanda_capstone.view.ui.composable
 
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -15,11 +16,9 @@ import coil.compose.AsyncImage
 @Composable
 fun ImageHolder(imageUrl: String, height: Int, description: String?) {
 
-    val calWidth: Int = height + 10
-
     Card(
         modifier = Modifier
-            .width(calWidth.dp)
+            .aspectRatio(1f)
             .height(height.dp),
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
