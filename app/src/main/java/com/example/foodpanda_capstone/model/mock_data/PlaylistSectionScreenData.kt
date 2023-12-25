@@ -12,7 +12,7 @@ val categoryPlaylists = listOf(
                 name = "K-pop 1",
                 imageUrl = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=3160&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                 cost = 30.00F,
-                deliverDay = "Thu",
+                deliveryDay = "Thu",
                 foodItems= null,
                 isPublic = true
             ),
@@ -21,7 +21,7 @@ val categoryPlaylists = listOf(
                 name = "K-pop 2",
                 imageUrl = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=3160&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                 cost = 50.00F,
-                deliverDay = "Fri",
+                deliveryDay = "Fri",
                 foodItems= null,
                 isPublic = true
             ),
@@ -30,7 +30,7 @@ val categoryPlaylists = listOf(
                 name = "K-pop 3",
                 imageUrl = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=3160&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                 cost = 15.90F,
-                deliverDay = "Tue",
+                deliveryDay = "Tue",
                 foodItems= null,
                 isPublic = true
             ),
@@ -39,7 +39,7 @@ val categoryPlaylists = listOf(
                 name = "K-pop 4",
                 imageUrl = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=3160&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                 cost = 15.90F,
-                deliverDay = "Tue",
+                deliveryDay = "Tue",
                 foodItems= null,
                 isPublic = true
             ),
@@ -48,7 +48,7 @@ val categoryPlaylists = listOf(
                 name = "K-pop 5",
                 imageUrl = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=3160&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                 cost = 15.90F,
-                deliverDay = "Tue",
+                deliveryDay = "Tue",
                 foodItems= null,
                 isPublic = true
             ),
@@ -57,7 +57,7 @@ val categoryPlaylists = listOf(
                 name = "K-pop 6",
                 imageUrl = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=3160&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                 cost = 15.90F,
-                deliverDay = "Tue",
+                deliveryDay = "Tue",
                 foodItems= null,
                 isPublic = true
             ),
@@ -66,7 +66,7 @@ val categoryPlaylists = listOf(
                 name = "K-pop 7",
                 imageUrl = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=3160&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                 cost = 15.90F,
-                deliverDay = "Tue",
+                deliveryDay = "Tue",
                 foodItems= null,
                 isPublic = true
             ),
@@ -75,7 +75,7 @@ val categoryPlaylists = listOf(
                 name = "K-pop 8",
                 imageUrl = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=3160&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                 cost = 15.90F,
-                deliverDay = "Tue",
+                deliveryDay = "Tue",
                 foodItems= null,
                 isPublic = true
             ),
@@ -84,7 +84,7 @@ val categoryPlaylists = listOf(
                 name = "K-pop 9",
                 imageUrl = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=3160&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                 cost = 15.90F,
-                deliverDay = "Tue",
+                deliveryDay = "Tue",
                 foodItems= null,
                 isPublic = true
             ),
@@ -93,7 +93,7 @@ val categoryPlaylists = listOf(
                 name = "K-pop 10",
                 imageUrl = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=3160&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                 cost = 15.90F,
-                deliverDay = "Tue",
+                deliveryDay = "Tue",
                 foodItems= null,
                 isPublic = true
             )

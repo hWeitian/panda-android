@@ -91,7 +91,7 @@ val publicPlaylist1 = Playlist(
     name = "K-pop 1",
     imageUrl = null,
     cost = 30.00F,
-    deliverDay = "Thu",
+    deliveryDay = "Thu",
     foodItems = restaurantsFoodItems,
     isPublic = true
 )
@@ -102,7 +102,7 @@ val privatePlaylist = Playlist(
     name = "K-pop 1",
     imageUrl = null,
     cost = 30.00F,
-    deliverDay = "Thu",
+    deliveryDay = "Thu",
     foodItems = restaurantsFoodItems,
     isPublic = false
 )

@@ -125,20 +125,19 @@ fun PlaylistCard(playlist: Playlist, cardClicked: () -> Unit) {
     ) {
 
         playlist.imageUrl?.let { ImageHolder(it, 140, "Playlist Image") }
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 4.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = playlist.name, style = Typography.headlineLarge)
+            Text(text = playlist.name, style = Typography.headlineLarge, modifier = Modifier.width(85.dp))
             Text(
                 text = "S$ ${"%.2f".format(playlist.cost)}",
                 style = Typography.headlineLarge,
                 fontWeight = FontWeight.Normal
             )
         }
-        Text(text = "Deliver every ${playlist.deliverDay}", style = Typography.bodyMedium, color = BrandSecondary)
+        Text(text = "Deliver every ${playlist.deliveryDay}", style = Typography.bodyMedium, color = BrandSecondary)
     }
 }
