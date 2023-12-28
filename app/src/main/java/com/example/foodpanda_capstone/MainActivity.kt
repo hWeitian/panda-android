@@ -1,9 +1,10 @@
 package com.example.foodpanda_capstone
 
+//import LocalDatabase
+//import NetworkService
 import android.app.Activity
 import android.os.Bundle
 import android.util.Log
-import android.view.MenuItem
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.EnterTransition
@@ -15,9 +16,7 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,9 +33,9 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
@@ -67,13 +66,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
@@ -82,43 +78,26 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.SemanticsProperties.ImeAction
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStoreOwner
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.get
-import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.viewmodel.viewModelFactory
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.foodpanda_capstone.view.ui.screen.DrawerBody
-import com.example.foodpanda_capstone.view.ui.screen.DrawerHeader
 import com.example.foodpanda_capstone.view.ui.screen.DrawerItems
-import com.example.foodpanda_capstone.view.ui.screen.HomeAppBar
 import com.example.foodpanda_capstone.view.ui.screen.HomeScreen
-import com.example.foodpanda_capstone.view.ui.screen.MenuItems
 import androidx.navigation.navArgument
-import androidx.navigation.navOptions
-import androidx.navigation.navigation
+import com.example.foodpanda_capstone.model.LoginFormRepository
+import com.example.foodpanda_capstone.model.NetworkServiceImpl
 import com.example.foodpanda_capstone.model.PlaylistRepository
 import com.example.foodpanda_capstone.view.ui.screen.EditPlaylistScreen
+import com.example.foodpanda_capstone.view.ui.screen.LoginScreen
 import com.example.foodpanda_capstone.view.ui.screen.PlaylistFormScreen
 import com.example.foodpanda_capstone.view.ui.screen.PlaylistListScreen
 import com.example.foodpanda_capstone.view.ui.screen.PlaylistScreen
@@ -126,16 +105,15 @@ import com.example.foodpanda_capstone.view.ui.theme.BrandPrimary
 import com.example.foodpanda_capstone.view.ui.theme.BrandSecondary
 import com.example.foodpanda_capstone.view.ui.theme.FoodpandaCapstoneTheme
 import com.example.foodpanda_capstone.view.ui.theme.NeutralBorder
-import com.example.foodpanda_capstone.view.ui.theme.NeutralDivider
 import com.example.foodpanda_capstone.view.ui.theme.Typography
-import com.google.android.material.search.SearchBar
 import kotlinx.coroutines.launch
-import org.w3c.dom.Text
-import com.example.foodpanda_capstone.viewmodel.AllPlaylistViewModel
 import com.example.foodpanda_capstone.viewmodel.GeneralViewModelFactory
+import com.example.foodpanda_capstone.viewmodel.LoginFormViewModel
 import com.example.foodpanda_capstone.viewmodel.PlaylistViewModel
+import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -152,6 +130,7 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Navigation() {
+
     fun scaleIntoContainer(
         initialScale: Float = 0.9f
     ): EnterTransition {
@@ -194,12 +173,25 @@ fun Navigation() {
         windowInsets.isAppearanceLightStatusBars = statusBarBackgroundArgb == Color.White.toArgb()
     }
 
+
     val playlistRepository = PlaylistRepository()
     val playlistViewModelFactory = GeneralViewModelFactory(
         viewModelClass = PlaylistViewModel::class.java,
         repository = playlistRepository,
         factory = ::PlaylistViewModel
     )
+
+    val networkService = NetworkServiceImpl()
+    val userRepository = LoginFormRepository(networkService = networkService)
+    val loginViewModels = LoginFormViewModel(userRepository)
+    val loginViewModelFactory = GeneralViewModelFactory(
+        viewModelClass = LoginFormViewModel::class.java,
+        repository = userRepository,
+        factory = ::LoginFormViewModel
+    )
+
+    val loginViewModel: LoginFormViewModel = viewModel(factory = loginViewModelFactory)
+
     val playlistViewModel: PlaylistViewModel = viewModel(factory = playlistViewModelFactory)
 
     var searchResult by remember { mutableStateOf("") }
@@ -221,11 +213,13 @@ fun Navigation() {
     )
 
     val drawerItem2 = listOf(
-        DrawerItems(Icons.Default.Share, "Share", 0, false),
+//        DrawerItems(Icons.Default.Share, "Share", 0, false),
         DrawerItems(Icons.Filled.Star, "Rate", 0, false),
         DrawerItems(Icons.Filled.Settings, "Setting", 0, false),
         DrawerItems(Icons.Filled.MoreVert, "Terms & Conditions / Policy", 0, false),
-    )
+        DrawerItems(Icons.Filled.ExitToApp, "Logout", 0, false),
+
+        )
 
     var selectedItem by remember {
         mutableStateOf(drawerItem[0])
@@ -301,6 +295,7 @@ fun Navigation() {
                         }
                     )
                 }
+//                Log.d("Drawer", "Building Logout item")
                 Divider(
                     thickness = 1.dp,
                     color = Color.DarkGray
@@ -308,9 +303,16 @@ fun Navigation() {
                 drawerItem2.forEach {
                     NavigationDrawerItem(label = { Text(text = it.text) }, selected = it == selectedItem, onClick = {
                         selectedItem = it
-
+//
                         scope.launch {
                             drawerState.close()
+                            if (selectedItem.text == "Logout") {
+                                Log.d("Navigation", "Current destination: ${navController.currentDestination?.route}")
+                                // Navigate to your logout destination
+                                navController.navigate("Login Form")
+                                Log.d("Navigation", "Current destination after navigation: ${navController.currentDestination?.route}"
+                                )
+                            }
                         }
 
                     },
@@ -426,12 +428,15 @@ fun Navigation() {
             {
                 NavHost(
                     navController = navController,
-                    startDestination = "Home", // TODO: Update to Home page when home page is ready
+                    startDestination = "Login Form", // TODO: Update to Home page when home page is ready
                     enterTransition = { scaleIntoContainer() },
                     exitTransition = { scaleOutOfContainer(targetScale = 0.9f) },
                     popEnterTransition = { scaleIntoContainer(initialScale = 1.1f) },
                     popExitTransition = { scaleOutOfContainer() }
                 ) {
+                    composable("Login Form") {
+                        LoginScreen(loginFormViewModel = loginViewModel, navController = navController)
+                    }
                     composable("Home") {
                         HomeScreen(navController)
                     }
@@ -458,6 +463,12 @@ fun Navigation() {
                     composable("EditPlaylist") { backStackEntry ->
                         EditPlaylistScreen(navController, playlistViewModel)
                     }
+
+//                    composable("Logout") {
+//                        navController.navigate("Login Form") {
+//                            popUpTo("Login Form") {inclusive = true}
+//                        }
+//                    }
                 }
 
             }

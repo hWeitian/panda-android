@@ -71,7 +71,8 @@ fun HomeAppBar() {
     )
     val drawerItem2 = listOf(
         DrawerItems(Icons.Default.Share, "Share", 0, false),
-        DrawerItems(Icons.Filled.Star, "Rate", 0, false)
+        DrawerItems(Icons.Filled.Star, "Rate", 0, false),
+        DrawerItems(Icons.Filled.Star, "Logout", 0, false)
     )
     var selectedItem by remember {
         mutableStateOf(drawerItem[0])
