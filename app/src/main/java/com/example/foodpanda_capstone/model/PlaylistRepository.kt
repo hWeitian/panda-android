@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.foodpanda_capstone.model.api.PlaylistApiService
 import com.example.foodpanda_capstone.model.api.RetrofitInstance
 import com.example.foodpanda_capstone.model.mock_data.categoryPlaylists
+import com.example.foodpanda_capstone.viewmodel.logErrorMsg
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -29,9 +30,8 @@ class PlaylistRepository {
         return apiService.getOnePlaylist(playlistId)
     }
 
-    suspend fun fetchCategoryPlaylist(category: String): List<PlaylistCategory> {
-        // TODO: Add retrofit function here
-        return categoryPlaylists
+    suspend fun fetchCategoryPlaylist(category: String): PlaylistCategory {
+        return apiService.getCategoryPlaylist(category)
     }
 
 }

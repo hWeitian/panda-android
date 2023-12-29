@@ -23,29 +23,21 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
     val isLoading: StateFlow<Boolean> = _isLoading
 
     fun getOnePlaylist(playlistId: Int) {
-
-        Log.i("WT", "getOnePlaylist is called")
-
         viewModelScope.launch(Dispatchers.IO) {
-
             withContext(Dispatchers.Main) {
                 _isLoading.value = true
             }
-
             try {
                 val result = repository.fetchOnePlaylist(playlistId)
                 _currentPlaylist.value = result
             } catch (e: Exception) {
-                Log.e("PdError", "Error at fetchOnePlaylist - $e")
+                logErrorMsg("getOnePlaylist", e)
             }
-
             withContext(Dispatchers.Main) {
                 _isLoading.value = false
             }
         }
-
     }
-
 
     fun onAddButtonClicked(dishId: Int?) {
         viewModelScope.launch(Dispatchers.IO) {

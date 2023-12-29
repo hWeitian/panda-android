@@ -4,7 +4,7 @@ import com.example.foodpanda_capstone.model.Playlist
 import com.example.foodpanda_capstone.model.PlaylistCategory
 import java.math.BigDecimal
 
-val categoryPlaylists = listOf(
+val categoryPlaylists =
     PlaylistCategory(
         categoryTitle = "K-pop",
         list = listOf(
@@ -100,4 +100,3 @@ val categoryPlaylists = listOf(
             )
         )
     )
-)
