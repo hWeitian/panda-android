@@ -92,7 +92,9 @@ fun PlaylistScreen(navController: NavController, id: Int?, viewModel: PlaylistVi
                         }
                         it.foodItems?.map { restaurantFoodItems ->
                             Spacer(modifier = Modifier.size(20.dp))
-                            RestaurantSection(restaurantFoodItems, false)
+                            if (restaurantFoodItems != null) {
+                                RestaurantSection(restaurantFoodItems)
+                            }
                         }
 
                         if(it.isPublic == true){
@@ -198,6 +200,6 @@ fun FoodItemContent(foodItem: FoodItem) {
             }
         }
         Spacer(modifier = Modifier.size(15.dp))
-        ImageHolder(imageUrl = foodItem.imageUrl, height = 80, description = foodItem.name)
+        ImageHolder(imageUrl = foodItem.imageUrl, height = 90, description = foodItem.name)
     }
 }

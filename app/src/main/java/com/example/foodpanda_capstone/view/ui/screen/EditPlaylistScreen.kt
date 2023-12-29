@@ -32,6 +32,7 @@ import com.example.foodpanda_capstone.view.ui.composable.FoodItemDescriptionText
 import com.example.foodpanda_capstone.view.ui.composable.FoodItemNameText
 import com.example.foodpanda_capstone.view.ui.composable.ImageHolder
 import com.example.foodpanda_capstone.view.ui.composable.PrimaryButton
+import com.example.foodpanda_capstone.view.ui.composable.RestaurantNameText
 import com.example.foodpanda_capstone.view.ui.composable.RestaurantSection
 import com.example.foodpanda_capstone.view.ui.theme.InteractionPrimary
 import com.example.foodpanda_capstone.view.ui.theme.Typography
@@ -61,7 +62,17 @@ fun EditPlaylistScreen(navController: NavController, viewModel: PlaylistViewMode
                 Column {
                     it.foodItems?.map { restaurantFoodItems ->
                         Spacer(modifier = Modifier.size(20.dp))
-                        RestaurantSection(restaurantFoodItems, true)
+                        Column {
+                            if (restaurantFoodItems != null) {
+                                RestaurantNameText(restaurantFoodItems.restaurantName)
+                            }
+                            restaurantFoodItems?.foodItems?.map { item ->
+                                EditableFoodItemContainer(item,
+                                    { viewModel.onAddButtonClicked(item.id) },
+                                    {  viewModel.onMinusButtonClicked(item.id)}
+                                )
+                            }
+                        }
                     }
                     Spacer(modifier = Modifier.size(endOfPageSpace.dp))
 
@@ -104,16 +115,13 @@ fun EditPlaylistScreen(navController: NavController, viewModel: PlaylistViewMode
                     )
                 }
                 Spacer(modifier = Modifier.size(20.dp))
-                if(currentPlaylist?.isPublic == true){
-                    PrimaryButton(name = "Subscribe", width = null) {
-                        // navController.navigate("EditPlaylist")  TODO: Add navigate to confirmation page
-                    }
-                } else {
-                    PrimaryButton(name = "Update", width = null) {
-                        // navController.navigate("EditPlaylist")  TODO: Add navigate to confirmation page
-                    }
-                }
 
+                PrimaryButton(
+                    name = if (currentPlaylist?.isPublic == true) "Subscribe" else "Update",
+                    width = null
+                ) {
+                    // navController.navigate("EditPlaylist")  TODO: Add navigate to confirmation page
+                }
             }
         }
     }
@@ -122,19 +130,33 @@ fun EditPlaylistScreen(navController: NavController, viewModel: PlaylistViewMode
 
 
 @Composable
-fun EditableFoodItemContainer(foodItem: FoodItem) {
-    FoodItemContainerCard { EditableFoodItemContent(foodItem) }
+fun EditableFoodItemContainer(
+    foodItem: FoodItem,
+    addQuantity: () -> Unit,
+    reduceQuantity: () -> Unit
+) {
+    FoodItemContainerCard {
+        EditableFoodItemContent(foodItem, addQuantity, reduceQuantity)
+    }
 }
 
 @Composable
-fun EditableFoodItemContent(foodItem: FoodItem) {
+fun EditableFoodItemContent(
+    foodItem: FoodItem,
+    addQuantity: () -> Unit,
+    reduceQuantity: () -> Unit
+) {
     Row(
         Modifier
             .fillMaxWidth()
             .height(82.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        EditQuantityButtons(foodItem.quantity)
+        EditQuantityButtons(
+            foodItem.quantity,
+            addQuantity,
+            reduceQuantity
+        )
         Column(
             Modifier
                 .width(220.dp)
@@ -157,7 +179,11 @@ fun EditableFoodItemContent(foodItem: FoodItem) {
 }
 
 @Composable
-fun EditQuantityButtons(quantity: Int) {
+fun EditQuantityButtons(
+    quantity: Int,
+    addQuantity: () -> Unit,
+    reduceQuantity: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxHeight()
@@ -171,7 +197,7 @@ fun EditQuantityButtons(quantity: Int) {
                 contentDescription = "Add Button",
                 tint = InteractionPrimary,
             )
-        }, { Log.i("Panda", "Add btn clicked") }) // TODO: Add clicked logic
+        }, { addQuantity() }) // TODO: Add clicked logic
 
         Card(
             modifier = Modifier
@@ -195,6 +221,6 @@ fun EditQuantityButtons(quantity: Int) {
                 contentDescription = "Remove Button",
                 tint = InteractionPrimary,
             )
-        }, { Log.i("Panda", "Remove btn clicked") }) // TODO: Add clicked logic
+        }, { reduceQuantity() }) // TODO: Add clicked logic
     }
 }
