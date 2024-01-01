@@ -15,11 +15,10 @@ import coil.compose.AsyncImage
 
 @Composable
 fun ImageHolder(imageUrl: String, height: Int, description: String?) {
-
     Card(
         modifier = Modifier
-            .aspectRatio(1f)
-            .height(height.dp),
+            .height(height.dp)
+            .aspectRatio(1f, true),
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
     ) {

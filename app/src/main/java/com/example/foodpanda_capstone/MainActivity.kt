@@ -119,6 +119,9 @@ import androidx.navigation.navArgument
 import androidx.navigation.navOptions
 import androidx.navigation.navigation
 import com.example.foodpanda_capstone.model.PlaylistRepository
+import com.example.foodpanda_capstone.model.api.PlaylistApiClient
+import com.example.foodpanda_capstone.model.api.PlaylistApiService
+import com.example.foodpanda_capstone.view.ui.composable.LoadingScreen
 import com.example.foodpanda_capstone.view.ui.screen.EditPlaylistScreen
 import com.example.foodpanda_capstone.view.ui.screen.PlaylistFormScreen
 import com.example.foodpanda_capstone.view.ui.screen.PlaylistListScreen
@@ -143,7 +146,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             FoodpandaCapstoneTheme {
                 Navigation()
-
             }
         }
     }
@@ -196,7 +198,8 @@ fun Navigation() {
         windowInsets.isAppearanceLightStatusBars = statusBarBackgroundArgb == Color.White.toArgb()
     }
 
-    val playlistRepository = PlaylistRepository()
+    val apiService: PlaylistApiService = PlaylistApiClient.apiService
+    val playlistRepository = PlaylistRepository(apiService)
     val playlistViewModelFactory = GeneralViewModelFactory(
         viewModelClass = PlaylistViewModel::class.java,
         repository = playlistRepository,

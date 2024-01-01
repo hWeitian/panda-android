@@ -1,9 +1,13 @@
 package com.example.foodpanda_capstone.view.ui.composable
 
+import android.util.Log
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -12,22 +16,29 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.example.foodpanda_capstone.R
+import com.example.foodpanda_capstone.model.FoodItem
 import com.example.foodpanda_capstone.model.RestaurantFoodItems
 import com.example.foodpanda_capstone.view.ui.screen.EditableFoodItemContainer
+import com.example.foodpanda_capstone.view.ui.screen.EditableFoodItemContent
 import com.example.foodpanda_capstone.view.ui.screen.FoodItemContainer
 import com.example.foodpanda_capstone.view.ui.theme.BrandDark
 import com.example.foodpanda_capstone.view.ui.theme.BrandSecondary
+import com.example.foodpanda_capstone.view.ui.theme.InteractionPrimary
 import com.example.foodpanda_capstone.view.ui.theme.Typography
 
 @Composable
-fun FoodItemNameText(name: String){
+fun FoodItemNameText(name: String) {
     Text(
         text = name,
         style = Typography.bodyLarge
@@ -36,7 +47,7 @@ fun FoodItemNameText(name: String){
 
 
 @Composable
-fun FoodItemDescriptionText(description: String){
+fun FoodItemDescriptionText(description: String) {
     Text(
         text = description,
         style = Typography.bodyMedium,
@@ -46,7 +57,7 @@ fun FoodItemDescriptionText(description: String){
 
 
 @Composable
-fun RestaurantNameText(name: String){
+fun RestaurantNameText(name: String) {
     Text(
         text = name,
         style = Typography.titleSmall
@@ -55,18 +66,20 @@ fun RestaurantNameText(name: String){
 
 
 @Composable
-fun RestaurantSection(restaurant: RestaurantFoodItems, isEditable: Boolean) {
+fun RestaurantSection(
+    restaurant: RestaurantFoodItems,
+) {
     Column {
         RestaurantNameText(restaurant.restaurantName)
         restaurant.foodItems.map { item ->
-            if(isEditable) EditableFoodItemContainer(item) else FoodItemContainer(item)
+            FoodItemContainer(item)
         }
     }
 }
 
 
 @Composable
-fun FoodItemContainerCard(foodItemContent: @Composable () -> Unit){
+fun FoodItemContainerCard(foodItemContent: @Composable () -> Unit) {
     Card(modifier = Modifier
         .drawBehind {
             drawLine(

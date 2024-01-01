@@ -22,7 +22,10 @@ import androidx.navigation.NavController
 import com.example.foodpanda_capstone.model.Playlist
 import com.example.foodpanda_capstone.model.PlaylistCategory
 import com.example.foodpanda_capstone.model.PlaylistRepository
+import com.example.foodpanda_capstone.model.api.PlaylistApiClient
+import com.example.foodpanda_capstone.model.api.PlaylistApiService
 import com.example.foodpanda_capstone.view.ui.composable.ImageHolder
+import com.example.foodpanda_capstone.view.ui.composable.LoadingScreen
 import com.example.foodpanda_capstone.view.ui.composable.PrimaryButton
 import com.example.foodpanda_capstone.view.ui.composable.ScreenBottomSpacer
 import com.example.foodpanda_capstone.view.ui.composable.SectionTitleAndBtn
@@ -34,7 +37,8 @@ import com.example.foodpanda_capstone.viewmodel.GeneralViewModelFactory
 @Composable
 fun PlaylistListScreen(navController: NavController) {
 
-    val repository = PlaylistRepository()
+    val apiService: PlaylistApiService = PlaylistApiClient.apiService
+    val repository = PlaylistRepository(apiService)
     val viewModelFactory = GeneralViewModelFactory(
         viewModelClass = AllPlaylistViewModel::class.java,
         repository = repository,
@@ -44,29 +48,34 @@ fun PlaylistListScreen(navController: NavController) {
 
     val publicPlaylists by viewModel.publicPlaylists.collectAsState()
     val userPlaylists by viewModel.userPlaylists.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
 
-    Column(
-        modifier = Modifier
-            .verticalScroll(rememberScrollState())
-    ) {
-        publicPlaylists.map {
-            PlaylistSection(it.list, it.categoryTitle, navController)
-        }
-
-        PlaylistSection(userPlaylists, "Subscribed", navController)
-
+    if(isLoading) {
+        LoadingScreen()
+    } else {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 25.dp), horizontalAlignment = Alignment.CenterHorizontally
+                .verticalScroll(rememberScrollState())
         ) {
-            Text(text = "Searching for a tasty twist?", style = Typography.titleMedium)
-            Spacer(modifier = Modifier.size(10.dp))
-            PrimaryButton(name = "Surprise me!", null) {
-                navController.navigate("Playlist Form")
+            publicPlaylists.map {
+                PlaylistSection(it.list, it.categoryTitle, navController)
             }
+
+            PlaylistSection(userPlaylists, "Subscribed", navController)
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 25.dp), horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "Searching for a tasty twist?", style = Typography.titleMedium)
+                Spacer(modifier = Modifier.size(10.dp))
+                PrimaryButton(name = "Surprise me!", null) {
+                    navController.navigate("Playlist Form")
+                }
+            }
+            ScreenBottomSpacer()
         }
-        ScreenBottomSpacer()
     }
 
 }
@@ -125,20 +134,19 @@ fun PlaylistCard(playlist: Playlist, cardClicked: () -> Unit) {
     ) {
 
         playlist.imageUrl?.let { ImageHolder(it, 140, "Playlist Image") }
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 4.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = playlist.name, style = Typography.headlineLarge)
+            Text(text = playlist.name, style = Typography.headlineLarge, modifier = Modifier.width(85.dp))
             Text(
                 text = "S$ ${"%.2f".format(playlist.cost)}",
                 style = Typography.headlineLarge,
                 fontWeight = FontWeight.Normal
             )
         }
-        Text(text = "Deliver every ${playlist.deliverDay}", style = Typography.bodyMedium, color = BrandSecondary)
+        Text(text = "Deliver every ${playlist.deliveryDay}", style = Typography.bodyMedium, color = BrandSecondary)
     }
 }
