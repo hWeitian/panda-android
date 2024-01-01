@@ -35,6 +35,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"
@@ -96,4 +97,7 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:$nav_version")
 
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
+
+    // OkHttp Logger
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 }

@@ -3,6 +3,7 @@ package com.example.foodpanda_capstone.model.api
 import com.example.foodpanda_capstone.model.AllPlaylist
 import com.example.foodpanda_capstone.model.Playlist
 import com.example.foodpanda_capstone.model.PlaylistCategory
+import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query

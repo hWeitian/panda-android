@@ -24,6 +24,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.foodpanda_capstone.R
 import com.example.foodpanda_capstone.model.PlaylistRepository
+import com.example.foodpanda_capstone.model.api.PlaylistApiClient
+import com.example.foodpanda_capstone.model.api.PlaylistApiService
 import com.example.foodpanda_capstone.view.ui.composable.PrimaryButton
 import com.example.foodpanda_capstone.view.ui.composable.ScreenBottomSpacer
 import com.example.foodpanda_capstone.view.ui.theme.Typography
@@ -33,7 +35,8 @@ import com.example.foodpanda_capstone.viewmodel.PlaylistSectionViewModel
 @Composable
 fun PlaylistSectionScreen(navController: NavController, categoryName: String?) {
 
-    val repository = PlaylistRepository()
+    val apiService: PlaylistApiService = PlaylistApiClient.apiService
+    val repository = PlaylistRepository(apiService)
     val viewModelFactory = GeneralViewModelFactory(
         viewModelClass = PlaylistSectionViewModel::class.java,
         repository = repository,

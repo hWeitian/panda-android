@@ -1,22 +1,38 @@
 package com.example.foodpanda_capstone.model.api
 
+import com.example.foodpanda_capstone.BuildConfig
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.create
 
-class RetrofitInstance {
-    private var retrofit: Retrofit? = null
-//    private val BASE_URL: String = "http://10.80.176.107:3000/"  // Office
-//    private val BASE_URL: String = "http://192.168.0.166:3000/" // Home
-    private val BASE_URL: String = "https://panda-food-playlist-backend.onrender.com/" // Live Server
+object RetrofitClient {
+    private const val BASE_URL = "http://192.168.0.166:3000/" // Home
+//    private const val BASE_URL = "http://10.80.176.107:3000/" // Office
+//    private const val BASE_URL = "https://panda-food-playlist-backend.onrender.com/" // Live Server
 
-    fun getService(): PlaylistApiService {
-        if(retrofit == null){
-            retrofit = Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                // Tell retrofit to use GsonConverterFactory to serialise and deserialise JSON data.
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
+    private val okHttp3Client = OkHttpClient.Builder()
+
+    init {
+        val logging = HttpLoggingInterceptor()
+        logging.level = HttpLoggingInterceptor.Level.BODY
+        if(BuildConfig.DEBUG){
+            okHttp3Client.addInterceptor(logging)
         }
-        return retrofit!!.create(PlaylistApiService::class.java)
+    }
+
+    val retrofit: Retrofit by lazy {
+        Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(okHttp3Client.build())
+            .build()
+    }
+}
+
+object PlaylistApiClient {
+    val apiService: PlaylistApiService by lazy {
+        RetrofitClient.retrofit.create(PlaylistApiService::class.java)
     }
 }

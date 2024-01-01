@@ -22,6 +22,8 @@ import androidx.navigation.NavController
 import com.example.foodpanda_capstone.model.Playlist
 import com.example.foodpanda_capstone.model.PlaylistCategory
 import com.example.foodpanda_capstone.model.PlaylistRepository
+import com.example.foodpanda_capstone.model.api.PlaylistApiClient
+import com.example.foodpanda_capstone.model.api.PlaylistApiService
 import com.example.foodpanda_capstone.view.ui.composable.ImageHolder
 import com.example.foodpanda_capstone.view.ui.composable.PrimaryButton
 import com.example.foodpanda_capstone.view.ui.composable.ScreenBottomSpacer
@@ -34,7 +36,8 @@ import com.example.foodpanda_capstone.viewmodel.GeneralViewModelFactory
 @Composable
 fun PlaylistListScreen(navController: NavController) {
 
-    val repository = PlaylistRepository()
+    val apiService: PlaylistApiService = PlaylistApiClient.apiService
+    val repository = PlaylistRepository(apiService)
     val viewModelFactory = GeneralViewModelFactory(
         viewModelClass = AllPlaylistViewModel::class.java,
         repository = repository,
