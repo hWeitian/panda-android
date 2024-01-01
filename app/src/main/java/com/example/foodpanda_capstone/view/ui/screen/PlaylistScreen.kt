@@ -32,17 +32,7 @@ import com.example.foodpanda_capstone.model.FoodItem
 import com.example.foodpanda_capstone.model.Playlist
 import com.example.foodpanda_capstone.model.PlaylistRepository
 import com.example.foodpanda_capstone.model.RestaurantFoodItems
-import com.example.foodpanda_capstone.view.ui.composable.CustomOutlinedBtn
-import com.example.foodpanda_capstone.view.ui.composable.CustomTextBtn
-import com.example.foodpanda_capstone.view.ui.composable.FoodItemContainerCard
-import com.example.foodpanda_capstone.view.ui.composable.FoodItemDescriptionText
-import com.example.foodpanda_capstone.view.ui.composable.FoodItemNameText
-import com.example.foodpanda_capstone.view.ui.composable.ImageHolder
-import com.example.foodpanda_capstone.view.ui.composable.Modal
-import com.example.foodpanda_capstone.view.ui.composable.PrimaryButton
-import com.example.foodpanda_capstone.view.ui.composable.RestaurantNameText
-import com.example.foodpanda_capstone.view.ui.composable.RestaurantSection
-import com.example.foodpanda_capstone.view.ui.composable.ScreenBottomSpacer
+import com.example.foodpanda_capstone.view.ui.composable.*
 import com.example.foodpanda_capstone.view.ui.theme.BrandDark
 import com.example.foodpanda_capstone.view.ui.theme.BrandPrimary
 import com.example.foodpanda_capstone.view.ui.theme.BrandSecondary
@@ -108,7 +98,7 @@ fun PlaylistScreen(navController: NavController, id: Int?, viewModel: PlaylistVi
             }
 
         } else {
-            Text(text = "Loading...")
+            LoadingScreen()
         }
 
         if(openModal.value){

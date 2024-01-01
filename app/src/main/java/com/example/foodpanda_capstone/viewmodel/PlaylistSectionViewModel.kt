@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.foodpanda_capstone.model.PlaylistCategory
 import com.example.foodpanda_capstone.model.PlaylistRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -28,7 +29,10 @@ class PlaylistSectionViewModel (private val repository: PlaylistRepository): Vie
     fun getCategoryPlaylist(categoryName: String){
         viewModelScope.launch(Dispatchers.IO) {
             withContext(Dispatchers.Main) {
+                if(categoryPlaylist.value.toString().isEmpty()){
                 _isLoading.value = true
+                    delay(1000)
+                }
             }
             try {
                 val result = repository.fetchCategoryPlaylist(categoryName)
@@ -39,6 +43,9 @@ class PlaylistSectionViewModel (private val repository: PlaylistRepository): Vie
             }
             withContext(Dispatchers.Main) {
                 _isLoading.value = false
+                if(categoryPlaylist.value.toString().isNotEmpty()){
+                    _isLoading.value = false
+                }
             }
 
         }

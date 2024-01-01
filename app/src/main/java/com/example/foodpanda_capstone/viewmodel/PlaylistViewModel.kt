@@ -7,6 +7,7 @@ import com.example.foodpanda_capstone.model.Playlist
 import com.example.foodpanda_capstone.model.PlaylistRepository
 import com.example.foodpanda_capstone.model.RestaurantFoodItems
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,7 +26,10 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
     fun getOnePlaylist(playlistId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             withContext(Dispatchers.Main) {
-                _isLoading.value = true
+                if (currentPlaylist.value.toString().isEmpty()) {
+                    _isLoading.value = true
+                    delay(1000)
+                }
             }
             try {
                 val result = repository.fetchOnePlaylist(playlistId)
@@ -34,7 +38,9 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
                 logErrorMsg("getOnePlaylist", e)
             }
             withContext(Dispatchers.Main) {
-                _isLoading.value = false
+                if(currentPlaylist.value.toString().isNotEmpty()){
+                    _isLoading.value = false
+                }
             }
         }
     }

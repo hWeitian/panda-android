@@ -121,6 +121,7 @@ import androidx.navigation.navigation
 import com.example.foodpanda_capstone.model.PlaylistRepository
 import com.example.foodpanda_capstone.model.api.PlaylistApiClient
 import com.example.foodpanda_capstone.model.api.PlaylistApiService
+import com.example.foodpanda_capstone.view.ui.composable.LoadingScreen
 import com.example.foodpanda_capstone.view.ui.screen.EditPlaylistScreen
 import com.example.foodpanda_capstone.view.ui.screen.PlaylistFormScreen
 import com.example.foodpanda_capstone.view.ui.screen.PlaylistListScreen
@@ -145,7 +146,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             FoodpandaCapstoneTheme {
                 Navigation()
-
             }
         }
     }

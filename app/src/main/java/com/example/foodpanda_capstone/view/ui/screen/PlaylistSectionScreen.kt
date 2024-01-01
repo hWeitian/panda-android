@@ -26,6 +26,7 @@ import com.example.foodpanda_capstone.R
 import com.example.foodpanda_capstone.model.PlaylistRepository
 import com.example.foodpanda_capstone.model.api.PlaylistApiClient
 import com.example.foodpanda_capstone.model.api.PlaylistApiService
+import com.example.foodpanda_capstone.view.ui.composable.LoadingScreen
 import com.example.foodpanda_capstone.view.ui.composable.PrimaryButton
 import com.example.foodpanda_capstone.view.ui.composable.ScreenBottomSpacer
 import com.example.foodpanda_capstone.view.ui.theme.Typography
@@ -77,12 +78,9 @@ fun PlaylistSectionScreen(navController: NavController, categoryName: String?) {
                         PlaylistCard(dataList[index]) { navController.navigate("Playlist/${dataList[index].id}/${dataList[index].name}") }
                     }
                 }
-
             }
-
-
         } else {
-            Text(text = "Loading")
+            LoadingScreen()
         }
     }
 
