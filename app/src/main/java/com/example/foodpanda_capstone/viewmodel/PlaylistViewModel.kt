@@ -17,29 +17,40 @@ import java.math.BigDecimal
 
 class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel() {
 
-    private val _currentPlaylist = MutableStateFlow<Playlist?>(null)
-    val currentPlaylist: StateFlow<Playlist?> = _currentPlaylist.asStateFlow()
+    private val _currentPlaylist = MutableStateFlow(
+        Playlist(
+            id = 0,
+            name = "",
+            imageUrl = "",
+            cost = BigDecimal(0),
+            deliveryDay = "",
+            foodItems = emptyList(),
+            isPublic = false
+        )
+    )
+    val currentPlaylist: StateFlow<Playlist> = _currentPlaylist.asStateFlow()
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
     fun getOnePlaylist(playlistId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            withContext(Dispatchers.Main) {
-                if (currentPlaylist.value.toString().isEmpty()) {
+            while (currentPlaylist.value.name.isBlank() || currentPlaylist.value.id != playlistId) {
+                withContext(Dispatchers.Main) {
                     _isLoading.value = true
                     delay(1000)
                 }
-            }
-            try {
-                val result = repository.fetchOnePlaylist(playlistId)
-                _currentPlaylist.value = result
-            } catch (e: Exception) {
-                logErrorMsg("getOnePlaylist", e)
-            }
-            withContext(Dispatchers.Main) {
-                if(currentPlaylist.value.toString().isNotEmpty()){
-                    _isLoading.value = false
+                try {
+                    repository.fetchOnePlaylist(playlistId).collect { playlist ->
+                        _currentPlaylist.value = playlist
+                    }
+                } catch (e: Exception) {
+                    logErrorMsg("getAllPlaylist", e)
+                }
+                if (currentPlaylist.value.name.isNotBlank() || currentPlaylist.value.id == playlistId) {
+                    withContext(Dispatchers.Main) {
+                        _isLoading.value = false
+                    }
                 }
             }
         }
@@ -48,7 +59,7 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
     fun onAddButtonClicked(dishId: Int?) {
         viewModelScope.launch(Dispatchers.IO) {
             val playlist = currentPlaylist.value
-            if (playlist != null) {
+            if (playlist.name.isNotBlank()) {
                 val updatedRestaurantList = addQuantity(dishId, 1, playlist)
                 val updatedCost = calculateTotalPrice(updatedRestaurantList)
                 updatePlaylist(updatedRestaurantList, updatedCost)
@@ -59,7 +70,7 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
     fun onMinusButtonClicked(dishId: Int?) {
         viewModelScope.launch(Dispatchers.IO) {
             val playlist = currentPlaylist.value
-            if (playlist != null) {
+            if (playlist.name.isNotBlank()) {
                 val updatedRestaurantList = reduceQuantity(dishId, 1, playlist)
                 val updatedCost = calculateTotalPrice(updatedRestaurantList)
                 updatePlaylist(updatedRestaurantList, updatedCost)
@@ -69,7 +80,7 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
 
     private suspend fun updatePlaylist(updatedRestaurantList: List<RestaurantFoodItems?>, updatedCost: BigDecimal) {
         val playlist = currentPlaylist.value
-        _currentPlaylist.emit(playlist?.copy(foodItems = updatedRestaurantList, cost = updatedCost))
+        playlist.copy(foodItems = updatedRestaurantList, cost = updatedCost).let { _currentPlaylist.emit(it) }
     }
 
     private fun addQuantity(dishId: Int?, amount: Int, playlist: Playlist): List<RestaurantFoodItems> {
