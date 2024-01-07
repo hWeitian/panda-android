@@ -35,7 +35,7 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
 
     fun getOnePlaylist(playlistId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            while (currentPlaylist.value.name.isBlank()) {
+            while (currentPlaylist.value.name.isBlank() || currentPlaylist.value.id != playlistId) {
                 withContext(Dispatchers.Main) {
                     _isLoading.value = true
                     delay(1000)
@@ -47,7 +47,7 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
                 } catch (e: Exception) {
                     logErrorMsg("getAllPlaylist", e)
                 }
-                if (currentPlaylist.value.name.isNotBlank()) {
+                if (currentPlaylist.value.name.isNotBlank() || currentPlaylist.value.id == playlistId) {
                     withContext(Dispatchers.Main) {
                         _isLoading.value = false
                     }
