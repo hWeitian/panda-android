@@ -17,12 +17,20 @@ class PlaylistRepository(private val apiService: PlaylistApiService) {
         Log.e("PdError", "Error at fetchAllPlaylist - ${e.message}")
     }
 
-    suspend fun fetchOnePlaylist(playlistId: Int): Playlist {
-        return apiService.getOnePlaylist(playlistId)
+    fun fetchOnePlaylist(playlistId: Int): Flow<Playlist> = flow {
+        val result = apiService.getOnePlaylist(playlistId)
+        emit(result)
+    }.catch { e ->
+        Log.e("PdError", "Error at fetchOnePlaylist - ${e.message}")
     }
+//    suspend fun fetchOnePlaylist(playlistId: Int): Playlist {
+//        return apiService.getOnePlaylist(playlistId)
+//    }
 
-    suspend fun fetchCategoryPlaylist(category: String): PlaylistCategory {
-        return apiService.getCategoryPlaylist(category)
+    fun fetchCategoryPlaylist(category: String): Flow<PlaylistCategory> = flow {
+        val result = apiService.getCategoryPlaylist(category)
+        emit(result)
+    }.catch { e ->
+        Log.e("PdError", "Error at fetchCategoryPlaylist - ${e.message}")
     }
-
 }

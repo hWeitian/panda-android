@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class AllPlaylistViewModel(private val repository: PlaylistRepository): ViewModel() {
+class AllPlaylistViewModel(private val repository: PlaylistRepository) : ViewModel() {
 
     private val _publicPlaylists = MutableStateFlow<List<PlaylistCategory>>(emptyList())
     val publicPlaylists: StateFlow<List<PlaylistCategory>> = _publicPlaylists
@@ -31,23 +31,23 @@ class AllPlaylistViewModel(private val repository: PlaylistRepository): ViewMode
 
     private fun getAllPlaylist() {
         viewModelScope.launch(Dispatchers.IO) {
-            withContext(Dispatchers.Main) {
-                if(publicPlaylists.value.isEmpty()){
+            while (publicPlaylists.value.isEmpty()) {
+                withContext(Dispatchers.Main) {
                     _isLoading.value = true
                     delay(1000)
                 }
-            }
-            try {
-                repository.fetchAllPlaylist().collect { playlists ->
-                    _publicPlaylists.value = playlists.publicPlaylist
-                    _userPlaylists.value = playlists.userPlaylist
+                try {
+                    repository.fetchAllPlaylist().collect { playlists ->
+                        _publicPlaylists.value = playlists.publicPlaylist
+                        _userPlaylists.value = playlists.userPlaylist
+                    }
+                } catch (e: Exception) {
+                    logErrorMsg("getAllPlaylist", e)
                 }
-            } catch (e: Exception){
-                logErrorMsg("getAllPlaylist", e)
-            }
-            withContext(Dispatchers.Main) {
-                if(publicPlaylists.value.isNotEmpty()){
-                    _isLoading.value = false
+                if (publicPlaylists.value.isNotEmpty()) {
+                    withContext(Dispatchers.Main) {
+                        _isLoading.value = false
+                    }
                 }
             }
         }

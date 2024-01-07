@@ -12,43 +12,44 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class PlaylistSectionViewModel (private val repository: PlaylistRepository): ViewModel() {
+class PlaylistSectionViewModel(private val repository: PlaylistRepository) : ViewModel() {
 
-    private val _categoryPlaylist = MutableStateFlow<PlaylistCategory?>(null)
-    val categoryPlaylist: StateFlow<PlaylistCategory?> = _categoryPlaylist.asStateFlow()
+    private val _categoryPlaylist = MutableStateFlow(PlaylistCategory("", emptyList()))
+    val categoryPlaylist: StateFlow<PlaylistCategory> = _categoryPlaylist
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-    fun getCategoryPlaylist(categoryName: String){
+    fun getCategoryPlaylist(categoryName: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            withContext(Dispatchers.Main) {
-                if(categoryPlaylist.value.toString().isEmpty()){
-                _isLoading.value = true
+            while (categoryPlaylist.value.list.isEmpty()) {
+                withContext(Dispatchers.Main) {
+                    _isLoading.value = true
                     delay(1000)
                 }
-            }
-            try {
-                val result = repository.fetchCategoryPlaylist(categoryName)
-                _categoryPlaylist.value = result
-
-            } catch (e: Exception){
-                logErrorMsg("getCategoryPlaylist" , e)
-            }
-            withContext(Dispatchers.Main) {
-                _isLoading.value = false
-                if(categoryPlaylist.value.toString().isNotEmpty()){
-                    _isLoading.value = false
+                try {
+                    repository.fetchCategoryPlaylist(categoryName).collect { playlists ->
+                        _categoryPlaylist.value = playlists
+                    }
+                } catch (e: Exception) {
+                    logErrorMsg("getAllPlaylist", e)
+                }
+                if (categoryPlaylist.value.list.isNotEmpty()) {
+                    withContext(Dispatchers.Main) {
+                        _isLoading.value = false
+                    }
                 }
             }
-
         }
     }
-
 }
+
+
