@@ -1,5 +1,6 @@
 package com.example.foodpanda_capstone.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.foodpanda_capstone.model.LoginFormRepository
@@ -29,5 +30,11 @@ class LoginFormViewModel(private val userRepository: LoginFormRepository) : View
 
     fun onNavigationComplete() {
         _navigateToHome.value = false
+    }
+
+    fun logout() {
+        _loginState.value = false
+        Log.d("Navigation", "isLoggedIn: $_loginState")
+
     }
 }

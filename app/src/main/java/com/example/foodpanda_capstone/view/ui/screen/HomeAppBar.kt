@@ -56,12 +56,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeAppBar() {
+fun HomeAppBar(navController: NavController) {
 
     val drawerItem = listOf(
         DrawerItems(Icons.Default.Face, "Profile", 0, false),

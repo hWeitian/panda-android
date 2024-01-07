@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
@@ -30,6 +31,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
@@ -64,6 +66,7 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
@@ -78,11 +81,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
@@ -97,10 +102,13 @@ import com.example.foodpanda_capstone.model.LoginFormRepository
 import com.example.foodpanda_capstone.model.NetworkServiceImpl
 import com.example.foodpanda_capstone.model.PlaylistRepository
 import com.example.foodpanda_capstone.view.ui.screen.EditPlaylistScreen
+import com.example.foodpanda_capstone.view.ui.screen.HomeAppBar
 import com.example.foodpanda_capstone.view.ui.screen.LoginScreen
+import com.example.foodpanda_capstone.view.ui.screen.PlaylistConfirmScreen
 import com.example.foodpanda_capstone.view.ui.screen.PlaylistFormScreen
 import com.example.foodpanda_capstone.view.ui.screen.PlaylistListScreen
 import com.example.foodpanda_capstone.view.ui.screen.PlaylistScreen
+import com.example.foodpanda_capstone.view.ui.screen.foodItemConfirm
 import com.example.foodpanda_capstone.view.ui.theme.BrandPrimary
 import com.example.foodpanda_capstone.view.ui.theme.BrandSecondary
 import com.example.foodpanda_capstone.view.ui.theme.FoodpandaCapstoneTheme
@@ -117,6 +125,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+
             FoodpandaCapstoneTheme {
                 Navigation()
 
@@ -183,7 +192,7 @@ fun Navigation() {
 
     val networkService = NetworkServiceImpl()
     val userRepository = LoginFormRepository(networkService = networkService)
-    val loginViewModels = LoginFormViewModel(userRepository)
+    val loginFormViewModel = LoginFormViewModel(userRepository)
     val loginViewModelFactory = GeneralViewModelFactory(
         viewModelClass = LoginFormViewModel::class.java,
         repository = userRepository,
@@ -218,15 +227,27 @@ fun Navigation() {
         DrawerItems(Icons.Filled.Settings, "Setting", 0, false),
         DrawerItems(Icons.Filled.MoreVert, "Terms & Conditions / Policy", 0, false),
         DrawerItems(Icons.Filled.ExitToApp, "Logout", 0, false),
-
         )
+
+    val drawerItem3 = listOf(
+        DrawerItems(Icons.Filled.Info, "Help Center", 0, false),
+        DrawerItems(Icons.Filled.ThumbUp, "Invite Friends", 0, false)
+    )
+
+    val drawerItem4 = listOf(
+        DrawerItems(Icons.Filled.Settings, "Setting", 0, false),
+        DrawerItems(Icons.Filled.MoreVert, "Terms & Conditions / Policy", 0, false),
+    )
 
     var selectedItem by remember {
         mutableStateOf(drawerItem[0])
     }
 
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val isLoggedIn by loginViewModel.loginState.collectAsState()
+    Log.d("Navigation", "isLoggedIn: $isLoggedIn")
 
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    //Side Nav bar
     ModalNavigationDrawer(drawerContent = {
         ModalDrawerSheet {
 
@@ -238,6 +259,7 @@ fun Navigation() {
                         .background(BrandPrimary),
                     contentAlignment = Alignment.Center
                 ) {
+
                     Column(
                         Modifier.wrapContentSize(),
                         verticalArrangement = Arrangement.SpaceAround,
@@ -251,76 +273,161 @@ fun Navigation() {
                                 .clip(CircleShape)
                         )
 
-                        Text(
-                            text = "Mr User",
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(top = 16.dp),
-                            fontSize = 22.sp,
-                            textAlign = TextAlign.Center
-                        )
+                        if(isLoggedIn) {
+                            Text(
+                                text = "Mr User",
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 16.dp),
+                                fontSize = 22.sp,
+                                textAlign = TextAlign.Center,
+                                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black)
+
+                            )
+                        } else {
+                            ClickableText(
+                                text = AnnotatedString("Login / Create Account"),
+                                onClick = {
+                                    // Navigate to the login screen when the link is clicked
+                                    navController.navigate("Login Form")
+                                    // Close the navigation drawer
+                                    scope.launch {
+                                        drawerState.close()
+                                    }
+                                },
+                                modifier = Modifier.padding(8.dp),
+                                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black)
+                            )
+
+                        }
                     }
                     Divider(
                         Modifier.align(Alignment.BottomCenter), thickness = 1.dp,
                         NeutralBorder
                     )
 
+
                 }
-                drawerItem.forEach {
-                    NavigationDrawerItem(label = { Text(text = it.text) }, selected = it == selectedItem, onClick = {
-                        selectedItem = it
+                if(isLoggedIn) {
+                    drawerItem.forEach {
+                        NavigationDrawerItem(label = { Text(text = it.text) }, selected = it == selectedItem, onClick = {
+                            selectedItem = it
 
-                        scope.launch {
-                            drawerState.close()
-                        }
+                            scope.launch {
+                                drawerState.close()
+                            }
 
-                    },
-                        modifier = Modifier.padding(horizontal = 16.dp), icon = {
-                            Icon(
-                                modifier = Modifier,
-                                imageVector = it.icon,
-                                contentDescription = it.text,
-                                tint = BrandPrimary
-                            )
-                        }, badge = {
-                            if (it.hasBadge) {
-                                BadgedBox(badge = {
-                                    Badge {
-                                        Text(text = it.badgeCount.toString(), fontSize = 17.sp)
+                        },
+                            modifier = Modifier.padding(horizontal = 16.dp), icon = {
+                                Icon(
+                                    modifier = Modifier,
+                                    imageVector = it.icon,
+                                    contentDescription = it.text,
+                                    tint = BrandPrimary
+                                )
+                            }, badge = {
+                                if (it.hasBadge) {
+                                    BadgedBox(badge = {
+                                        Badge {
+                                            Text(text = it.badgeCount.toString(), fontSize = 17.sp)
+                                        }
+                                    }) {
+
                                     }
-                                }) {
-
                                 }
                             }
-                        }
-                    )
-                }
+                        )
+                    }
 //                Log.d("Drawer", "Building Logout item")
-                Divider(
-                    thickness = 1.dp,
-                    color = Color.DarkGray
-                )
-                drawerItem2.forEach {
-                    NavigationDrawerItem(label = { Text(text = it.text) }, selected = it == selectedItem, onClick = {
-                        selectedItem = it
-//
-                        scope.launch {
-                            drawerState.close()
-                            if (selectedItem.text == "Logout") {
-                                Log.d("Navigation", "Current destination: ${navController.currentDestination?.route}")
-                                // Navigate to your logout destination
-                                navController.navigate("Login Form")
-                                Log.d("Navigation", "Current destination after navigation: ${navController.currentDestination?.route}"
-                                )
-                            }
-                        }
-
-                    },
-                        modifier = Modifier.padding(horizontal = 16.dp), icon = {
-                            Icon(imageVector = it.icon, contentDescription = it.text, tint = BrandPrimary)
-                        }
+                    Divider(
+                        thickness = 1.dp,
+                        color = Color.DarkGray
                     )
+                    drawerItem2.forEach {
+                        NavigationDrawerItem(label = { Text(text = it.text) }, selected = it == selectedItem, onClick = {
+                            selectedItem = it
+//
+                            scope.launch {
+                                drawerState.close()
+                                if (selectedItem.text == "Logout") {
+                                    loginViewModel.logout()
+
+//                                    Log.d("Navigation", "Current destination: ${navController.currentDestination?.route}")
+                                    // Navigate to your logout destination
+
+                                    // Navigate to the home screen and clear the back stack,
+                                    // ensure that the home screen is a single top destination.
+                                    navController.navigate("Home") {
+                                        popUpTo(navController.graph.startDestinationId) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                    }
+
+//                                    Log.d("Navigation", "Current destination after navigation: ${navController.currentDestination?.route}")
+
+                                }
+
+                            }
+
+                        },
+                            modifier = Modifier.padding(horizontal = 16.dp), icon = {
+                                Icon(imageVector = it.icon, contentDescription = it.text, tint = BrandPrimary)
+                            }
+                        )
+
+                    }
+                } else {
+                    drawerItem3.forEach {
+                        NavigationDrawerItem(label = { Text(text = it.text) }, selected = it == selectedItem, onClick = {
+                            selectedItem = it
+
+                            scope.launch {
+                                drawerState.close()
+                            }
+
+                        },
+                            modifier = Modifier.padding(horizontal = 16.dp), icon = {
+                                Icon(
+                                    modifier = Modifier,
+                                    imageVector = it.icon,
+                                    contentDescription = it.text,
+                                    tint = BrandPrimary
+                                )
+                            }, badge = {
+                                if (it.hasBadge) {
+                                    BadgedBox(badge = {
+                                        Badge {
+                                            Text(text = it.badgeCount.toString(), fontSize = 17.sp)
+                                        }
+                                    }) {
+
+                                    }
+                                }
+                            }
+                        )
+                    }
+//                Log.d("Drawer", "Building Logout item")
+                    Divider(
+                        thickness = 1.dp,
+                        color = Color.DarkGray
+                    )
+                    drawerItem4.forEach {
+                        NavigationDrawerItem(label = { Text(text = it.text) }, selected = it == selectedItem, onClick = {
+                            selectedItem = it
+//
+                            scope.launch {
+                                drawerState.close()
+                            }
+
+                        },
+                            modifier = Modifier.padding(horizontal = 16.dp), icon = {
+                                Icon(imageVector = it.icon, contentDescription = it.text, tint = BrandPrimary)
+                            }
+                        )
+                    }
                 }
+
             }
         }
 
@@ -428,7 +535,7 @@ fun Navigation() {
             {
                 NavHost(
                     navController = navController,
-                    startDestination = "Login Form", // TODO: Update to Home page when home page is ready
+                    startDestination = "Home", // TODO: Update to Home page when home page is ready
                     enterTransition = { scaleIntoContainer() },
                     exitTransition = { scaleOutOfContainer(targetScale = 0.9f) },
                     popEnterTransition = { scaleIntoContainer(initialScale = 1.1f) },
@@ -462,6 +569,15 @@ fun Navigation() {
                     }
                     composable("EditPlaylist") { backStackEntry ->
                         EditPlaylistScreen(navController, playlistViewModel)
+                    }
+
+                    composable("Home AppBar") { backStackEntry ->
+                        HomeAppBar(navController)
+                    }
+
+
+                    composable("Playlist Confirm") { backStackEntry ->
+                        PlaylistConfirmScreen(foodItemConfirm,navController)
                     }
 
 //                    composable("Logout") {

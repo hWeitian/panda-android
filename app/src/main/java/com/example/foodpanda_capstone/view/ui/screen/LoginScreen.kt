@@ -79,18 +79,22 @@ fun LoginScreen(loginFormViewModel: LoginFormViewModel, navController: NavContro
 
         Column(modifier = Modifier
             .padding(top = 300.dp)) {
-             Button(modifier = Modifier
-                 .padding(8.dp), onClick = {
-                 isButtonClicked = true
-                 // Trigger login when the button is pressed
-                 loginFormViewModel.login(email, password)
-                 Log.d("LoginScreen", "Login button clicked")}
+            PrimaryButton(name = "Login", width = null) {
+                isButtonClicked = true
+                loginFormViewModel.login(email, password)
+            }
+//             Button(modifier = Modifier
+//                 .padding(8.dp), onClick = {
+//                 isButtonClicked = true
+//                 // Trigger login when the button is pressed
+//                 loginFormViewModel.login(email, password)
+//                 Log.d("LoginScreen", "Login button clicked")}
+//
+//                  )
+//             {
+//                 Text(text = "Login")
 
-                  )
-             {
-                 Text(text = "Login")
-
-             }
+//             }
 
             LaunchedEffect(navigateToHome) {
                 if (navigateToHome) {
@@ -100,7 +104,7 @@ fun LoginScreen(loginFormViewModel: LoginFormViewModel, navController: NavContro
                     Log.d("LoginScreen", "Navigating to Login Form")
 
                 }
-            } 
+            }
 
 
             Spacer(modifier = Modifier.padding(8.dp))
@@ -110,12 +114,15 @@ fun LoginScreen(loginFormViewModel: LoginFormViewModel, navController: NavContro
                 loginState && isButtonClicked -> Text("Login Successful", color = Color.Green)
                 !loginState && isButtonClicked -> Text("Login Failed", color = Color.Red)
             }
+            Log.d("Navigation", "isLoggedIn: $loginState")
 
             PrimaryButton(name = "Cancel", width = null) {
 
+                navController.navigate("Home")
 
             }
         }
+
     }
 
 
