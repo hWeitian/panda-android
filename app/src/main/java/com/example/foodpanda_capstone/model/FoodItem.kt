@@ -1,11 +1,16 @@
 package com.example.foodpanda_capstone.model
 
 
+import com.google.gson.annotations.SerializedName
+import java.math.BigDecimal
+
 data class FoodItem(
+    @SerializedName("dishId")
+    val id: Int?,
     val name: String,
     val description: String,
-    val quantity: Int,
-    val price: Double,
+    var quantity: Int,
+    val price: BigDecimal,
     val imageUrl: String,
 )
 

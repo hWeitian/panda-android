@@ -1,50 +1,48 @@
 package com.example.foodpanda_capstone.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.foodpanda_capstone.model.Playlist
 import com.example.foodpanda_capstone.model.PlaylistCategory
 import com.example.foodpanda_capstone.model.PlaylistRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class AllPlaylistViewModel(private val repository: PlaylistRepository) : ViewModel() {
+class PlaylistSectionViewModel(private val repository: PlaylistRepository) : ViewModel() {
 
-    private val _publicPlaylists = MutableStateFlow<List<PlaylistCategory>>(emptyList())
-    val publicPlaylists: StateFlow<List<PlaylistCategory>> = _publicPlaylists
-
-    private val _userPlaylists = MutableStateFlow<List<Playlist>>(emptyList())
-    val userPlaylists: StateFlow<List<Playlist>> = _userPlaylists
+    private val _categoryPlaylist = MutableStateFlow(PlaylistCategory("", emptyList()))
+    val categoryPlaylist: StateFlow<PlaylistCategory> = _categoryPlaylist
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-    init {
-        getAllPlaylist()
-    }
-
-    private fun getAllPlaylist() {
+    fun getCategoryPlaylist(categoryName: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            while (publicPlaylists.value.isEmpty()) {
+            while (categoryPlaylist.value.list.isEmpty()) {
                 withContext(Dispatchers.Main) {
                     _isLoading.value = true
                     delay(1000)
                 }
                 try {
-                    repository.fetchAllPlaylist().collect { playlists ->
-                        _publicPlaylists.value = playlists.publicPlaylist
-                        _userPlaylists.value = playlists.userPlaylist
+                    repository.fetchCategoryPlaylist(categoryName).collect { playlists ->
+                        _categoryPlaylist.value = playlists
                     }
                 } catch (e: Exception) {
                     logErrorMsg("getAllPlaylist", e)
                 }
-                if (publicPlaylists.value.isNotEmpty()) {
+                if (categoryPlaylist.value.list.isNotEmpty()) {
                     withContext(Dispatchers.Main) {
                         _isLoading.value = false
                     }
@@ -53,3 +51,5 @@ class AllPlaylistViewModel(private val repository: PlaylistRepository) : ViewMod
         }
     }
 }
+
+

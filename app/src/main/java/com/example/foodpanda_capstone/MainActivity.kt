@@ -80,6 +80,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
@@ -101,6 +102,9 @@ import androidx.navigation.navArgument
 import com.example.foodpanda_capstone.model.LoginFormRepository
 import com.example.foodpanda_capstone.model.NetworkServiceImpl
 import com.example.foodpanda_capstone.model.PlaylistRepository
+import com.example.foodpanda_capstone.model.api.PlaylistApiClient
+import com.example.foodpanda_capstone.model.api.PlaylistApiService
+import com.example.foodpanda_capstone.view.ui.composable.LoadingScreen
 import com.example.foodpanda_capstone.view.ui.screen.EditPlaylistScreen
 import com.example.foodpanda_capstone.view.ui.screen.HomeAppBar
 import com.example.foodpanda_capstone.view.ui.screen.LoginScreen
@@ -109,6 +113,7 @@ import com.example.foodpanda_capstone.view.ui.screen.PlaylistFormScreen
 import com.example.foodpanda_capstone.view.ui.screen.PlaylistListScreen
 import com.example.foodpanda_capstone.view.ui.screen.PlaylistScreen
 import com.example.foodpanda_capstone.view.ui.screen.foodItemConfirm
+import com.example.foodpanda_capstone.view.ui.screen.PlaylistSectionScreen
 import com.example.foodpanda_capstone.view.ui.theme.BrandPrimary
 import com.example.foodpanda_capstone.view.ui.theme.BrandSecondary
 import com.example.foodpanda_capstone.view.ui.theme.FoodpandaCapstoneTheme
@@ -128,7 +133,6 @@ class MainActivity : ComponentActivity() {
 
             FoodpandaCapstoneTheme {
                 Navigation()
-
             }
         }
     }
@@ -183,7 +187,9 @@ fun Navigation() {
     }
 
 
-    val playlistRepository = PlaylistRepository()
+    val apiService: PlaylistApiService = PlaylistApiClient.apiService
+    val playlistRepository = PlaylistRepository(apiService)
+
     val playlistViewModelFactory = GeneralViewModelFactory(
         viewModelClass = PlaylistViewModel::class.java,
         repository = playlistRepository,
@@ -530,7 +536,11 @@ fun Navigation() {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
-                    .padding(bottom = 25.dp, start = 15.dp, end = 15.dp)
+                    .padding(
+                        bottom = 0.dp,
+                        start = dimensionResource(R.dimen.base_side_padding),
+                        end = dimensionResource(R.dimen.base_side_padding)
+                    )
             )
             {
                 NavHost(
@@ -567,9 +577,14 @@ fun Navigation() {
                         val playlistId = backStackEntry.arguments?.getInt("playlistId")
                         PlaylistScreen(navController, playlistId, playlistViewModel)
                     }
-                    composable("EditPlaylist") { backStackEntry ->
+                    composable("EditPlaylist/{title}",
+                        arguments = listOf(
+                            navArgument("title") { type = NavType.StringType }
+                        )
+                    ) { backStackEntry ->
                         EditPlaylistScreen(navController, playlistViewModel)
                     }
+
 
                     composable("Home AppBar") { backStackEntry ->
                         HomeAppBar(navController)
@@ -585,6 +600,17 @@ fun Navigation() {
 //                            popUpTo("Login Form") {inclusive = true}
 //                        }
 //                    }
+
+                    composable("ViewCategoryPlaylist/{categoryName}/{title}",
+                        arguments = listOf(
+                            navArgument("title") { type = NavType.StringType },
+                            navArgument("categoryName") { type = NavType.StringType }
+                        )
+                    ) { backStackEntry ->
+                        val categoryName = backStackEntry.arguments?.getString("categoryName")
+                        PlaylistSectionScreen(navController, categoryName)
+                    }
+
                 }
 
             }

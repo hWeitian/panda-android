@@ -32,15 +32,7 @@ import com.example.foodpanda_capstone.model.FoodItem
 import com.example.foodpanda_capstone.model.Playlist
 import com.example.foodpanda_capstone.model.PlaylistRepository
 import com.example.foodpanda_capstone.model.RestaurantFoodItems
-import com.example.foodpanda_capstone.view.ui.composable.CustomOutlinedBtn
-import com.example.foodpanda_capstone.view.ui.composable.CustomTextBtn
-import com.example.foodpanda_capstone.view.ui.composable.FoodItemDescriptionText
-import com.example.foodpanda_capstone.view.ui.composable.FoodItemNameText
-import com.example.foodpanda_capstone.view.ui.composable.ImageHolder
-import com.example.foodpanda_capstone.view.ui.composable.Modal
-import com.example.foodpanda_capstone.view.ui.composable.PrimaryButton
-import com.example.foodpanda_capstone.view.ui.composable.RestaurantNameText
-import com.example.foodpanda_capstone.view.ui.composable.RestaurantSection
+import com.example.foodpanda_capstone.view.ui.composable.*
 import com.example.foodpanda_capstone.view.ui.theme.BrandDark
 import com.example.foodpanda_capstone.view.ui.theme.BrandPrimary
 import com.example.foodpanda_capstone.view.ui.theme.BrandSecondary
@@ -90,20 +82,23 @@ fun PlaylistScreen(navController: NavController, id: Int?, viewModel: PlaylistVi
                         }
                         it.foodItems?.map { restaurantFoodItems ->
                             Spacer(modifier = Modifier.size(20.dp))
-                            RestaurantSection(restaurantFoodItems)
+                            if (restaurantFoodItems != null) {
+                                RestaurantSection(restaurantFoodItems)
+                            }
                         }
 
                         if(it.isPublic == true){
-                            PublicPlaylistButtons()
+                            PublicPlaylistButtons(navController, it.name)
                         } else {
-                            PrivatePlayListButtons(openModal, navController)
+                            PrivatePlayListButtons(openModal, navController, it.name)
                         }
+                        ScreenBottomSpacer()
                     }
                 }
             }
 
         } else {
-            Text(text = "Loading...")
+            LoadingScreen()
         }
 
         if(openModal.value){
@@ -122,65 +117,15 @@ fun PlaylistScreen(navController: NavController, id: Int?, viewModel: PlaylistVi
 
 @Composable
 fun FoodItemContainer(foodItem: FoodItem) {
-    Card(modifier = Modifier
-        .drawBehind {
-            drawLine(
-                color = BrandSecondary,
-                start = Offset(0f, size.height),
-                end = Offset(size.width, size.height),
-                strokeWidth = 1f,
-            )
-        }
-        .padding(bottom = 10.dp, top = 18.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        shape = RoundedCornerShape(0.dp)
-    ) {
-        Row(
-            Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column(
-                Modifier
-                    .width(250.dp)
-                    .height(80.dp),
-                verticalArrangement = Arrangement.SpaceBetween
-                ) {
-                Column {
-                    FoodItemNameText(foodItem.name)
-                    FoodItemDescriptionText(foodItem.description)
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 5.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                )
-                {
-                    Text(
-                        text = "Qty: ${foodItem.quantity}",
-                        style = Typography.bodyMedium,
-                        color = BrandDark
-                    )
-                    Text(
-                        text = "S$ ${"%.2f".format(foodItem.price)}",
-                        style = Typography.bodyMedium
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.size(15.dp))
-            ImageHolder(imageUrl = foodItem.imageUrl, height = 80, description = foodItem.name)
-        }
-    }
-
+    FoodItemContainerCard { FoodItemContent(foodItem) }
 }
 
 @Composable
-fun PublicPlaylistButtons() {
+fun PublicPlaylistButtons(navController: NavController, playlistName: String) {
     CustomTextBtn(
         name = "Edit Playlist",
         iconVector = null,
-        iconImgId = R.drawable.baseline_edit_24_white) { Log.i("Panda", "Edit playlist btn clicked")} // TODO: Link to edit playlist page
+        iconImgId = R.drawable.baseline_edit_24_white) { navController.navigate("EditPlaylist/Editing $playlistName")}
 
     Spacer(modifier = Modifier.size(40.dp))
 
@@ -196,7 +141,7 @@ fun PublicPlaylistButtons() {
 }
 
 @Composable
-fun PrivatePlayListButtons(openModal: MutableState<Boolean>, navController: NavController) {
+fun PrivatePlayListButtons(openModal: MutableState<Boolean>, navController: NavController, playlistName: String) {
     CustomTextBtn(
         name = "Cancel Subscription",
         iconVector = null,
@@ -205,6 +150,46 @@ fun PrivatePlayListButtons(openModal: MutableState<Boolean>, navController: NavC
     Spacer(modifier = Modifier.size(40.dp))
 
     PrimaryButton(name = "Edit", width = null) {
-        navController.navigate("EditPlaylist")
+        navController.navigate("EditPlaylist/Editing $playlistName")
+    }
+}
+
+@Composable
+fun FoodItemContent(foodItem: FoodItem) {
+    Row(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column(
+            Modifier
+                .width(250.dp)
+                .height(80.dp),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column {
+                FoodItemNameText(foodItem.name)
+                FoodItemDescriptionText(foodItem.description)
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 5.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            )
+            {
+                Text(
+                    text = "Qty: ${foodItem.quantity}",
+                    style = Typography.bodyMedium,
+                    color = BrandDark
+                )
+                Text(
+                    text = "S$ ${"%.2f".format(foodItem.price)}",
+                    style = Typography.bodyMedium
+                )
+            }
+        }
+        Spacer(modifier = Modifier.size(15.dp))
+        ImageHolder(imageUrl = foodItem.imageUrl, height = 90, description = foodItem.name)
     }
 }
