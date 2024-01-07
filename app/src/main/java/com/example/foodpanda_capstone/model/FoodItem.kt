@@ -1,5 +1,6 @@
 package com.example.foodpanda_capstone.model
 
+
 import com.google.gson.annotations.SerializedName
 import java.math.BigDecimal
 
@@ -13,7 +14,7 @@ data class FoodItem(
     val imageUrl: String,
 )
 
-data class RestaurantFoodItems(
+data class RestaurantFoodItems   (
     val restaurantName: String,
     val foodItems: List<FoodItem>
 )

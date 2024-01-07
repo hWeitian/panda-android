@@ -56,12 +56,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeAppBar() {
+fun HomeAppBar(navController: NavController) {
 
     val drawerItem = listOf(
         DrawerItems(Icons.Default.Face, "Profile", 0, false),
@@ -71,7 +72,8 @@ fun HomeAppBar() {
     )
     val drawerItem2 = listOf(
         DrawerItems(Icons.Default.Share, "Share", 0, false),
-        DrawerItems(Icons.Filled.Star, "Rate", 0, false)
+        DrawerItems(Icons.Filled.Star, "Rate", 0, false),
+        DrawerItems(Icons.Filled.Star, "Logout", 0, false)
     )
     var selectedItem by remember {
         mutableStateOf(drawerItem[0])
