@@ -1,6 +1,5 @@
 package com.example.foodpanda_capstone.view.ui.screen
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -21,7 +20,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.foodpanda_capstone.R
@@ -33,7 +31,6 @@ import com.example.foodpanda_capstone.view.ui.composable.FoodItemNameText
 import com.example.foodpanda_capstone.view.ui.composable.ImageHolder
 import com.example.foodpanda_capstone.view.ui.composable.PrimaryButton
 import com.example.foodpanda_capstone.view.ui.composable.RestaurantNameText
-import com.example.foodpanda_capstone.view.ui.composable.RestaurantSection
 import com.example.foodpanda_capstone.view.ui.theme.InteractionPrimary
 import com.example.foodpanda_capstone.view.ui.theme.Typography
 import com.example.foodpanda_capstone.viewmodel.PlaylistViewModel
@@ -58,6 +55,15 @@ fun EditPlaylistScreen(navController: NavController, viewModel: PlaylistViewMode
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
         ) {
+            Spacer(modifier = Modifier.size(10.dp))
+            SearchInputButton(
+                isEnabled = false,
+                isClickable = false,
+                placeholderText = "Search for food",
+                inputValue = "",
+                onSearch = null,
+                updateInput = {}
+                ){navController.navigate("Search")}
             currentPlaylist?.let {
                 Column {
                     it.foodItems?.map { restaurantFoodItems ->
