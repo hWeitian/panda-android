@@ -159,7 +159,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -710,7 +709,7 @@ fun Navigation() {
                     }
 
                     composable("Search") { backStackEntry ->
-                        SearchScreen(navController)
+                        SearchScreen(navController, playlistViewModel)
                     }
 
                 }

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,69 +14,45 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActionScope
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.widget.Placeholder
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.foodpanda_capstone.model.PlaylistRepository
 import com.example.foodpanda_capstone.model.RecentSearch
-import com.example.foodpanda_capstone.model.SearchRepository
-import com.example.foodpanda_capstone.model.api.PlaylistApiClient
-import com.example.foodpanda_capstone.model.api.PlaylistApiService
 import com.example.foodpanda_capstone.view.ui.composable.SectionTitleAndBtn
-import com.example.foodpanda_capstone.view.ui.theme.BrandSecondary
 import com.example.foodpanda_capstone.view.ui.theme.LightGrey
-import com.example.foodpanda_capstone.view.ui.theme.NeutralBorder
-import com.example.foodpanda_capstone.viewmodel.AllPlaylistViewModel
-import com.example.foodpanda_capstone.viewmodel.GeneralViewModelFactory
-import com.example.foodpanda_capstone.viewmodel.SearchViewModel
+import com.example.foodpanda_capstone.viewmodel.PlaylistViewModel
 
 
 @Composable
-fun SearchScreen(navController: NavController) {
+fun SearchScreen(navController: NavController, playlistViewModel: PlaylistViewModel) {
 
-    val apiService: PlaylistApiService = PlaylistApiClient.apiService
-    val repository = SearchRepository(apiService)
-    val viewModelFactory = GeneralViewModelFactory(
-        viewModelClass = SearchViewModel::class.java,
-        repository = repository,
-        factory = ::SearchViewModel
-    )
-    val viewModel: SearchViewModel = viewModel(factory = viewModelFactory)
-
-    val searchInput by viewModel.searchText.observeAsState("")
-    val recentSearch by viewModel.recentSearch.collectAsState()
+    val searchInput by playlistViewModel.searchText.observeAsState("")
+    val recentSearch by playlistViewModel.recentSearch.collectAsState()
+    
+    LaunchedEffect(true) {
+        playlistViewModel.getRecentSearch()
+    }
 
     Box(
         modifier = Modifier
@@ -92,8 +67,8 @@ fun SearchScreen(navController: NavController) {
                 isClickable = true,
                 placeholderText = "Search for food",
                 inputValue = searchInput,
-                onSearch = {viewModel.search()},
-                updateInput = {input -> viewModel.updateSearchText(input)}
+                onSearch = {playlistViewModel.search()},
+                updateInput = {input -> playlistViewModel.updateSearchText(input)}
                 ) {}
             Spacer(modifier = Modifier.size(20.dp))
             RecentSearch(recentSearch)

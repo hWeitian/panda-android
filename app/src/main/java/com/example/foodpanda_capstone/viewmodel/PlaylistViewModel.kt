@@ -1,10 +1,13 @@
 package com.example.foodpanda_capstone.viewmodel
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.foodpanda_capstone.model.Playlist
 import com.example.foodpanda_capstone.model.PlaylistRepository
+import com.example.foodpanda_capstone.model.RecentSearch
 import com.example.foodpanda_capstone.model.RestaurantFoodItems
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -32,6 +35,32 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
+
+    private val _searchText = MutableLiveData("")
+    val searchText: LiveData<String> = _searchText
+
+    private val _recentSearch = MutableStateFlow<List<RecentSearch>>(emptyList())
+    val recentSearch: StateFlow<List<RecentSearch>> = _recentSearch
+
+    fun getRecentSearch() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                repository.fetchRecentSearch(1).collect {
+                    _recentSearch.value = it
+                }
+            } catch (e: Exception) {
+                logErrorMsg("getRecentSearch", e)
+            }
+        }
+    }
+
+    fun updateSearchText(inputText: String) {
+        _searchText.value = inputText
+    }
+
+    fun search() {
+        Log.i("WT", "Keyboard Search Clicked: ${searchText.value.toString()}")
+    }
 
     fun getOnePlaylist(playlistId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
