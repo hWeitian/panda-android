@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -38,6 +39,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.foodpanda_capstone.model.FoodItem
 import com.example.foodpanda_capstone.model.RecentSearch
 import com.example.foodpanda_capstone.view.ui.composable.SectionTitleAndBtn
 import com.example.foodpanda_capstone.view.ui.theme.LightGrey
@@ -45,13 +47,20 @@ import com.example.foodpanda_capstone.viewmodel.PlaylistViewModel
 
 
 @Composable
-fun SearchScreen(navController: NavController, playlistViewModel: PlaylistViewModel) {
+fun SearchScreen(navController: NavController, viewModel: PlaylistViewModel) {
 
-    val searchInput by playlistViewModel.searchText.observeAsState("")
-    val recentSearch by playlistViewModel.recentSearch.collectAsState()
-    
-    LaunchedEffect(true) {
-        playlistViewModel.getRecentSearch()
+    val searchInput by viewModel.searchText.observeAsState("")
+    val recentSearch by viewModel.recentSearch.collectAsState()
+    val searchResults by viewModel.searchResults.collectAsState()
+
+    LaunchedEffect(searchResults) {
+        viewModel.getRecentSearch()
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.clearSearchText()
+        }
     }
 
     Box(
@@ -67,11 +76,35 @@ fun SearchScreen(navController: NavController, playlistViewModel: PlaylistViewMo
                 isClickable = true,
                 placeholderText = "Search for food",
                 inputValue = searchInput,
-                onSearch = {playlistViewModel.search()},
-                updateInput = {input -> playlistViewModel.updateSearchText(input)}
+                onSearch = {viewModel.getSearchResult()},
+                updateInput = {input -> viewModel.updateSearchText(input)}
                 ) {}
             Spacer(modifier = Modifier.size(20.dp))
-            RecentSearch(recentSearch)
+
+            SearchResults(searchResults = searchResults, viewModel = viewModel)
+            if(searchResults.isEmpty()){
+                RecentSearch(recentSearch)
+            } else {
+                SearchResults(searchResults = searchResults, viewModel = viewModel)
+            }
+        }
+    }
+}
+
+@Composable
+fun SearchResults(searchResults: List<FoodItem>, viewModel: PlaylistViewModel) {
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.clearSearchResult()
+        }
+    }
+
+    LazyColumn {
+        items(searchResults) { result ->
+            EditableFoodItemContainer(
+                foodItem = result,
+                addQuantity = { viewModel.onAddButtonClicked(result.id) })
+            { viewModel.onMinusButtonClicked(result.id) }
         }
     }
 }

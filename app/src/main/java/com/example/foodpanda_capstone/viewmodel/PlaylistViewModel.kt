@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.foodpanda_capstone.model.FoodItem
 import com.example.foodpanda_capstone.model.Playlist
 import com.example.foodpanda_capstone.model.PlaylistRepository
 import com.example.foodpanda_capstone.model.RecentSearch
@@ -42,6 +43,9 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
     private val _recentSearch = MutableStateFlow<List<RecentSearch>>(emptyList())
     val recentSearch: StateFlow<List<RecentSearch>> = _recentSearch
 
+    private val _searchResults = MutableStateFlow<List<FoodItem>>(emptyList())
+    val searchResults: StateFlow<List<FoodItem>> = _searchResults
+
     fun getRecentSearch() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -58,8 +62,33 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
         _searchText.value = inputText
     }
 
-    fun search() {
-        Log.i("WT", "Keyboard Search Clicked: ${searchText.value.toString()}")
+    fun clearSearchText() {
+        _searchText.value = ""
+    }
+
+    fun getSearchResult() {
+        viewModelScope.launch(Dispatchers.IO) {
+
+            withContext(Dispatchers.Main) {
+                _isLoading.value = true
+                delay(1000)
+            }
+            try {
+                repository.fetchSearchResults(searchText.value.toString()).collect { searchResult ->
+                    _searchResults.value = searchResult
+                }
+            } catch (e: Exception) {
+                logErrorMsg("getSearchResult", e)
+            }
+
+            withContext(Dispatchers.Main) {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun clearSearchResult() {
+        _searchResults.value = emptyList()
     }
 
     fun getOnePlaylist(playlistId: Int) {
