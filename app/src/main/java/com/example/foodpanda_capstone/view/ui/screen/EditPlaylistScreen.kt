@@ -126,7 +126,7 @@ fun EditPlaylistScreen(navController: NavController, viewModel: PlaylistViewMode
                     name = if (currentPlaylist?.isPublic == true) "Subscribe" else "Update",
                     width = null
                 ) {
-                    // navController.navigate("EditPlaylist")  TODO: Add navigate to confirmation page
+                     navController.navigate("Playlist Confirm")
                 }
             }
         }

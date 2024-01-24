@@ -136,7 +136,7 @@ fun PublicPlaylistButtons(navController: NavController, playlistName: String) {
     Spacer(modifier = Modifier.size(10.dp))
 
     PrimaryButton(name = "Subscribe", width = null) {
-        Log.i("Panda", "Subscribe playlist btn clicked") // TODO: Link to subscribe playlist logic
+        navController.navigate("Playlist Confirm")
     }
 }
 
