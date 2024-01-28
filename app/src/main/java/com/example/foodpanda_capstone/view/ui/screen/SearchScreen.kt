@@ -79,14 +79,18 @@ fun SearchScreen(navController: NavController, viewModel: PlaylistViewModel) {
                 isClickable = true,
                 placeholderText = "Search for food",
                 inputValue = searchInput,
-                onSearch = {viewModel.getSearchResult()},
-                updateInput = {input -> viewModel.updateSearchText(input)}
-                ) {}
+                onSearch = { viewModel.getSearchResult() },
+                updateInput = { input -> viewModel.updateSearchText(input) }
+            ) {}
             Spacer(modifier = Modifier.size(20.dp))
 
             SearchResults(searchResults = searchResults, viewModel = viewModel)
-            if(searchResults.isEmpty()){
-                RecentSearch(recentSearches = recentSearch, search = viewModel::searchRecentSearchKeyword)
+            if (searchResults.isEmpty()) {
+                RecentSearch(
+                    recentSearches = recentSearch,
+                    search = viewModel::searchRecentSearchKeyword,
+                    deleteKeyword = viewModel::deleteRecentSearchKeyword
+                    )
             } else {
                 SearchResults(searchResults = searchResults, viewModel = viewModel)
             }
@@ -114,19 +118,27 @@ fun SearchResults(searchResults: List<FoodItem>, viewModel: PlaylistViewModel) {
 
 
 @Composable
-fun RecentSearch(recentSearches: List<RecentSearch>, search: (keyword: String) -> Unit) {
+fun RecentSearch(
+    recentSearches: List<RecentSearch>,
+    search: (keyword: String) -> Unit,
+    deleteKeyword: (keyword: String) -> Unit
+) {
     Box {
-        if(recentSearches.isNotEmpty()) {
+        if (recentSearches.isNotEmpty()) {
             Column {
                 SectionTitleAndBtn(title = "Recent Search", btnTitle = "Clear all", icon = null) {}
                 LazyColumn {
                     items(recentSearches) { keyword ->
-                        SearchKeyword(keyword = keyword, search = search)
+                        SearchKeyword(
+                            keyword = keyword,
+                            search = search,
+                            deleteKeyword = deleteKeyword
+                        )
                     }
                 }
             }
         } else {
-            Column (
+            Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
@@ -137,14 +149,18 @@ fun RecentSearch(recentSearches: List<RecentSearch>, search: (keyword: String) -
 }
 
 @Composable
-fun SearchKeyword(keyword: RecentSearch, search: (keyword: String) -> Unit){
-    Row (
+fun SearchKeyword(
+    keyword: RecentSearch,
+    search: (keyword: String) -> Unit,
+    deleteKeyword: (keyword: String) -> Unit
+) {
+    Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(text = keyword.keyword, modifier = Modifier.clickable { search(keyword.keyword) })
-        IconButton(onClick = {}) { // TODO: Add function to clear keyword
+        IconButton(onClick = { deleteKeyword(keyword.keyword) }) {
             Icon(
                 imageVector = Icons.Default.Clear,
                 contentDescription = "Clear Icon",
@@ -160,11 +176,10 @@ fun SearchInput(
     isClickable: Boolean,
     inputValue: String,
     placeholderText: String,
-    onSearch: (KeyboardActionScope.()  -> Unit)?,
+    onSearch: (KeyboardActionScope.() -> Unit)?,
     updateInput: (input: String) -> Unit,
     navigateToSearchScreen: () -> Unit
-)
-{
+) {
     val focusRequester = remember { FocusRequester() }
 
     LaunchedEffect(Unit) {

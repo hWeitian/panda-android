@@ -32,7 +32,7 @@ class PlaylistRepository(private val apiService: PlaylistApiService) {
     }
 
     // TODO: Remove mockData once backend is ready
-    private val mockData = listOf(
+    private var mockData = listOf(
         RecentSearch(1, "Burger"),
         RecentSearch(2, "Korean"),
         RecentSearch(3, "Sushi"),
@@ -42,6 +42,11 @@ class PlaylistRepository(private val apiService: PlaylistApiService) {
         emit(result)
     }.catch { e ->
         Log.e("PdError", "Error at fetchRecentSearch - ${e.message}")
+    }
+
+    fun deleteRecentSearch(userId: Int, keyword: String) {
+        // TODO: Add function to delete recent search from database
+        mockData = mockData.filterNot { it.keyword == keyword }
     }
 
     fun fetchSearchResults(keyword: String): Flow<List<FoodItem>> = flow {

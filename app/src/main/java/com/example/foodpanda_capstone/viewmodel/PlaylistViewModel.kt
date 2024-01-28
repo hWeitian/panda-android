@@ -46,10 +46,10 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
     private val _searchResults = MutableStateFlow<List<FoodItem>>(emptyList())
     val searchResults: StateFlow<List<FoodItem>> = _searchResults
 
-    fun getRecentSearch() {
+    fun getRecentSearch(userId: Int = 1) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                repository.fetchRecentSearch(1).collect {
+                repository.fetchRecentSearch(userId).collect {
                     _recentSearch.value = it
                 }
             } catch (e: Exception) {
@@ -94,6 +94,17 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
     fun searchRecentSearchKeyword(keyword: String) {
         _searchText.value = keyword
         getSearchResult()
+    }
+
+    fun deleteRecentSearchKeyword(keyword: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                repository.deleteRecentSearch(userId = 1, keyword = keyword)
+                getRecentSearch()
+            } catch (e: Exception) {
+                logErrorMsg("deleteRecentSearchKeyword", e)
+            }
+        }
     }
 
     fun getOnePlaylist(playlistId: Int) {
