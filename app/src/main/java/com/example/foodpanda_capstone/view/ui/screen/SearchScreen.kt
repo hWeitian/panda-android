@@ -86,7 +86,7 @@ fun SearchScreen(navController: NavController, viewModel: PlaylistViewModel) {
 
             SearchResults(searchResults = searchResults, viewModel = viewModel)
             if(searchResults.isEmpty()){
-                RecentSearch(recentSearch)
+                RecentSearch(recentSearches = recentSearch, search = viewModel::searchRecentSearchKeyword)
             } else {
                 SearchResults(searchResults = searchResults, viewModel = viewModel)
             }
@@ -114,14 +114,14 @@ fun SearchResults(searchResults: List<FoodItem>, viewModel: PlaylistViewModel) {
 
 
 @Composable
-fun RecentSearch(recentSearches: List<RecentSearch>) {
+fun RecentSearch(recentSearches: List<RecentSearch>, search: (keyword: String) -> Unit) {
     Box {
         if(recentSearches.isNotEmpty()) {
             Column {
                 SectionTitleAndBtn(title = "Recent Search", btnTitle = "Clear all", icon = null) {}
                 LazyColumn {
                     items(recentSearches) { keyword ->
-                        SearchKeyword(keyword = keyword)
+                        SearchKeyword(keyword = keyword, search = search)
                     }
                 }
             }
@@ -137,14 +137,14 @@ fun RecentSearch(recentSearches: List<RecentSearch>) {
 }
 
 @Composable
-fun SearchKeyword(keyword: RecentSearch){
+fun SearchKeyword(keyword: RecentSearch, search: (keyword: String) -> Unit){
     Row (
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = keyword.keyword)
-        IconButton(onClick = { /*TODO Add delete this recent search function*/ }) {
+        Text(text = keyword.keyword, modifier = Modifier.clickable { search(keyword.keyword) })
+        IconButton(onClick = {}) { // TODO: Add function to clear keyword
             Icon(
                 imageVector = Icons.Default.Clear,
                 contentDescription = "Clear Icon",

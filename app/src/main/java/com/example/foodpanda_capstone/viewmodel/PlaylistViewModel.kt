@@ -91,6 +91,11 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
         _searchResults.value = emptyList()
     }
 
+    fun searchRecentSearchKeyword(keyword: String) {
+        _searchText.value = keyword
+        getSearchResult()
+    }
+
     fun getOnePlaylist(playlistId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             while (currentPlaylist.value.name.isBlank() || currentPlaylist.value.id != playlistId) {

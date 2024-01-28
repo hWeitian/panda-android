@@ -33,7 +33,7 @@ class PlaylistRepository(private val apiService: PlaylistApiService) {
 
     // TODO: Remove mockData once backend is ready
     private val mockData = listOf(
-        RecentSearch(1, "Hamburger"),
+        RecentSearch(1, "Burger"),
         RecentSearch(2, "Korean"),
         RecentSearch(3, "Sushi"),
     )
