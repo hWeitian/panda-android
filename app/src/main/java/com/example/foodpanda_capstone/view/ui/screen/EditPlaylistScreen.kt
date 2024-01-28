@@ -56,7 +56,7 @@ fun EditPlaylistScreen(navController: NavController, viewModel: PlaylistViewMode
                 .verticalScroll(rememberScrollState())
         ) {
             Spacer(modifier = Modifier.size(10.dp))
-            SearchInputButton(
+            SearchInput(
                 isEnabled = false,
                 isClickable = false,
                 placeholderText = "Search for food",

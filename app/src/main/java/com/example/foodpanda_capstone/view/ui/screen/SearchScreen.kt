@@ -32,8 +32,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -71,7 +74,7 @@ fun SearchScreen(navController: NavController, viewModel: PlaylistViewModel) {
     ) {
         Column {
             Spacer(modifier = Modifier.size(10.dp))
-            SearchInputButton(
+            SearchInput(
                 isEnabled = true,
                 isClickable = true,
                 placeholderText = "Search for food",
@@ -152,7 +155,7 @@ fun SearchKeyword(keyword: RecentSearch){
 }
 
 @Composable
-fun SearchInputButton(
+fun SearchInput(
     isEnabled: Boolean,
     isClickable: Boolean,
     inputValue: String,
@@ -162,6 +165,12 @@ fun SearchInputButton(
     navigateToSearchScreen: () -> Unit
 )
 {
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+
     TextField(
         placeholder = { Text(text = placeholderText) },
         enabled = isEnabled,
@@ -171,6 +180,7 @@ fun SearchInputButton(
         modifier = Modifier
             .fillMaxWidth()
             .height(50.dp)
+            .focusRequester(focusRequester)
             .clickable(onClick = { if (!isClickable) navigateToSearchScreen() }),
         shape = RoundedCornerShape(25.dp),
         colors = TextFieldDefaults.colors(
