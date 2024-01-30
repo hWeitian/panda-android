@@ -114,7 +114,7 @@ import com.example.foodpanda_capstone.model.NetworkServiceImpl
 import com.example.foodpanda_capstone.model.PlaylistRepository
 import com.example.foodpanda_capstone.model.api.PlaylistApiClient
 import com.example.foodpanda_capstone.model.api.PlaylistApiService
-import com.example.foodpanda_capstone.view.ui.composable.LoadingScreen
+import com.example.foodpanda_capstone.view.ui.screen.SearchScreen
 import com.example.foodpanda_capstone.view.ui.screen.EditPlaylistScreen
 import com.example.foodpanda_capstone.view.ui.screen.HomeAppBar
 import com.example.foodpanda_capstone.view.ui.screen.LoginScreen
@@ -158,7 +158,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
 
 }
 
@@ -570,7 +569,7 @@ fun Navigation() {
                                             style = Typography.bodySmall
                                         )
                                         //Sample search bar to filter database
-                                        SearchBar() { searchText -> searchResult = "Searching for: $searchText" }
+//                                        SearchBar() { searchText -> searchResult = "Searching for: $searchText" }
                                     }
 
                                     Spacer(modifier = Modifier.height(8.dp))
@@ -699,12 +698,6 @@ fun Navigation() {
                         PlaylistConfirmScreen(foodItemConfirm, navController)
                     }
 
-//                    composable("Logout") {
-//                        navController.navigate("Login Form") {
-//                            popUpTo("Login Form") {inclusive = true}
-//                        }
-//                    }
-
                     composable("ViewCategoryPlaylist/{categoryName}/{title}",
                         arguments = listOf(
                             navArgument("title") { type = NavType.StringType },
@@ -715,47 +708,14 @@ fun Navigation() {
                         PlaylistSectionScreen(navController, categoryName)
                     }
 
+                    composable("Search") { backStackEntry ->
+                        SearchScreen(navController, playlistViewModel)
+                    }
+
                 }
 
             }
 
-        }
-    }
-}
-
-
-//Sample search bar to filter database
-@Composable
-fun SearchBar(onSearch: (String) -> Unit) {
-    var searchText by remember { mutableStateOf("") }
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-//            .padding(2.dp)
-            .background(NeutralBorder)
-    ) {
-        BasicTextField(
-            value = searchText,
-            onValueChange = {
-                searchText = it
-                onSearch(it)
-            },
-            keyboardOptions = KeyboardOptions.Default.copy(
-                imeAction = androidx.compose.ui.text.input.ImeAction.Search,
-                keyboardType = KeyboardType.Text
-            ),
-            textStyle = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier
-                .weight(1f)
-                .padding(end = 8.dp)
-        )
-
-        IconButton(
-            onClick = { onSearch(searchText) },
-            modifier = Modifier.background(MaterialTheme.colorScheme.primary)
-        ) {
-            Icon(imageVector = Icons.Default.Search, contentDescription = null, tint = Color.White)
         }
     }
 }

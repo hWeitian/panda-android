@@ -1,10 +1,14 @@
 package com.example.foodpanda_capstone.viewmodel
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.foodpanda_capstone.model.FoodItem
 import com.example.foodpanda_capstone.model.Playlist
 import com.example.foodpanda_capstone.model.PlaylistRepository
+import com.example.foodpanda_capstone.model.RecentSearch
 import com.example.foodpanda_capstone.model.RestaurantFoodItems
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -32,6 +36,76 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
+
+    private val _searchText = MutableLiveData("")
+    val searchText: LiveData<String> = _searchText
+
+    private val _recentSearch = MutableStateFlow<List<RecentSearch>>(emptyList())
+    val recentSearch: StateFlow<List<RecentSearch>> = _recentSearch
+
+    private val _searchResults = MutableStateFlow<List<FoodItem>>(emptyList())
+    val searchResults: StateFlow<List<FoodItem>> = _searchResults
+
+    fun getRecentSearch(userId: Int = 1) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                repository.fetchRecentSearch(userId).collect {
+                    _recentSearch.value = it
+                }
+            } catch (e: Exception) {
+                logErrorMsg("getRecentSearch", e)
+            }
+        }
+    }
+
+    fun updateSearchText(inputText: String) {
+        _searchText.value = inputText
+    }
+
+    fun clearSearchText() {
+        _searchText.value = ""
+    }
+
+    fun getSearchResult() {
+        viewModelScope.launch(Dispatchers.IO) {
+
+            withContext(Dispatchers.Main) {
+                _isLoading.value = true
+                delay(1000)
+            }
+            try {
+                repository.fetchSearchResults(searchText.value.toString()).collect { searchResult ->
+                    _searchResults.value = searchResult
+                }
+            } catch (e: Exception) {
+                logErrorMsg("getSearchResult", e)
+            }
+
+            withContext(Dispatchers.Main) {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun clearSearchResult() {
+        _searchResults.value = emptyList()
+    }
+
+    fun searchRecentSearchKeyword(keyword: String) {
+        _searchText.value = keyword
+        getSearchResult()
+    }
+
+    fun deleteRecentSearchKeyword(keyword: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                repository.deleteRecentSearch(userId = 1, keyword = keyword)
+                getRecentSearch()
+            } catch (e: Exception) {
+                logErrorMsg("deleteRecentSearchKeyword", e)
+            }
+        }
+    }
 
     fun getOnePlaylist(playlistId: Int) {
         viewModelScope.launch(Dispatchers.IO) {

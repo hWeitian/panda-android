@@ -23,14 +23,36 @@ class PlaylistRepository(private val apiService: PlaylistApiService) {
     }.catch { e ->
         Log.e("PdError", "Error at fetchOnePlaylist - ${e.message}")
     }
-//    suspend fun fetchOnePlaylist(playlistId: Int): Playlist {
-//        return apiService.getOnePlaylist(playlistId)
-//    }
 
     fun fetchCategoryPlaylist(category: String): Flow<PlaylistCategory> = flow {
         val result = apiService.getCategoryPlaylist(category)
         emit(result)
     }.catch { e ->
         Log.e("PdError", "Error at fetchCategoryPlaylist - ${e.message}")
+    }
+
+    // TODO: Remove mockData once backend is ready
+    private var mockData = listOf(
+        RecentSearch(1, "Burger"),
+        RecentSearch(2, "Korean"),
+        RecentSearch(3, "Sushi"),
+    )
+    fun fetchRecentSearch(userId: Int): Flow<List<RecentSearch>> = flow {
+        val result = mockData // TODO: Add function to get recent search
+        emit(result)
+    }.catch { e ->
+        Log.e("PdError", "Error at fetchRecentSearch - ${e.message}")
+    }
+
+    fun deleteRecentSearch(userId: Int, keyword: String) {
+        // TODO: Add function to delete recent search from database
+        mockData = mockData.filterNot { it.keyword == keyword }
+    }
+
+    fun fetchSearchResults(keyword: String): Flow<List<FoodItem>> = flow {
+        val result = apiService.getSearchResults(keyword)
+        emit(result)
+    }.catch { e ->
+        Log.e("PdError", "Error at fetchSearchResults - ${e.message}")
     }
 }

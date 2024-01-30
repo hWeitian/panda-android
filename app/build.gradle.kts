@@ -122,4 +122,5 @@ dependencies {
     implementation ("com.firebaseui:firebase-ui-auth:7.2.0")
     //Facebook
     implementation ("com.facebook.android:facebook-android-sdk:16.2.0")
+
 }
