@@ -3,6 +3,7 @@ package com.example.foodpanda_capstone
 //import LocalDatabase
 //import NetworkService
 import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -28,8 +29,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
@@ -46,10 +49,15 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -83,6 +91,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -99,6 +108,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.foodpanda_capstone.view.ui.screen.DrawerItems
 import com.example.foodpanda_capstone.view.ui.screen.HomeScreen
 import androidx.navigation.navArgument
+import com.example.foodpanda_capstone.model.AuthRepository
 import com.example.foodpanda_capstone.model.LoginFormRepository
 import com.example.foodpanda_capstone.model.NetworkServiceImpl
 import com.example.foodpanda_capstone.model.PlaylistRepository
@@ -114,23 +124,35 @@ import com.example.foodpanda_capstone.view.ui.screen.PlaylistListScreen
 import com.example.foodpanda_capstone.view.ui.screen.PlaylistScreen
 import com.example.foodpanda_capstone.view.ui.screen.foodItemConfirm
 import com.example.foodpanda_capstone.view.ui.screen.PlaylistSectionScreen
+import com.example.foodpanda_capstone.view.ui.screen.onBoardingScreen
+import com.example.foodpanda_capstone.view.ui.screen.signUpForm
 import com.example.foodpanda_capstone.view.ui.theme.BrandPrimary
 import com.example.foodpanda_capstone.view.ui.theme.BrandSecondary
 import com.example.foodpanda_capstone.view.ui.theme.FoodpandaCapstoneTheme
 import com.example.foodpanda_capstone.view.ui.theme.NeutralBorder
+import com.example.foodpanda_capstone.view.ui.theme.NeutralDivider
 import com.example.foodpanda_capstone.view.ui.theme.Typography
+import com.example.foodpanda_capstone.viewmodel.AuthViewModel
 import kotlinx.coroutines.launch
 import com.example.foodpanda_capstone.viewmodel.GeneralViewModelFactory
 import com.example.foodpanda_capstone.viewmodel.LoginFormViewModel
 import com.example.foodpanda_capstone.viewmodel.PlaylistViewModel
+import com.google.firebase.Firebase
+import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
-
+    private lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
 
+        FirebaseApp.initializeApp(applicationContext)
+
+        auth = FirebaseAuth.getInstance()
+
+        setContent {
             FoodpandaCapstoneTheme {
                 Navigation()
             }
@@ -196,6 +218,14 @@ fun Navigation() {
         factory = ::PlaylistViewModel
     )
 
+    val authRepository = AuthRepository(FirebaseAuth.getInstance())
+
+    val authViewModelFactory = GeneralViewModelFactory(
+        viewModelClass = AuthViewModel::class.java,
+        repository = authRepository,
+        factory = ::AuthViewModel
+    )
+
     val networkService = NetworkServiceImpl()
     val userRepository = LoginFormRepository(networkService = networkService)
     val loginFormViewModel = LoginFormViewModel(userRepository)
@@ -208,6 +238,8 @@ fun Navigation() {
     val loginViewModel: LoginFormViewModel = viewModel(factory = loginViewModelFactory)
 
     val playlistViewModel: PlaylistViewModel = viewModel(factory = playlistViewModelFactory)
+
+    val authViewModel: AuthViewModel = viewModel(factory = authViewModelFactory)
 
     var searchResult by remember { mutableStateOf("") }
 
@@ -233,7 +265,7 @@ fun Navigation() {
         DrawerItems(Icons.Filled.Settings, "Setting", 0, false),
         DrawerItems(Icons.Filled.MoreVert, "Terms & Conditions / Policy", 0, false),
         DrawerItems(Icons.Filled.ExitToApp, "Logout", 0, false),
-        )
+    )
 
     val drawerItem3 = listOf(
         DrawerItems(Icons.Filled.Info, "Help Center", 0, false),
@@ -249,7 +281,9 @@ fun Navigation() {
         mutableStateOf(drawerItem[0])
     }
 
-    val isLoggedIn by loginViewModel.loginState.collectAsState()
+    val isLoggedIn by authViewModel.loginState.collectAsState()
+    val isSignedUp by authViewModel.signupState.collectAsState()
+
     Log.d("Navigation", "isLoggedIn: $isLoggedIn")
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -257,6 +291,7 @@ fun Navigation() {
     ModalNavigationDrawer(drawerContent = {
         ModalDrawerSheet {
 
+//            Column(Modifier.fillMaxSize().background(Color.White), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Box(
                     modifier = Modifier
@@ -278,10 +313,13 @@ fun Navigation() {
                                 .size(130.dp)
                                 .clip(CircleShape)
                         )
+                        val auth = FirebaseAuth.getInstance()
+                        val currentUser = auth.currentUser
 
-                        if(isLoggedIn) {
+                        if (isLoggedIn || isSignedUp) {
+                            val userName = currentUser?.displayName ?: "Hi user!"
                             Text(
-                                text = "Mr User",
+                                text = "Hello, $userName",
                                 Modifier
                                     .fillMaxWidth()
                                     .padding(top = 16.dp),
@@ -295,14 +333,17 @@ fun Navigation() {
                                 text = AnnotatedString("Login / Create Account"),
                                 onClick = {
                                     // Navigate to the login screen when the link is clicked
-                                    navController.navigate("Login Form")
+                                    navController.navigate("onBoarding Screen")
                                     // Close the navigation drawer
                                     scope.launch {
                                         drawerState.close()
                                     }
                                 },
                                 modifier = Modifier.padding(8.dp),
-                                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black)
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold
+                                ),
                             )
 
                         }
@@ -314,24 +355,28 @@ fun Navigation() {
 
 
                 }
-                if(isLoggedIn) {
+                if (isLoggedIn || isSignedUp) {
                     drawerItem.forEach {
-                        NavigationDrawerItem(label = { Text(text = it.text) }, selected = it == selectedItem, onClick = {
-                            selectedItem = it
+                        NavigationDrawerItem(label = { Text(text = it.text) },
+                            selected = it == selectedItem,
+                            onClick = {
+                                selectedItem = it
 
-                            scope.launch {
-                                drawerState.close()
-                            }
+                                scope.launch {
+                                    drawerState.close()
+                                }
 
-                        },
-                            modifier = Modifier.padding(horizontal = 16.dp), icon = {
+                            },
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            icon = {
                                 Icon(
                                     modifier = Modifier,
                                     imageVector = it.icon,
                                     contentDescription = it.text,
                                     tint = BrandPrimary
                                 )
-                            }, badge = {
+                            },
+                            badge = {
                                 if (it.hasBadge) {
                                     BadgedBox(badge = {
                                         Badge {
@@ -349,58 +394,108 @@ fun Navigation() {
                         thickness = 1.dp,
                         color = Color.DarkGray
                     )
+                    var showDialog by remember { mutableStateOf(false) }
+
                     drawerItem2.forEach {
-                        NavigationDrawerItem(label = { Text(text = it.text) }, selected = it == selectedItem, onClick = {
-                            selectedItem = it
-//
-                            scope.launch {
-                                drawerState.close()
-                                if (selectedItem.text == "Logout") {
-                                    loginViewModel.logout()
+                        NavigationDrawerItem(label = { Text(text = it.text) },
+                            selected = it == selectedItem,
+                            onClick = {
+                                selectedItem = it
 
-//                                    Log.d("Navigation", "Current destination: ${navController.currentDestination?.route}")
-                                    // Navigate to your logout destination
-
-                                    // Navigate to the home screen and clear the back stack,
-                                    // ensure that the home screen is a single top destination.
-                                    navController.navigate("Home") {
-                                        popUpTo(navController.graph.startDestinationId) {
-                                            saveState = true
-                                        }
-                                        launchSingleTop = true
+                                scope.launch {
+                                    drawerState.close()
+                                    if (selectedItem.text == "Logout") {
+                                        // Show Dialog when the user clicks on "Logout"
+                                        showDialog =
+                                            true // Assuming you have a boolean state variable to control the dialog visibility
                                     }
-
-//                                    Log.d("Navigation", "Current destination after navigation: ${navController.currentDestination?.route}")
-
                                 }
-
-                            }
-
-                        },
-                            modifier = Modifier.padding(horizontal = 16.dp), icon = {
+                            },
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            icon = {
                                 Icon(imageVector = it.icon, contentDescription = it.text, tint = BrandPrimary)
                             }
                         )
+                    }
 
+// Outside of your composable function, preferably in your main activity or composable
+                    if (showDialog) {
+                        AlertDialog(modifier = Modifier
+                            .padding(8.dp)
+                            .clip(RoundedCornerShape(16.dp)),
+                            onDismissRequest = {
+                                // Handle dialog dismissal if needed
+                                showDialog = false
+                            }
+                        ) {
+                            Card(
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .clip(RoundedCornerShape(16.dp)) // Adjust the corner radius as needed
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .padding(16.dp)
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(16.dp))
+                                ) {
+                                    Text("Logout", fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    Text("Are you sure you want to logout?")
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.End
+                                    ) {
+                                        Button(
+                                            onClick = {
+                                                authViewModel.signOut()
+                                                navController.navigate("Home") {
+                                                    popUpTo(navController.graph.startDestinationId) {
+                                                        saveState = true
+                                                    }
+                                                    launchSingleTop = true
+                                                }
+                                                showDialog = false
+                                            }
+                                        ) {
+                                            Text("Logout")
+                                        }
+                                        Spacer(modifier = Modifier.width(16.dp))
+                                        Button(
+                                            onClick = {
+                                                showDialog = false
+                                            }
+                                        ) {
+                                            Text("Cancel")
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 } else {
                     drawerItem3.forEach {
-                        NavigationDrawerItem(label = { Text(text = it.text) }, selected = it == selectedItem, onClick = {
-                            selectedItem = it
+                        NavigationDrawerItem(label = { Text(text = it.text) },
+                            selected = it == selectedItem,
+                            onClick = {
+                                selectedItem = it
 
-                            scope.launch {
-                                drawerState.close()
-                            }
+                                scope.launch {
+                                    drawerState.close()
+                                }
 
-                        },
-                            modifier = Modifier.padding(horizontal = 16.dp), icon = {
+                            },
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            icon = {
                                 Icon(
                                     modifier = Modifier,
                                     imageVector = it.icon,
                                     contentDescription = it.text,
                                     tint = BrandPrimary
                                 )
-                            }, badge = {
+                            },
+                            badge = {
                                 if (it.hasBadge) {
                                     BadgedBox(badge = {
                                         Badge {
@@ -419,15 +514,18 @@ fun Navigation() {
                         color = Color.DarkGray
                     )
                     drawerItem4.forEach {
-                        NavigationDrawerItem(label = { Text(text = it.text) }, selected = it == selectedItem, onClick = {
-                            selectedItem = it
+                        NavigationDrawerItem(label = { Text(text = it.text) },
+                            selected = it == selectedItem,
+                            onClick = {
+                                selectedItem = it
 //
-                            scope.launch {
-                                drawerState.close()
-                            }
+                                scope.launch {
+                                    drawerState.close()
+                                }
 
-                        },
-                            modifier = Modifier.padding(horizontal = 16.dp), icon = {
+                            },
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            icon = {
                                 Icon(imageVector = it.icon, contentDescription = it.text, tint = BrandPrimary)
                             }
                         )
@@ -552,7 +650,13 @@ fun Navigation() {
                     popExitTransition = { scaleOutOfContainer() }
                 ) {
                     composable("Login Form") {
-                        LoginScreen(loginFormViewModel = loginViewModel, navController = navController)
+                        LoginScreen(viewModel = authViewModel, navController = navController)
+                    }
+                    composable("onBoarding Screen") {
+                        onBoardingScreen(navController = navController)
+                    }
+                    composable("SignUp Form") {
+                        signUpForm(authViewModel, navController = navController)
                     }
                     composable("Home") {
                         HomeScreen(navController)
@@ -592,7 +696,7 @@ fun Navigation() {
 
 
                     composable("Playlist Confirm") { backStackEntry ->
-                        PlaylistConfirmScreen(foodItemConfirm,navController)
+                        PlaylistConfirmScreen(foodItemConfirm, navController)
                     }
 
 //                    composable("Logout") {

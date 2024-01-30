@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "187528335990",
+    "project_id": "foodpanda-capestone",
+    "storage_bucket": "foodpanda-capestone.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:187528335990:android:b5f4c52c9b553148740557",
+        "android_client_info": {
+          "package_name": "com.example.foodpanda_capstone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "187528335990-rlagi9r8l4ib66bhgkuu0e6aipu8j7g5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.foodpanda_capstone",
+            "certificate_hash": "12a090527b5e49cbd4ca4bbdc1e1e6772329a1c0"
+          }
+        },
+        {
+          "client_id": "187528335990-ltvma3gvugml4j903e6apqa44754nf7k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDADD6G2yku0ULpS5dV9jn9Ig_26S5xC_g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "187528335990-ltvma3gvugml4j903e6apqa44754nf7k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

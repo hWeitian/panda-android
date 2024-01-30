@@ -17,4 +17,6 @@ interface PlaylistApiService {
 
     @GET("playlists/category/{category}")
     suspend fun getCategoryPlaylist(@Path("category") category: String): PlaylistCategory
+
+
 }

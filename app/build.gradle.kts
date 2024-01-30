@@ -1,6 +1,8 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.gms.google-services")
+
 }
 
 android {
@@ -51,8 +53,14 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
     implementation ("androidx.lifecycle:lifecycle-viewmodel:2.4.0")
 
+
+    //FirebaseAuth
+    implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
+    implementation("com.google.firebase:firebase-auth")
+
     implementation ("androidx.activity:activity-compose:1.8.2")
     implementation ("androidx.compose.foundation:foundation:1.5.4")
+    implementation("com.google.firebase:firebase-analytics")
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
@@ -79,6 +87,8 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version")
     // LiveData
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
+
+    implementation ("androidx.compose.material:material-icons-extended:1.3.1")
 
     implementation("androidx.compose.runtime:runtime:1.5.4")
     implementation("androidx.compose.runtime:runtime-livedata:1.5.4")
@@ -107,4 +117,9 @@ dependencies {
 
     // Lottie Animation
     implementation("com.airbnb.android:lottie-compose:6.3.0")
+    implementation("com.google.gms:google-services:4.3.10")
+    //FirebaseUI
+    implementation ("com.firebaseui:firebase-ui-auth:7.2.0")
+    //Facebook
+    implementation ("com.facebook.android:facebook-android-sdk:16.2.0")
 }

@@ -105,7 +105,7 @@ fun PlaylistConfirmScreen(foodItem: List<FoodItem>, navController: NavController
                     text = AnnotatedString("Edit"),
                     onClick = {
                         // Navigate to the edit playlist screen when the link is clicked
-                        navController.navigate("EditPlaylist")
+//                        navController.navigate("EditPlaylist")
                     },
                     modifier = Modifier.padding(8.dp),
                     style = MaterialTheme.typography.bodyMedium.copy(color = BrandPrimary)
