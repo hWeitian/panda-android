@@ -1,5 +1,6 @@
 package com.example.foodpanda_capstone.view.ui.screen
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,15 +30,23 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -55,6 +64,7 @@ fun SearchScreen(navController: NavController, viewModel: PlaylistViewModel) {
     val searchInput by viewModel.searchText.observeAsState("")
     val recentSearch by viewModel.recentSearch.collectAsState()
     val searchResults by viewModel.searchResults.collectAsState()
+    val isInputOnFocus by viewModel.isInputOnFocus.collectAsState()
 
     LaunchedEffect(searchResults) {
         viewModel.getRecentSearch()
@@ -75,22 +85,25 @@ fun SearchScreen(navController: NavController, viewModel: PlaylistViewModel) {
         Column {
             Spacer(modifier = Modifier.size(10.dp))
             SearchInput(
+                isInputOnFocus = isInputOnFocus,
                 isEnabled = true,
                 isClickable = true,
                 placeholderText = "Search for food",
                 inputValue = searchInput,
                 onSearch = { viewModel.getSearchResult() },
-                updateInput = { input -> viewModel.updateSearchText(input) }
+                updateInput = { input -> viewModel.updateSearchText(input) },
+                updateIsInputOnFocus = { isFocus -> viewModel.updateIsInputOnFocusState(isFocus) }
             ) {}
             Spacer(modifier = Modifier.size(20.dp))
 
             SearchResults(searchResults = searchResults, viewModel = viewModel)
-            if (searchResults.isEmpty()) {
+            if (searchResults.isEmpty() || isInputOnFocus) {
                 RecentSearch(
                     recentSearches = recentSearch,
                     search = viewModel::searchRecentSearchKeyword,
-                    deleteKeyword = viewModel::deleteRecentSearchKeyword
-                    )
+                    deleteKeyword = viewModel::deleteRecentSearchKeyword,
+                    updateIsInputOnFocus = { isFocus -> viewModel.updateIsInputOnFocusState(isFocus) }
+                )
             } else {
                 SearchResults(searchResults = searchResults, viewModel = viewModel)
             }
@@ -121,7 +134,8 @@ fun SearchResults(searchResults: List<FoodItem>, viewModel: PlaylistViewModel) {
 fun RecentSearch(
     recentSearches: List<RecentSearch>,
     search: (keyword: String) -> Unit,
-    deleteKeyword: (keyword: String) -> Unit
+    deleteKeyword: (keyword: String) -> Unit,
+    updateIsInputOnFocus: (isFocused: Boolean) -> Unit,
 ) {
     Box {
         if (recentSearches.isNotEmpty()) {
@@ -132,7 +146,8 @@ fun RecentSearch(
                         SearchKeyword(
                             keyword = keyword,
                             search = search,
-                            deleteKeyword = deleteKeyword
+                            deleteKeyword = deleteKeyword,
+                            updateIsInputOnFocus = updateIsInputOnFocus
                         )
                     }
                 }
@@ -152,14 +167,18 @@ fun RecentSearch(
 fun SearchKeyword(
     keyword: RecentSearch,
     search: (keyword: String) -> Unit,
-    deleteKeyword: (keyword: String) -> Unit
+    deleteKeyword: (keyword: String) -> Unit,
+    updateIsInputOnFocus: (isFocused: Boolean) -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = keyword.keyword, modifier = Modifier.clickable { search(keyword.keyword) })
+        Text(text = keyword.keyword, modifier = Modifier.clickable {
+            search(keyword.keyword)
+            updateIsInputOnFocus(false)
+        })
         IconButton(onClick = { deleteKeyword(keyword.keyword) }) {
             Icon(
                 imageVector = Icons.Default.Clear,
@@ -170,21 +189,34 @@ fun SearchKeyword(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SearchInput(
+    isInputOnFocus: Boolean?,
     isEnabled: Boolean,
     isClickable: Boolean,
     inputValue: String,
     placeholderText: String,
     onSearch: (KeyboardActionScope.() -> Unit)?,
     updateInput: (input: String) -> Unit,
+    updateIsInputOnFocus: (isFocused: Boolean) -> Unit,
     navigateToSearchScreen: () -> Unit
 ) {
     val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
+
+    LaunchedEffect(isInputOnFocus) {
+        if(isInputOnFocus !== null && !isInputOnFocus) {
+            keyboardController?.hide()
+            focusManager.clearFocus(force = true)
+        }
+    }
+
 
     TextField(
         placeholder = { Text(text = placeholderText) },
@@ -192,11 +224,21 @@ fun SearchInput(
         value = inputValue,
         leadingIcon = { Icon(imageVector = Icons.Default.Search, "Search Icon") },
         onValueChange = { updateInput(it) },
+        keyboardActions = KeyboardActions(
+            onSearch =  {
+                if (onSearch != null) {
+                    onSearch()
+                }
+                keyboardController?.hide()
+                focusManager.clearFocus(force = true)
+            }
+        ),
         modifier = Modifier
             .fillMaxWidth()
             .height(50.dp)
             .focusRequester(focusRequester)
-            .clickable(onClick = { if (!isClickable) navigateToSearchScreen() }),
+            .clickable(onClick = { if (!isClickable) navigateToSearchScreen() })
+            .onFocusChanged { updateIsInputOnFocus(it.isFocused) },
         shape = RoundedCornerShape(25.dp),
         colors = TextFieldDefaults.colors(
             focusedContainerColor = LightGrey,
@@ -209,9 +251,6 @@ fun SearchInput(
         keyboardOptions = KeyboardOptions.Default.copy(
             imeAction = ImeAction.Search,
             keyboardType = KeyboardType.Text
-        ),
-        keyboardActions = KeyboardActions(
-            onSearch = onSearch
         )
     )
 

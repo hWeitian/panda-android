@@ -46,6 +46,13 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
     private val _searchResults = MutableStateFlow<List<FoodItem>>(emptyList())
     val searchResults: StateFlow<List<FoodItem>> = _searchResults
 
+    private val _isInputOnFocus = MutableStateFlow(false)
+    val isInputOnFocus: StateFlow<Boolean> = _isInputOnFocus
+
+    fun updateIsInputOnFocusState(isFocus: Boolean) {
+        _isInputOnFocus.value = isFocus
+    }
+
     fun getRecentSearch(userId: Int = 1) {
         viewModelScope.launch(Dispatchers.IO) {
             try {

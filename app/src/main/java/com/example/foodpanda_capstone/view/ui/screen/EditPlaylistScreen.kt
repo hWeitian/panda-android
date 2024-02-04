@@ -57,12 +57,14 @@ fun EditPlaylistScreen(navController: NavController, viewModel: PlaylistViewMode
         ) {
             Spacer(modifier = Modifier.size(10.dp))
             SearchInput(
+                isInputOnFocus = null,
                 isEnabled = false,
                 isClickable = false,
                 placeholderText = "Search for food",
                 inputValue = "",
                 onSearch = null,
-                updateInput = {}
+                updateInput = {},
+                updateIsInputOnFocus = {},
                 ){navController.navigate("Search")}
             currentPlaylist?.let {
                 Column {
