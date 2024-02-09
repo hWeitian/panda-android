@@ -82,7 +82,7 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
             }
             try {
                 repository.fetchSearchResults(searchText.value.toString()).collect { searchResult ->
-                    _searchResults.value = searchResult
+                    _searchResults.value = updateSearchedDishQuantity(searchResult)
                 }
             } catch (e: Exception) {
                 logErrorMsg("getSearchResult", e)
@@ -92,6 +92,54 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
                 _isLoading.value = false
             }
         }
+    }
+
+    private fun updateSearchedDishQuantity(searchResults: List<FoodItem>): List<FoodItem> {
+
+        val restaurantsInPlaylist = _currentPlaylist.value.foodItems
+
+        var currentPlaylistDishIds = mutableMapOf<Int, Int>()
+
+        if (restaurantsInPlaylist != null) {
+            for (i in 0..restaurantsInPlaylist.size - 1) {
+                val restaurantDishes = restaurantsInPlaylist[i]?.foodItems
+                if (restaurantDishes != null) {
+                    val restaurantDishesId = getCurrentPlaylistDishIds(restaurantDishes)
+                    currentPlaylistDishIds = addMapToMap(currentPlaylistDishIds, restaurantDishesId)
+                }
+            }
+        }
+
+        val newResults = searchResults.map { dish ->
+            if (currentPlaylistDishIds?.containsKey(dish.id) == true) {
+                val quantity = currentPlaylistDishIds[dish.id]
+                dish.copy(quantity = quantity!!)
+            } else {
+                dish.copy(quantity = 0)
+            }
+
+        }
+
+        return newResults
+    }
+
+    private fun getCurrentPlaylistDishIds(playlistDishes: List<FoodItem>): Map<Int,Int> {
+        var idMap = mutableMapOf<Int, Int>()
+        for(i in 0..playlistDishes.size - 1){
+            val dish = playlistDishes[i]
+            dish.id?.let { idMap.put(it, dish.quantity) }
+        }
+        return idMap
+    }
+
+    private fun addMapToMap(
+        currentPlaylistDishIds: MutableMap<Int, Int>,
+        newPlaylistDishIds: Map<Int, Int>
+    ): MutableMap<Int, Int> {
+        newPlaylistDishIds.forEach { id ->
+            currentPlaylistDishIds[id.key] = id.value
+        }
+        return currentPlaylistDishIds
     }
 
     fun clearSearchResult() {
@@ -126,7 +174,7 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
                         _currentPlaylist.value = playlist
                     }
                 } catch (e: Exception) {
-                    logErrorMsg("getAllPlaylist", e)
+                    logErrorMsg("getOnePlaylist", e)
                 }
                 if (currentPlaylist.value.name.isNotBlank() || currentPlaylist.value.id == playlistId) {
                     withContext(Dispatchers.Main) {

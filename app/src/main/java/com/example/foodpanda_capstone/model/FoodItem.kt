@@ -6,12 +6,14 @@ import java.math.BigDecimal
 
 data class FoodItem(
     @SerializedName("dishId")
-    val id: Int?,
+    val id: Int,
     val name: String,
     val description: String,
     var quantity: Int,
     val price: BigDecimal,
     val imageUrl: String,
+    val restaurantId: Int?,
+    val restaurantName: String?
 )
 
 data class RestaurantFoodItems   (

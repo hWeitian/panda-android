@@ -70,10 +70,46 @@ import com.example.foodpanda_capstone.viewmodel.PlaylistViewModel
 import java.math.BigDecimal
 
 val foodItemConfirm = listOf(
-    FoodItem(1, "XL burger", "This is the biggest burger you have ever needed", 1, BigDecimal(12.99), "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=3160&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"),
-    FoodItem(2, "L burger", "This is the biggest burger you have ever needed", 1, BigDecimal(10.99), "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=3160&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"),
-    FoodItem(3, "M burger", "This is the biggest burger you have ever needed", 1, BigDecimal(8.99), "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=3160&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"),
-    FoodItem(4, "S burger", "This is the biggest burger you have ever needed", 1, BigDecimal(6.99), "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=3160&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"),
+    FoodItem(
+        1,
+        "XL burger",
+        "This is the biggest burger you have ever needed",
+        1,
+        BigDecimal(12.99),
+        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=3160&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        restaurantId = null,
+        restaurantName = null
+    ),
+    FoodItem(
+        2,
+        "L burger",
+        "This is the biggest burger you have ever needed",
+        1,
+        BigDecimal(10.99),
+        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=3160&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        restaurantId = null,
+        restaurantName = null
+    ),
+    FoodItem(
+        3,
+        "M burger",
+        "This is the biggest burger you have ever needed",
+        1,
+        BigDecimal(8.99),
+        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=3160&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        restaurantId = null,
+        restaurantName = null
+    ),
+    FoodItem(
+        4,
+        "S burger",
+        "This is the biggest burger you have ever needed",
+        1,
+        BigDecimal(6.99),
+        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=3160&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        restaurantId = null,
+        restaurantName = null
+    ),
     // ... other food items
 )
 @Composable

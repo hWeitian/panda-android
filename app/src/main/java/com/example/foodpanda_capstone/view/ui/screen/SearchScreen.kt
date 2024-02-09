@@ -3,6 +3,7 @@ package com.example.foodpanda_capstone.view.ui.screen
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -96,7 +97,6 @@ fun SearchScreen(navController: NavController, viewModel: PlaylistViewModel) {
             ) {}
             Spacer(modifier = Modifier.size(20.dp))
 
-            SearchResults(searchResults = searchResults, viewModel = viewModel)
             if (searchResults.isEmpty() || isInputOnFocus) {
                 RecentSearch(
                     recentSearches = recentSearch,
@@ -208,6 +208,7 @@ fun SearchInput(
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
+        keyboardController?.show()
     }
 
     LaunchedEffect(isInputOnFocus) {

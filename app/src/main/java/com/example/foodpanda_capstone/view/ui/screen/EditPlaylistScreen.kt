@@ -37,7 +37,6 @@ import com.example.foodpanda_capstone.viewmodel.PlaylistViewModel
 
 @Composable
 fun EditPlaylistScreen(navController: NavController, viewModel: PlaylistViewModel) {
-    // TODO: Add search bar
 
     val currentPlaylist by viewModel.currentPlaylist.collectAsState()
     val totalAmountCardHeight: Int = 130
