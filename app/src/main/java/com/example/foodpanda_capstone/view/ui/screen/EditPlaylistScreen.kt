@@ -28,6 +28,7 @@ import com.example.foodpanda_capstone.view.ui.composable.BoxIconButton
 import com.example.foodpanda_capstone.view.ui.composable.FoodItemContainerCard
 import com.example.foodpanda_capstone.view.ui.composable.FoodItemDescriptionText
 import com.example.foodpanda_capstone.view.ui.composable.FoodItemNameText
+import com.example.foodpanda_capstone.view.ui.composable.FoodItemRestaurantText
 import com.example.foodpanda_capstone.view.ui.composable.ImageHolder
 import com.example.foodpanda_capstone.view.ui.composable.PrimaryButton
 import com.example.foodpanda_capstone.view.ui.composable.RestaurantNameText
@@ -156,7 +157,7 @@ fun EditableFoodItemContent(
     Row(
         Modifier
             .fillMaxWidth()
-            .height(82.dp),
+            .height(if (foodItem.restaurantName != null) 100.dp else 82.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         EditQuantityButtons(
@@ -173,6 +174,11 @@ fun EditableFoodItemContent(
             Column {
                 FoodItemNameText(foodItem.name)
                 FoodItemDescriptionText(foodItem.description)
+
+                if(foodItem.restaurantName != null) {
+                    Spacer(modifier = Modifier.size(10.dp))
+                    FoodItemRestaurantText(foodItem.restaurantName)
+                }
             }
             Text(
                 text = "S$ ${"%.2f".format(foodItem.price)}",
