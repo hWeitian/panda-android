@@ -33,6 +33,7 @@ import com.example.foodpanda_capstone.view.ui.composable.ImageHolder
 import com.example.foodpanda_capstone.view.ui.composable.PrimaryButton
 import com.example.foodpanda_capstone.view.ui.composable.RestaurantNameText
 import com.example.foodpanda_capstone.view.ui.theme.InteractionPrimary
+import com.example.foodpanda_capstone.view.ui.theme.InteractionSecondary
 import com.example.foodpanda_capstone.view.ui.theme.Typography
 import com.example.foodpanda_capstone.viewmodel.PlaylistViewModel
 
@@ -236,7 +237,7 @@ fun EditQuantityButtons(
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_remove_24_pink),
                     contentDescription = "Remove Button",
-                    tint = InteractionPrimary,
+                    tint = if(quantity > 0) InteractionPrimary else InteractionSecondary,
                 )
             }, { reduceQuantity() })
     }
