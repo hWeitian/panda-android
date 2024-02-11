@@ -170,7 +170,6 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
 
     fun onSearchResultDishMinusBtnClicked(
         clickedDishId: Int,
-        currentDishQuantity: Int,
         positionOfSearchResultDish: Int
     ) {
         viewModelScope.launch(Dispatchers.IO) {

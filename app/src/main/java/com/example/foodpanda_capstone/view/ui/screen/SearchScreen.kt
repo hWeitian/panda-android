@@ -125,7 +125,7 @@ fun SearchResults(searchResults: List<FoodItem>, viewModel: PlaylistViewModel) {
             EditableFoodItemContainer(
                 foodItem = result,
                 addQuantity = { viewModel.onSearchResultDishAddBtnClicked(result.id, result.quantity, index) })
-            { viewModel.onSearchResultDishMinusBtnClicked(result.id, result.quantity, index) }
+            { viewModel.onSearchResultDishMinusBtnClicked(result.id, index) }
         }
     }
 }
