@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActionScope
 import androidx.compose.foundation.text.KeyboardActions
@@ -120,11 +121,11 @@ fun SearchResults(searchResults: List<FoodItem>, viewModel: PlaylistViewModel) {
     }
 
     LazyColumn {
-        items(searchResults) { result ->
+        itemsIndexed(searchResults) { index, result ->
             EditableFoodItemContainer(
                 foodItem = result,
-                addQuantity = { viewModel.onAddButtonClicked(result.id) })
-            { viewModel.onMinusButtonClicked(result.id) }
+                addQuantity = { viewModel.onSearchResultDishAddBtnClicked(result.id, result.quantity, index) })
+            { viewModel.onSearchResultDishMinusBtnClicked(result.id, result.quantity, index) }
         }
     }
 }

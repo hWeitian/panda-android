@@ -65,7 +65,7 @@ fun EditPlaylistScreen(navController: NavController, viewModel: PlaylistViewMode
                 onSearch = null,
                 updateInput = {},
                 updateIsInputOnFocus = {},
-                ){navController.navigate("Search")}
+            ) { navController.navigate("Search") }
             currentPlaylist?.let {
                 Column {
                     it.foodItems?.map { restaurantFoodItems ->
@@ -77,7 +77,7 @@ fun EditPlaylistScreen(navController: NavController, viewModel: PlaylistViewMode
                             restaurantFoodItems?.foodItems?.map { item ->
                                 EditableFoodItemContainer(item,
                                     { viewModel.onAddButtonClicked(item.id) },
-                                    {  viewModel.onMinusButtonClicked(item.id)}
+                                    { viewModel.onMinusButtonClicked(item.id) }
                                 )
                             }
                         }
@@ -128,7 +128,7 @@ fun EditPlaylistScreen(navController: NavController, viewModel: PlaylistViewMode
                     name = if (currentPlaylist?.isPublic == true) "Subscribe" else "Update",
                     width = null
                 ) {
-                     navController.navigate("Playlist Confirm")
+                    navController.navigate("Playlist Confirm")
                 }
             }
         }
@@ -175,7 +175,7 @@ fun EditableFoodItemContent(
                 FoodItemNameText(foodItem.name)
                 FoodItemDescriptionText(foodItem.description)
 
-                if(foodItem.restaurantName != null) {
+                if (foodItem.restaurantName != null) {
                     Spacer(modifier = Modifier.size(10.dp))
                     FoodItemRestaurantText(foodItem.restaurantName)
                 }
@@ -204,13 +204,15 @@ fun EditQuantityButtons(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        BoxIconButton({
-            Icon(
-                painter = painterResource(id = R.drawable.baseline_add_24_pink),
-                contentDescription = "Add Button",
-                tint = InteractionPrimary,
-            )
-        }, { addQuantity() }) // TODO: Add clicked logic
+        BoxIconButton(
+            isEnabled = true,
+            {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_add_24_pink),
+                    contentDescription = "Add Button",
+                    tint = InteractionPrimary,
+                )
+            }, { addQuantity() })
 
         Card(
             modifier = Modifier
@@ -228,12 +230,14 @@ fun EditQuantityButtons(
                 Text(text = quantity.toString(), style = Typography.bodyMedium)
             }
         }
-        BoxIconButton({
-            Icon(
-                painter = painterResource(id = R.drawable.baseline_remove_24_pink),
-                contentDescription = "Remove Button",
-                tint = InteractionPrimary,
-            )
-        }, { reduceQuantity() }) // TODO: Add clicked logic
+        BoxIconButton(
+            isEnabled = quantity > 0,
+            {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_remove_24_pink),
+                    contentDescription = "Remove Button",
+                    tint = InteractionPrimary,
+                )
+            }, { reduceQuantity() })
     }
 }

@@ -18,5 +18,5 @@ data class FoodItem(
 
 data class RestaurantFoodItems   (
     val restaurantName: String,
-    val foodItems: List<FoodItem>
+    var foodItems: List<FoodItem>
 )

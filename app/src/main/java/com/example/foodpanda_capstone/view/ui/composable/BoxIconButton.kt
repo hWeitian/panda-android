@@ -19,12 +19,13 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun BoxIconButton(icon: @Composable () -> Unit, onClicked: () -> Unit) {
+fun BoxIconButton(isEnabled: Boolean, icon: @Composable () -> Unit, onClicked: () -> Unit) {
     Box(
         modifier = Modifier
             .size(22.dp)
             .bounceClick()
             .clickable(
+                enabled = isEnabled,
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() } // Remove click ripple effect
             ) {

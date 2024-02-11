@@ -10,6 +10,9 @@ import com.example.foodpanda_capstone.model.Playlist
 import com.example.foodpanda_capstone.model.PlaylistRepository
 import com.example.foodpanda_capstone.model.RecentSearch
 import com.example.foodpanda_capstone.model.RestaurantFoodItems
+import com.example.foodpanda_capstone.utils.addMapToMap
+import com.example.foodpanda_capstone.utils.getCurrentPlaylistDishIds
+import com.example.foodpanda_capstone.utils.getCurrentPlaylistRestaurantNames
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -97,18 +100,7 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
     private fun updateSearchedDishQuantity(searchResults: List<FoodItem>): List<FoodItem> {
 
         val restaurantsInPlaylist = _currentPlaylist.value.foodItems
-
-        var currentPlaylistDishIds = mutableMapOf<Int, Int>()
-
-        if (restaurantsInPlaylist != null) {
-            for (i in 0..restaurantsInPlaylist.size - 1) {
-                val restaurantDishes = restaurantsInPlaylist[i]?.foodItems
-                if (restaurantDishes != null) {
-                    val restaurantDishesId = getCurrentPlaylistDishIds(restaurantDishes)
-                    currentPlaylistDishIds = addMapToMap(currentPlaylistDishIds, restaurantDishesId)
-                }
-            }
-        }
+        val currentPlaylistDishIds = getDishesIdInCurrentPlaylist(restaurantsInPlaylist)
 
         val newResults = searchResults.map { dish ->
             if (currentPlaylistDishIds?.containsKey(dish.id) == true) {
@@ -123,22 +115,19 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
         return newResults
     }
 
-    private fun getCurrentPlaylistDishIds(playlistDishes: List<FoodItem>): Map<Int,Int> {
-        var idMap = mutableMapOf<Int, Int>()
-        for(i in 0..playlistDishes.size - 1){
-            val dish = playlistDishes[i]
-            dish.id?.let { idMap.put(it, dish.quantity) }
+    private fun getDishesIdInCurrentPlaylist(restaurantsInPlaylist: List<RestaurantFoodItems?>?)
+        : MutableMap<Int, Int> {
+        var currentPlaylistDishIds = mutableMapOf<Int, Int>()
+        if (restaurantsInPlaylist != null) {
+            for (i in 0..restaurantsInPlaylist.size - 1) {
+                val restaurantDishes = restaurantsInPlaylist[i]?.foodItems
+                if (restaurantDishes != null) {
+                    val restaurantDishesId = getCurrentPlaylistDishIds(restaurantDishes)
+                    currentPlaylistDishIds = addMapToMap(currentPlaylistDishIds, restaurantDishesId)
+                }
+            }
         }
-        return idMap
-    }
 
-    private fun addMapToMap(
-        currentPlaylistDishIds: MutableMap<Int, Int>,
-        newPlaylistDishIds: Map<Int, Int>
-    ): MutableMap<Int, Int> {
-        newPlaylistDishIds.forEach { id ->
-            currentPlaylistDishIds[id.key] = id.value
-        }
         return currentPlaylistDishIds
     }
 
@@ -159,6 +148,151 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
             } catch (e: Exception) {
                 logErrorMsg("deleteRecentSearchKeyword", e)
             }
+        }
+    }
+
+    fun onSearchResultDishAddBtnClicked(clickedDishId: Int, currentDishQuantity: Int, positionOfSearchResultDish: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val newDish = addQuantityOfDishInSearchResults(positionOfSearchResultDish, 1)
+                updateSearchResults(newDish, positionOfSearchResultDish)
+
+                if (currentDishQuantity > 0) {
+                    onAddButtonClicked(clickedDishId)
+                } else {
+                    addDishToCurrentPlaylist(searchResults.value[positionOfSearchResultDish])
+                }
+            } catch (e: Exception) {
+                logErrorMsg("onSearchResultDishAddBtnClicked", e)
+            }
+        }
+    }
+
+    fun onSearchResultDishMinusBtnClicked(
+        clickedDishId: Int,
+        currentDishQuantity: Int,
+        positionOfSearchResultDish: Int
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val updatedDish = minusQuantityOfDishInSearchResults(positionOfSearchResultDish, 1)
+                updateSearchResults(updatedDish, positionOfSearchResultDish)
+                onMinusButtonClicked(clickedDishId)
+            } catch (e: Exception) {
+                logErrorMsg("onSearchResultDishAddBtnClicked", e)
+            }
+        }
+    }
+
+    private suspend fun addDishToCurrentPlaylist(dishToAdd: FoodItem) {
+        val restaurantNameOfDishToAdd = dishToAdd.restaurantName
+        val dish = FoodItem(
+            id = dishToAdd.id,
+            name = dishToAdd.name,
+            description = dishToAdd.description,
+            quantity = dishToAdd.quantity,
+            price = dishToAdd.price,
+            imageUrl = dishToAdd.imageUrl,
+            restaurantId = null,
+            restaurantName = null
+        )
+        var currentPlaylistRestaurants = getCurrentPlaylistRestaurants()
+
+        if (restaurantNameOfDishToAdd != null) {
+            val currentRestaurantNames = getCurrentRestaurantNames()
+
+            if (currentRestaurantNames.containsKey(restaurantNameOfDishToAdd)) {
+                currentPlaylistRestaurants =
+                    updateExistingRestaurant(
+                        restaurantNameOfDishToAdd,
+                        dish,
+                        currentPlaylistRestaurants,
+                        currentRestaurantNames
+                    )
+            } else {
+                currentPlaylistRestaurants =
+                    addNewRestaurant(restaurantNameOfDishToAdd, dish, currentPlaylistRestaurants)
+            }
+
+            val updatedCurrentPlaylistRestaurants = currentPlaylistRestaurants.toList()
+            val updatedCost = calculateTotalPrice(updatedCurrentPlaylistRestaurants)
+            updatePlaylist(updatedCurrentPlaylistRestaurants, updatedCost)
+        } else {
+            val e: Exception = Exception("restaurant name not found")
+            logErrorMsg("addDishToCurrentPlaylist", e)
+        }
+    }
+
+    private fun getCurrentPlaylistRestaurants(): MutableList<RestaurantFoodItems?> {
+        return currentPlaylist.value.foodItems?.toMutableList() ?: mutableListOf()
+    }
+
+    private fun getCurrentRestaurantNames(): Map<String, Int> {
+        val currentPlaylistRestaurants = getCurrentPlaylistRestaurants()
+        return getCurrentPlaylistRestaurantNames(currentPlaylistRestaurants)
+    }
+
+    private fun updateExistingRestaurant(
+        restaurantName: String,
+        dish: FoodItem,
+        currentPlaylistRestaurants: MutableList<RestaurantFoodItems?>,
+        currentRestaurantNames: Map<String, Int>
+    ): MutableList<RestaurantFoodItems?> {
+        val positionOfRestaurant = currentRestaurantNames[restaurantName]
+        if (positionOfRestaurant != null) {
+            val restaurant = currentPlaylistRestaurants[positionOfRestaurant]
+            val restaurantFoodItems = restaurant?.foodItems?.toMutableList()
+            restaurantFoodItems?.add(dish)
+            restaurant?.foodItems = restaurantFoodItems?.toList()!!
+            currentPlaylistRestaurants[positionOfRestaurant] = restaurant
+        }
+
+        return currentPlaylistRestaurants
+    }
+
+    private fun addNewRestaurant(
+        restaurantName: String,
+        dish: FoodItem,
+        currentPlaylistRestaurants: MutableList<RestaurantFoodItems?>
+    ): MutableList<RestaurantFoodItems?> {
+        val newRestaurantToAdd = RestaurantFoodItems(restaurantName = restaurantName, foodItems = listOf(dish))
+        currentPlaylistRestaurants.add(newRestaurantToAdd)
+        return currentPlaylistRestaurants
+    }
+
+    private fun addQuantityOfDishInSearchResults(dishIndex: Int, quantityToAdd: Int): FoodItem {
+        return try {
+            val currentDish = _searchResults.value[dishIndex]
+            val newQuantity = currentDish.quantity + quantityToAdd
+
+            currentDish.copy(quantity = newQuantity)
+        } catch (e: Exception) {
+            logErrorMsg("addQuantityInSearchResults", e)
+            throw e
+        }
+    }
+
+    private fun minusQuantityOfDishInSearchResults(dishIndex: Int, quantityToAdd: Int): FoodItem {
+        return try {
+            val currentDish = _searchResults.value[dishIndex]
+            val newQuantity = currentDish.quantity - quantityToAdd
+
+            currentDish.copy(quantity = newQuantity)
+        } catch (e: Exception) {
+            logErrorMsg("minusQuantityInSearchResults", e)
+            throw e
+        }
+    }
+
+    private suspend fun updateSearchResults(newDish: FoodItem, dishIndex: Int) {
+        try {
+            val updatedSearchResults = searchResults.value.toMutableList()
+            updatedSearchResults[dishIndex] = newDish
+
+            _searchResults.emit(updatedSearchResults)
+        } catch (e: Exception) {
+            logErrorMsg("updateSearchResults", e)
+            throw e
         }
     }
 
