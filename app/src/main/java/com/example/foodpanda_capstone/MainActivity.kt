@@ -2,13 +2,14 @@ package com.example.foodpanda_capstone
 
 //import LocalDatabase
 //import NetworkService
+import PREF_KEY_CURRENT_ADDRESS
+import PREF_KEY_CURRENT_CITY
+import PREF_KEY_CURRENT_ZIPCODE
 import android.app.Activity
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
@@ -18,6 +19,7 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,9 +35,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.ExitToApp
@@ -44,9 +44,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.AlertDialog
@@ -54,10 +52,8 @@ import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -71,6 +67,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -87,18 +84,16 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -108,12 +103,14 @@ import androidx.navigation.compose.rememberNavController
 import com.example.foodpanda_capstone.view.ui.screen.DrawerItems
 import com.example.foodpanda_capstone.view.ui.screen.HomeScreen
 import androidx.navigation.navArgument
+import com.example.foodpanda_capstone.model.AddressRepository
 import com.example.foodpanda_capstone.model.AuthRepository
 import com.example.foodpanda_capstone.model.LoginFormRepository
 import com.example.foodpanda_capstone.model.NetworkServiceImpl
 import com.example.foodpanda_capstone.model.PlaylistRepository
 import com.example.foodpanda_capstone.model.api.PlaylistApiClient
 import com.example.foodpanda_capstone.model.api.PlaylistApiService
+import com.example.foodpanda_capstone.view.ui.screen.AddressFormScreen
 import com.example.foodpanda_capstone.view.ui.screen.SearchScreen
 import com.example.foodpanda_capstone.view.ui.screen.EditPlaylistScreen
 import com.example.foodpanda_capstone.view.ui.screen.HomeAppBar
@@ -130,21 +127,27 @@ import com.example.foodpanda_capstone.view.ui.theme.BrandPrimary
 import com.example.foodpanda_capstone.view.ui.theme.BrandSecondary
 import com.example.foodpanda_capstone.view.ui.theme.FoodpandaCapstoneTheme
 import com.example.foodpanda_capstone.view.ui.theme.NeutralBorder
-import com.example.foodpanda_capstone.view.ui.theme.NeutralDivider
 import com.example.foodpanda_capstone.view.ui.theme.Typography
+import com.example.foodpanda_capstone.viewmodel.AddressViewModel
 import com.example.foodpanda_capstone.viewmodel.AuthViewModel
 import kotlinx.coroutines.launch
 import com.example.foodpanda_capstone.viewmodel.GeneralViewModelFactory
+import com.example.foodpanda_capstone.viewmodel.GeneralViewModelFactoryDoubleParam
 import com.example.foodpanda_capstone.viewmodel.LoginFormViewModel
 import com.example.foodpanda_capstone.viewmodel.PlaylistViewModel
-import com.google.firebase.Firebase
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
-import kotlinx.coroutines.delay
+import getStringSharedPreference
 
 class MainActivity : ComponentActivity() {
     private lateinit var auth: FirebaseAuth
+
+    private val PREFS_ADDRESSDATA_KEY = "currentAddressPreferences"
+
+    private val currentAddressDataPref = "saved_current_address_data"
+    private val currentZipCodePref = "saved_current_zipcode"
+    private val currentCityPref = "saved_current_city"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -159,11 +162,14 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Navigation() {
+    val context = LocalContext.current
 
     fun scaleIntoContainer(
         initialScale: Float = 0.9f
@@ -234,13 +240,24 @@ fun Navigation() {
         factory = ::LoginFormViewModel
     )
 
+    val addressRepository = AddressRepository()
+    val addressViewModelFactory = GeneralViewModelFactoryDoubleParam(
+        viewModelClass = AddressViewModel::class.java,
+        repository = addressRepository,
+        factory = ::AddressViewModel,
+        context = context,
+    )
+
     val loginViewModel: LoginFormViewModel = viewModel(factory = loginViewModelFactory)
 
     val playlistViewModel: PlaylistViewModel = viewModel(factory = playlistViewModelFactory)
 
     val authViewModel: AuthViewModel = viewModel(factory = authViewModelFactory)
 
+    val addressFormViewModel: AddressViewModel = viewModel(factory = addressViewModelFactory)
+
     var searchResult by remember { mutableStateOf("") }
+
 
     val scaffoldState = rememberTopAppBarState()
     val scope = rememberCoroutineScope()
@@ -286,6 +303,36 @@ fun Navigation() {
     Log.d("Navigation", "isLoggedIn: $isLoggedIn")
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+
+    val sheetState = rememberModalBottomSheetState()
+
+
+    var isAddressFormVisible by remember { mutableStateOf(false) }
+    // Function to toggle the visibility of the AddressFormScreen
+    val toggleAddressFormVisibility = { isAddressFormVisible = !isAddressFormVisible }
+
+
+
+
+
+    val savedAddress = context.getStringSharedPreference(PREF_KEY_CURRENT_ADDRESS)
+    val savedZipCode = context.getStringSharedPreference(PREF_KEY_CURRENT_ZIPCODE)
+    val savedCity = context.getStringSharedPreference(PREF_KEY_CURRENT_CITY)
+
+
+    var selectedAddress = if (savedAddress != null && savedZipCode != null && savedCity != null) {
+        "$savedAddress $savedZipCode $savedCity"
+    } else {
+        "Type your address here"
+    }
+
+    // Define the setAddressOnUI function
+    val setAddressOnAppbar: (String, String, String) -> Unit = { address, city, zipCode ->
+        // Here you can use address, city, and zipCode as needed
+        // For example, you could concatenate them into one string:
+        selectedAddress = "$address, $city, $zipCode"
+    }
+
     //Side Nav bar
     ModalNavigationDrawer(drawerContent = {
         ModalDrawerSheet {
@@ -535,7 +582,6 @@ fun Navigation() {
         }
 
     }, drawerState = drawerState) {
-
         Scaffold(
             topBar = {
                 when (currentRoute) {
@@ -562,12 +608,31 @@ fun Navigation() {
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(start = 16.dp, bottom = 8.dp, top = 16.dp)
+                                            .clickable {
+                                                toggleAddressFormVisibility()
+                                                isAddressFormVisible = true
+//                                                navController.navigate("Address Form Screen")
+
+                                            }
                                     ) {
                                         Text(text = currentRoute, style = Typography.titleMedium)
-                                        Text(
-                                            text = "Address input here from database...",
-                                            style = Typography.bodySmall
-                                        )
+                                        selectedAddress?.let {
+                                            Text(
+                                                text = it,
+                                                style = Typography.bodySmall
+                                            )
+                                        }
+                                        
+                                        if(isAddressFormVisible) {
+                                            AddressFormScreen(
+                                                addressViewModel = addressFormViewModel,
+                                                isVisible = isAddressFormVisible,
+                                                showBottomSheet = isAddressFormVisible,
+                                                toggleBottomSheet = { toggleAddressFormVisibility() },
+                                                setAddressOnAppbar = setAddressOnAppbar,
+                                                onAddressSelected = selectedAddress)
+
+                                        }
                                         //Sample search bar to filter database
 //                                        SearchBar() { searchText -> searchResult = "Searching for: $searchText" }
                                     }
@@ -711,6 +776,10 @@ fun Navigation() {
                     composable("Search") { backStackEntry ->
                         SearchScreen(navController, playlistViewModel)
                     }
+
+//                    composable("Address Form Screen") {
+//
+//                    }
 
                 }
 
