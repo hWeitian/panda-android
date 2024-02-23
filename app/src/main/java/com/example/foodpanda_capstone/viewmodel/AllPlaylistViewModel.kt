@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.foodpanda_capstone.model.Playlist
 import com.example.foodpanda_capstone.model.PlaylistCategory
+import com.example.foodpanda_capstone.model.PlaylistOverview
 import com.example.foodpanda_capstone.model.PlaylistRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -16,11 +17,11 @@ import kotlinx.coroutines.withContext
 
 class AllPlaylistViewModel(private val repository: PlaylistRepository) : ViewModel() {
 
-    private val _publicPlaylists = MutableStateFlow<List<PlaylistCategory>>(emptyList())
-    val publicPlaylists: StateFlow<List<PlaylistCategory>> = _publicPlaylists
+    private val _publicPlaylists = MutableStateFlow<List<PlaylistOverview>>(emptyList())
+    val publicPlaylists: StateFlow<List<PlaylistOverview>> = _publicPlaylists
 
-    private val _userPlaylists = MutableStateFlow<List<Playlist>>(emptyList())
-    val userPlaylists: StateFlow<List<Playlist>> = _userPlaylists
+    private val _userPlaylists = MutableStateFlow<List<PlaylistOverview>>(emptyList())
+    val userPlaylists: StateFlow<List<PlaylistOverview>> = _userPlaylists
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
@@ -37,7 +38,8 @@ class AllPlaylistViewModel(private val repository: PlaylistRepository) : ViewMod
                     delay(1000)
                 }
                 try {
-                    repository.fetchAllPlaylist().collect { playlists ->
+                    // TODO: Update userId to the userId given by firebase.
+                    repository.fetchAllPlaylist(1).collect { playlists ->
                         _publicPlaylists.value = playlists.publicPlaylist
                         _userPlaylists.value = playlists.userPlaylist
                     }

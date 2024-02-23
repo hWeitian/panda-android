@@ -17,7 +17,17 @@ data class PlaylistCategory(
     val list: List<Playlist>
 )
 
+data class PlaylistOverview (
+    val id: Int,
+    val name: String,
+    val imageUrl: String?,
+    val isPublic: Boolean?,
+    val deliveryDay: String,
+    val category: String,
+    val cost: BigDecimal,
+)
+
 data class AllPlaylist(
-    val publicPlaylist: List<PlaylistCategory>,
-    val userPlaylist: List<Playlist>
+    val publicPlaylist: List<PlaylistOverview>,
+    val userPlaylist: List<PlaylistOverview>
 )

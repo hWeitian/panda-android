@@ -59,8 +59,8 @@ fun PlaylistSectionScreen(navController: NavController, categoryName: String?) {
             .fillMaxSize()
             .background(Color.White)
     ) {
-        if (!isLoading && categoryPlaylist?.list != null) {
-            val dataList = categoryPlaylist!!.list
+        if (!isLoading && categoryPlaylist != null) {
+            val dataList = categoryPlaylist
             Column(modifier = Modifier.fillMaxSize()) {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),

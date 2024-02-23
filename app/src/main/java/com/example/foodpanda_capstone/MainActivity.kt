@@ -6,10 +6,12 @@ import PREF_KEY_CURRENT_ADDRESS
 import PREF_KEY_CURRENT_CITY
 import PREF_KEY_CURRENT_ZIPCODE
 import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
@@ -90,10 +92,13 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -622,7 +627,7 @@ fun Navigation() {
                                                 style = Typography.bodySmall
                                             )
                                         }
-                                        
+
                                         if(isAddressFormVisible) {
                                             AddressFormScreen(
                                                 addressViewModel = addressFormViewModel,
@@ -706,6 +711,7 @@ fun Navigation() {
             )
             {
                 NavHost(
+                    modifier = Modifier.fillMaxHeight(),
                     navController = navController,
                     startDestination = "Home", // TODO: Update to Home page when home page is ready
                     enterTransition = { scaleIntoContainer() },
