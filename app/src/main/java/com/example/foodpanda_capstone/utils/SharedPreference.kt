@@ -61,5 +61,26 @@ fun Context.addAddressList(newAddress: AddressData) {
     editor.apply()
 }
 
+fun Context.removeAddressFromList(addressToRemove: AddressData) {
+    // Retrieve the current list of addresses from SharedPreferences
+    val currentAddresses = getAddressList().toMutableList()
+
+    // Remove the desired address from the list
+    currentAddresses.remove(addressToRemove)
+
+    // Serialize the updated list to JSON
+    val gson = Gson()
+    val json = gson.toJson(currentAddresses)
+
+    // Save the JSON string to SharedPreferences
+    val editor = this.sharedPreferences.edit()
+    editor.putString(PREF_KEY_ADDRESS_LIST, json)
+    editor.apply()
+}
+
+
+
+
+
 
 

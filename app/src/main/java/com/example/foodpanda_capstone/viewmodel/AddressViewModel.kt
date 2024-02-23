@@ -10,6 +10,7 @@ import getAddressList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import removeAddressFromList
 
 class AddressViewModel(private val addressRepository: AddressRepository, private val context: Context) : ViewModel() {
 
@@ -26,9 +27,14 @@ class AddressViewModel(private val addressRepository: AddressRepository, private
     }
 
     fun saveAddress(address: AddressData) {
-
         addressRepository.saveAddress(address)
         context.addAddressList(address)
+        refreshAddresses()
+    }
+
+    fun removeAddress(address: AddressData) {
+        addressRepository.removeAddress(address)
+        context.removeAddressFromList(address)
         refreshAddresses()
     }
 

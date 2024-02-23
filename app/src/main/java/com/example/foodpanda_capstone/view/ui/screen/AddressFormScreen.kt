@@ -174,24 +174,39 @@ fun AddressInputForm(
         },
         confirmButton = {
             // Confirm button in the AlertDialog
-            Button(
-                onClick = {
-                    //address from input which has yet to be saved. If the address from database is not null, update old with new address.
-                    //Else just save into database with the new input address.
-                    val currentAddress = AddressData(address, city, zipCode)
-                    if (editedAddress != null) {
-                        // address from current database
-                        val addressIndex = viewModel.getAddressIndex(editedAddress.address, editedAddress.city, editedAddress.zipCode)
-                        viewModel.updateAddress( addressIndex,currentAddress!!)
-                    } else {
-                        viewModel.saveAddress(currentAddress)
-                    }
+            Row() {
+                Button(
+                    onClick = {
+                        //address from input which has yet to be saved. If the address from database is not null, update old with new address.
+                        //Else just save into database with the new input address.
+                        val currentAddress = AddressData(address, city, zipCode)
+                        if (editedAddress != null) {
+                            // address from current database
+                            val addressIndex = viewModel.getAddressIndex(editedAddress.address, editedAddress.city, editedAddress.zipCode)
+                            viewModel.updateAddress( addressIndex,currentAddress!!)
+                        } else {
+                            viewModel.saveAddress(currentAddress)
+                        }
 
-                    onDismissRequest()
+                        onDismissRequest()
+                    }
+                ) {
+                    Text("Add Address")
                 }
-            ) {
-                Text("Add Address")
+
+                Button(
+                    onClick = {
+                        //address from input which has yet to be saved. If the address from database is not null, update old with new address.
+                        //Else just save into database with the new input address.
+                        viewModel.removeAddress(AddressData(address, city, zipCode))
+
+                        onDismissRequest()
+                    }
+                ) {
+                    Text("Remove Address")
+                }
             }
+
         }
     )
 }

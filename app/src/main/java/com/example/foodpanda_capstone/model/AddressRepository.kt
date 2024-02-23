@@ -9,6 +9,10 @@ class AddressRepository {
         _addresses.add(address)
     }
 
+    fun removeAddress(address: AddressData) {
+        _addresses.remove(address)
+    }
+
     fun getAddresses(): List<AddressData> {
         return _addresses.toList()
     }
