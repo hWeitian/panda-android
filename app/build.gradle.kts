@@ -123,4 +123,6 @@ dependencies {
     //Facebook
     implementation ("com.facebook.android:facebook-android-sdk:16.2.0")
 
+    implementation ("androidx.datastore:datastore-preferences:1.0.0")
+
 }

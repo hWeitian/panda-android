@@ -1,6 +1,5 @@
 package com.example.foodpanda_capstone.view.ui.screen
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -8,10 +7,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layout
@@ -20,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.foodpanda_capstone.model.Playlist
-import com.example.foodpanda_capstone.model.PlaylistCategory
 import com.example.foodpanda_capstone.model.PlaylistRepository
 import com.example.foodpanda_capstone.model.api.PlaylistApiClient
 import com.example.foodpanda_capstone.model.api.PlaylistApiService

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedButton
@@ -64,13 +65,15 @@ fun onBoardingScreen(navController: NavController) {
     Column(modifier = Modifier.background(BrandPrimary)) {
         Image(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .weight(0.55f),
             painter = painterResource(id = R.drawable.panda_onboard_pic), contentDescription = "onboard image"
         )
 
         ElevatedCard(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .weight(0.45f),
             elevation = CardDefaults.cardElevation(
                 defaultElevation = 12.dp
             ),
@@ -83,13 +86,13 @@ fun onBoardingScreen(navController: NavController) {
                     .fillMaxWidth()
                     .padding(16.dp) // Adjust padding as needed
             ) {
-                Text(text = "Sign up or Log in")
+                Text(fontSize = 24.sp,text = "Sign up or Log in")
 
                 Spacer(modifier = Modifier.padding(top = 8.dp))
 
-                Text(text = "Select your preferred method to continue", fontSize = 8.sp)
+                Text(text = "Select your preferred method to continue", fontSize = 16.sp)
 
-                Spacer(modifier = Modifier.padding(top = 24.dp))
+                Spacer(modifier = Modifier.weight(1f))
 
 
 //                ElevatedButton(
