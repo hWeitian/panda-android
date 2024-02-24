@@ -60,41 +60,53 @@ fun PlaylistListScreen(navController: NavController, isUserLoggedIn: Boolean, us
                 .fillMaxHeight(),
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
-            if(!isUserLoggedIn ) {
-                PlaylistListScreenButtons(
-                    descriptionText = "Log in / sign up to view your subscriptions",
-                    buttonText = "Log in / Sign up",
-                    navigateDestination = "Welcome",
-                    navController,
-                    Modifier.weight(1f)
-                )
-                Column {
-                    PlaylistSection(publicPlaylists, "Discover More", navController)
-                }
-            } else if(userPlaylists.isNullOrEmpty()) {
-                PlaylistListScreenButtons(
-                    descriptionText = "You haven't subscribed to any playlists.",
-                    buttonText = "Build your mix!",
-                    navigateDestination = "Playlist Form",
-                    navController,
-                    Modifier.weight(1f)
-                )
-                Column {
-                    PlaylistSection(publicPlaylists, "Discover More", navController)
-                }
-            } else {
-                Column {
-                    PlaylistSection(userPlaylists, "Your Subscription", navController)
-                    PlaylistSection(publicPlaylists, "Discover More", navController)
-                }
-                PlaylistListScreenButtons(
-                    descriptionText = "Want a tailored experience?",
-                    buttonText = "Build your mix!",
-                    navigateDestination = "Playlist Form",
-                    navController,
-                    Modifier.weight(1f)
-                )
+            Column {
+                PlaylistSection(userPlaylists, "Your Subscription", navController)
+                PlaylistSection(publicPlaylists, "Discover More", navController)
             }
+            PlaylistListScreenButtons(
+                descriptionText = "Want a tailored experience?",
+                buttonText = "Build your mix!",
+                navigateDestination = "Playlist Form",
+                navController,
+                Modifier.weight(1f)
+            )
+
+//            if(!isUserLoggedIn ) {
+//                PlaylistListScreenButtons(
+//                    descriptionText = "Log in / sign up to view your subscriptions",
+//                    buttonText = "Log in / Sign up",
+//                    navigateDestination = "Welcome",
+//                    navController,
+//                    Modifier.weight(1f)
+//                )
+//                Column {
+//                    PlaylistSection(publicPlaylists, "Discover More", navController)
+//                }
+//            } else if(userPlaylists.isNullOrEmpty()) {
+//                PlaylistListScreenButtons(
+//                    descriptionText = "You haven't subscribed to any playlists.",
+//                    buttonText = "Build your mix!",
+//                    navigateDestination = "Playlist Form",
+//                    navController,
+//                    Modifier.weight(1f)
+//                )
+//                Column {
+//                    PlaylistSection(publicPlaylists, "Discover More", navController)
+//                }
+//            } else {
+//                Column {
+//                    PlaylistSection(userPlaylists, "Your Subscription", navController)
+//                    PlaylistSection(publicPlaylists, "Discover More", navController)
+//                }
+//                PlaylistListScreenButtons(
+//                    descriptionText = "Want a tailored experience?",
+//                    buttonText = "Build your mix!",
+//                    navigateDestination = "Playlist Form",
+//                    navController,
+//                    Modifier.weight(1f)
+//                )
+//            }
             ScreenBottomSpacer()
         }
     }
@@ -197,6 +209,8 @@ fun PlaylistCard(playlist: PlaylistOverview, cardClicked: () -> Unit) {
                 fontWeight = FontWeight.Normal
             )
         }
-        Text(text = "Deliver every ${playlist.deliveryDay}", style = Typography.bodyMedium, color = BrandSecondary)
+        if(playlist.isPublic == false) {
+            Text(text = "Deliver every ${playlist.deliveryDay}", style = Typography.bodyMedium, color = BrandSecondary)
+        }
     }
 }
