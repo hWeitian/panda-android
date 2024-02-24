@@ -61,8 +61,20 @@ fun PlaylistListScreen(navController: NavController, isUserLoggedIn: Boolean, us
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
             Column {
-                PlaylistSection(userPlaylists, "Your Subscription", navController)
-                PlaylistSection(publicPlaylists, "Discover More", navController)
+                PlaylistSection(
+                    dataList = userPlaylists,
+                    title = "Your Subscription",
+                    navController = navController,
+                    isPublic = false,
+                    userId = userId
+                    )
+                PlaylistSection(
+                    dataList = publicPlaylists,
+                    title = "Discover More",
+                    navController = navController,
+                    isPublic = true,
+                    userId = userId
+                )
             }
             PlaylistListScreenButtons(
                 descriptionText = "Want a tailored experience?",
@@ -143,7 +155,7 @@ fun PlaylistListScreenButtons(
 }
 
 @Composable
-fun PlaylistSection(dataList: List<PlaylistOverview>, title: String, navController: NavController) {
+fun PlaylistSection(dataList: List<PlaylistOverview>, title: String, navController: NavController, isPublic: Boolean, userId: String) {
     Column(
         modifier = Modifier
             .wrapContentHeight()
@@ -151,7 +163,7 @@ fun PlaylistSection(dataList: List<PlaylistOverview>, title: String, navControll
     ) {
 
         SectionTitleAndBtn(title = title, btnTitle = "See all", icon = null) {
-            navController.navigate("ViewCategoryPlaylist/$title/$title")
+            navController.navigate("ViewCategoryPlaylist/$title/$isPublic/$userId")
         }
 
         Box(modifier = Modifier.layout() { measurable, constraints ->

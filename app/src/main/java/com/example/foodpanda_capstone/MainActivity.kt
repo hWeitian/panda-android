@@ -753,28 +753,25 @@ fun Navigation() {
                         PlaylistConfirmScreen(foodItemConfirm, navController)
                     }
 
-                    composable("ViewCategoryPlaylist/{categoryName}/{title}",
+                    composable("ViewCategoryPlaylist/{title}/{isPublic}/{userId}",
                         arguments = listOf(
                             navArgument("title") { type = NavType.StringType },
-                            navArgument("categoryName") { type = NavType.StringType }
+                            navArgument("isPublic") { type = NavType.BoolType },
+                            navArgument("userId") { type = NavType.StringType }
                         )
                     ) { backStackEntry ->
-                        val categoryName = backStackEntry.arguments?.getString("categoryName")
-                        PlaylistSectionScreen(navController, categoryName)
+                        val userId = backStackEntry.arguments?.getString("userId")
+                        val isPublic = backStackEntry.arguments?.getBoolean("isPublic", false)
+                        if (isPublic != null && userId != null) {
+                            PlaylistSectionScreen(navController, isPublic, userId)
+                        }
                     }
 
                     composable("Search") { backStackEntry ->
                         SearchScreen(navController, playlistViewModel)
                     }
-
-//                    composable("Address Form Screen") {
-//
-//                    }
-
                 }
-
             }
-
         }
     }
 }

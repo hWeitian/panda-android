@@ -23,7 +23,7 @@ import com.example.foodpanda_capstone.viewmodel.GeneralViewModelFactory
 import com.example.foodpanda_capstone.viewmodel.PlaylistSectionViewModel
 
 @Composable
-fun PlaylistSectionScreen(navController: NavController, categoryName: String?) {
+fun PlaylistSectionScreen(navController: NavController, isPublic: Boolean, userId: String) {
 
     val apiService: PlaylistApiService = PlaylistApiClient.apiService
     val repository = PlaylistRepository(apiService)
@@ -37,9 +37,11 @@ fun PlaylistSectionScreen(navController: NavController, categoryName: String?) {
     val categoryPlaylist by viewModel.categoryPlaylist.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
 
-    LaunchedEffect(categoryName) {
-        if (categoryName != null) {
-            viewModel.getCategoryPlaylist(categoryName)
+    LaunchedEffect(isPublic) {
+        if (isPublic) {
+            viewModel.getPublicPlaylist()
+        } else {
+            viewModel.getUserPlaylist(userId)
         }
     }
 

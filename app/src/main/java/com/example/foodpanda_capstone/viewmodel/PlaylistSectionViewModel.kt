@@ -29,7 +29,7 @@ class PlaylistSectionViewModel(private val repository: PlaylistRepository) : Vie
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-    fun getCategoryPlaylist(categoryName: String) {
+    fun getPublicPlaylist() {
         viewModelScope.launch(Dispatchers.IO) {
             while (categoryPlaylist.value.isEmpty()) {
                 withContext(Dispatchers.Main) {
@@ -37,11 +37,34 @@ class PlaylistSectionViewModel(private val repository: PlaylistRepository) : Vie
                     delay(1000)
                 }
                 try {
-                    repository.fetchCategoryPlaylist(categoryName).collect { playlists ->
+                    repository.fetchAllPublicPlaylist().collect { playlists ->
                         _categoryPlaylist.value = playlists
                     }
                 } catch (e: Exception) {
-                    logErrorMsg("getAllPlaylist", e)
+                    logErrorMsg("getPublicPlaylist", e)
+                }
+                if (categoryPlaylist.value.isNotEmpty()) {
+                    withContext(Dispatchers.Main) {
+                        _isLoading.value = false
+                    }
+                }
+            }
+        }
+    }
+
+    fun getUserPlaylist(userId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            while (categoryPlaylist.value.isEmpty()) {
+                withContext(Dispatchers.Main) {
+                    _isLoading.value = true
+                    delay(1000)
+                }
+                try {
+                    repository.fetchAllUserPlaylist(userId).collect { playlists ->
+                        _categoryPlaylist.value = playlists
+                    }
+                } catch (e: Exception) {
+                    logErrorMsg("getUserPlaylist", e)
                 }
                 if (categoryPlaylist.value.isNotEmpty()) {
                     withContext(Dispatchers.Main) {

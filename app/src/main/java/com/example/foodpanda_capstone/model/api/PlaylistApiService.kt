@@ -18,8 +18,10 @@ interface PlaylistApiService {
     @GET("playlists/current/{id}")
     suspend fun getOnePlaylist(@Path("id") id: Int): Playlist
 
-    @GET("playlists/category/{category}")
-    suspend fun getCategoryPlaylist(@Path("category") category: String): List<PlaylistOverview>
+    @GET("playlists/user/{userId}")
+    suspend fun getAllUserPlaylist(@Path("userId") userId: String): List<PlaylistOverview>
+    @GET("playlists/public")
+    suspend fun getAllPubliPlaylist(): List<PlaylistOverview>
 
     @GET("dishes/search/{keyword}")
     suspend fun getSearchResults(@Path("keyword") keyword: String): List<FoodItem>
