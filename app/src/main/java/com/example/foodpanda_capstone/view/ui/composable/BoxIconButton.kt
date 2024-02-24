@@ -8,6 +8,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,19 +20,29 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun BoxIconButton(icon: @Composable () -> Unit, onClicked: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .size(22.dp)
-            .bounceClick()
-            .clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() } // Remove click ripple effect
-            ) {
-                onClicked()
-            }
-    ) {
-        icon()
+fun BoxIconButton(isEnabled: Boolean, icon: @Composable () -> Unit, onClicked: () -> Unit) {
+    var modifier = Modifier.size(22.dp)
+
+    if(isEnabled) {
+        Box(
+            modifier = modifier
+                .bounceClick()
+                .clickable(
+                    enabled = isEnabled,
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() } // Remove click ripple effect
+                ) {
+                    onClicked()
+                }
+        ) {
+            icon()
+        }
+    } else {
+        Box(
+            modifier = modifier
+        ) {
+            icon()
+        }
     }
 }
 

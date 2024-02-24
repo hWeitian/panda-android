@@ -28,16 +28,17 @@ import com.example.foodpanda_capstone.view.ui.composable.BoxIconButton
 import com.example.foodpanda_capstone.view.ui.composable.FoodItemContainerCard
 import com.example.foodpanda_capstone.view.ui.composable.FoodItemDescriptionText
 import com.example.foodpanda_capstone.view.ui.composable.FoodItemNameText
+import com.example.foodpanda_capstone.view.ui.composable.FoodItemRestaurantText
 import com.example.foodpanda_capstone.view.ui.composable.ImageHolder
 import com.example.foodpanda_capstone.view.ui.composable.PrimaryButton
 import com.example.foodpanda_capstone.view.ui.composable.RestaurantNameText
 import com.example.foodpanda_capstone.view.ui.theme.InteractionPrimary
+import com.example.foodpanda_capstone.view.ui.theme.InteractionSecondary
 import com.example.foodpanda_capstone.view.ui.theme.Typography
 import com.example.foodpanda_capstone.viewmodel.PlaylistViewModel
 
 @Composable
 fun EditPlaylistScreen(navController: NavController, viewModel: PlaylistViewModel) {
-    // TODO: Add search bar
 
     val currentPlaylist by viewModel.currentPlaylist.collectAsState()
     val totalAmountCardHeight: Int = 130
@@ -57,13 +58,15 @@ fun EditPlaylistScreen(navController: NavController, viewModel: PlaylistViewMode
         ) {
             Spacer(modifier = Modifier.size(10.dp))
             SearchInput(
+                isInputOnFocus = null,
                 isEnabled = false,
                 isClickable = false,
                 placeholderText = "Search for food",
                 inputValue = "",
                 onSearch = null,
-                updateInput = {}
-                ){navController.navigate("Search")}
+                updateInput = {},
+                updateIsInputOnFocus = {},
+            ) { navController.navigate("Search") }
             currentPlaylist?.let {
                 Column {
                     it.foodItems?.map { restaurantFoodItems ->
@@ -75,7 +78,7 @@ fun EditPlaylistScreen(navController: NavController, viewModel: PlaylistViewMode
                             restaurantFoodItems?.foodItems?.map { item ->
                                 EditableFoodItemContainer(item,
                                     { viewModel.onAddButtonClicked(item.id) },
-                                    {  viewModel.onMinusButtonClicked(item.id)}
+                                    { viewModel.onMinusButtonClicked(item.id) }
                                 )
                             }
                         }
@@ -126,7 +129,7 @@ fun EditPlaylistScreen(navController: NavController, viewModel: PlaylistViewMode
                     name = if (currentPlaylist?.isPublic == true) "Subscribe" else "Update",
                     width = null
                 ) {
-                     navController.navigate("Playlist Confirm")
+                    navController.navigate("Playlist Confirm")
                 }
             }
         }
@@ -155,7 +158,7 @@ fun EditableFoodItemContent(
     Row(
         Modifier
             .fillMaxWidth()
-            .height(82.dp),
+            .height(if (foodItem.restaurantName != null) 100.dp else 82.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         EditQuantityButtons(
@@ -172,6 +175,11 @@ fun EditableFoodItemContent(
             Column {
                 FoodItemNameText(foodItem.name)
                 FoodItemDescriptionText(foodItem.description)
+
+                if (foodItem.restaurantName != null) {
+                    Spacer(modifier = Modifier.size(10.dp))
+                    FoodItemRestaurantText(foodItem.restaurantName)
+                }
             }
             Text(
                 text = "S$ ${"%.2f".format(foodItem.price)}",
@@ -197,13 +205,15 @@ fun EditQuantityButtons(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        BoxIconButton({
-            Icon(
-                painter = painterResource(id = R.drawable.baseline_add_24_pink),
-                contentDescription = "Add Button",
-                tint = InteractionPrimary,
-            )
-        }, { addQuantity() }) // TODO: Add clicked logic
+        BoxIconButton(
+            isEnabled = true,
+            {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_add_24_pink),
+                    contentDescription = "Add Button",
+                    tint = InteractionPrimary,
+                )
+            }, { addQuantity() })
 
         Card(
             modifier = Modifier
@@ -221,12 +231,14 @@ fun EditQuantityButtons(
                 Text(text = quantity.toString(), style = Typography.bodyMedium)
             }
         }
-        BoxIconButton({
-            Icon(
-                painter = painterResource(id = R.drawable.baseline_remove_24_pink),
-                contentDescription = "Remove Button",
-                tint = InteractionPrimary,
-            )
-        }, { reduceQuantity() }) // TODO: Add clicked logic
+        BoxIconButton(
+            isEnabled = quantity > 0,
+            {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_remove_24_pink),
+                    contentDescription = "Remove Button",
+                    tint = if(quantity > 0) InteractionPrimary else InteractionSecondary,
+                )
+            }, { reduceQuantity() })
     }
 }

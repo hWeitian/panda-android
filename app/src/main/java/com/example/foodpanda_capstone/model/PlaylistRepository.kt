@@ -10,8 +10,8 @@ import kotlinx.coroutines.flow.flow
 
 class PlaylistRepository(private val apiService: PlaylistApiService) {
 
-    fun fetchAllPlaylist(): Flow<AllPlaylist> = flow {
-        val result = apiService.getAllPlaylist()
+    fun fetchAllPlaylist(userId: String): Flow<AllPlaylist> = flow {
+        val result = apiService.getAllPlaylist(userId)
         emit(result)
     }.catch { e ->
         Log.e("PdError", "Error at fetchAllPlaylist - ${e.message}")
@@ -24,7 +24,7 @@ class PlaylistRepository(private val apiService: PlaylistApiService) {
         Log.e("PdError", "Error at fetchOnePlaylist - ${e.message}")
     }
 
-    fun fetchCategoryPlaylist(category: String): Flow<PlaylistCategory> = flow {
+    fun fetchCategoryPlaylist(category: String): Flow<List<PlaylistOverview>> = flow {
         val result = apiService.getCategoryPlaylist(category)
         emit(result)
     }.catch { e ->

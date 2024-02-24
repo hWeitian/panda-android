@@ -7,6 +7,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -16,7 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.foodpanda_capstone.model.Playlist
+import com.example.foodpanda_capstone.model.PlaylistOverview
 import com.example.foodpanda_capstone.model.PlaylistRepository
 import com.example.foodpanda_capstone.model.api.PlaylistApiClient
 import com.example.foodpanda_capstone.model.api.PlaylistApiService
@@ -31,14 +32,14 @@ import com.example.foodpanda_capstone.viewmodel.AllPlaylistViewModel
 import com.example.foodpanda_capstone.viewmodel.GeneralViewModelFactory
 
 @Composable
-fun PlaylistListScreen(navController: NavController) {
+fun PlaylistListScreen(navController: NavController, isUserLoggedIn: Boolean, userId: String = "1") {
 
     val apiService: PlaylistApiService = PlaylistApiClient.apiService
     val repository = PlaylistRepository(apiService)
     val viewModelFactory = GeneralViewModelFactory(
         viewModelClass = AllPlaylistViewModel::class.java,
         repository = repository,
-        factory = ::AllPlaylistViewModel // This refers to the constructor of AllPlaylistViewModel
+        factory = ::AllPlaylistViewModel,
     )
     val viewModel: AllPlaylistViewModel = viewModel(factory = viewModelFactory)
 
@@ -46,38 +47,91 @@ fun PlaylistListScreen(navController: NavController) {
     val userPlaylists by viewModel.userPlaylists.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
 
-    if(isLoading) {
+    LaunchedEffect(userId) {
+        viewModel.getAllPlaylist(userId)
+    }
+
+    if (isLoading) {
         LoadingScreen()
     } else {
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
+                .fillMaxHeight(),
+            verticalArrangement = Arrangement.SpaceBetween,
         ) {
-            publicPlaylists.map {
-                PlaylistSection(it.list, it.categoryTitle, navController)
-            }
-
-            PlaylistSection(userPlaylists, "Subscribed", navController)
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 25.dp), horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(text = "Searching for a tasty twist?", style = Typography.titleMedium)
-                Spacer(modifier = Modifier.size(10.dp))
-                PrimaryButton(name = "Surprise me!", null) {
-                    navController.navigate("Playlist Form")
+            if(!isUserLoggedIn ) {
+                PlaylistListScreenButtons(
+                    descriptionText = "Log in / sign up to view your subscriptions",
+                    buttonText = "Log in / Sign up",
+                    navigateDestination = "Welcome",
+                    navController,
+                    Modifier.weight(1f)
+                )
+                Column {
+                    PlaylistSection(publicPlaylists, "Discover More", navController)
                 }
+            } else if(userPlaylists.isNullOrEmpty()) {
+                PlaylistListScreenButtons(
+                    descriptionText = "You haven't subscribed to any playlists.",
+                    buttonText = "Build your mix!",
+                    navigateDestination = "Playlist Form",
+                    navController,
+                    Modifier.weight(1f)
+                )
+                Column {
+                    PlaylistSection(publicPlaylists, "Discover More", navController)
+                }
+            } else {
+                Column {
+                    PlaylistSection(userPlaylists, "Your Subscription", navController)
+                    PlaylistSection(publicPlaylists, "Discover More", navController)
+                }
+                PlaylistListScreenButtons(
+                    descriptionText = "Want a tailored experience?",
+                    buttonText = "Build your mix!",
+                    navigateDestination = "Playlist Form",
+                    navController,
+                    Modifier.weight(1f)
+                )
             }
             ScreenBottomSpacer()
         }
     }
-
 }
 
 @Composable
-fun PlaylistSection(dataList: List<Playlist>, title: String, navController: NavController) {
+fun PlaylistListScreenButtons(
+    descriptionText: String,
+    buttonText: String,
+    navigateDestination: String,
+    navController: NavController,
+    modifier: Modifier
+) {
+    Column(
+        modifier
+            .fillMaxWidth()
+            .padding(top = 25.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Bottom
+    ) {
+        Column(
+            modifier = Modifier.fillMaxHeight(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(text = descriptionText, style = Typography.titleSmall)
+            Spacer(modifier = Modifier.size(15.dp))
+            PrimaryButton(name = buttonText, null) {
+                navController.navigate(navigateDestination)
+            }
+        }
+
+    }
+}
+
+@Composable
+fun PlaylistSection(dataList: List<PlaylistOverview>, title: String, navController: NavController) {
     Column(
         modifier = Modifier
             .wrapContentHeight()
@@ -122,7 +176,7 @@ fun PlaylistSection(dataList: List<Playlist>, title: String, navController: NavC
 
 
 @Composable
-fun PlaylistCard(playlist: Playlist, cardClicked: () -> Unit) {
+fun PlaylistCard(playlist: PlaylistOverview, cardClicked: () -> Unit) {
     Column(
         modifier = Modifier
             .width(150.dp)

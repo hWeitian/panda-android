@@ -2,6 +2,7 @@ package com.example.foodpanda_capstone.view.ui.composable
 
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +15,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AdfScanner
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Storefront
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -53,6 +59,27 @@ fun FoodItemDescriptionText(description: String) {
         style = Typography.bodyMedium,
         color = BrandSecondary
     )
+}
+
+@Composable
+fun FoodItemRestaurantText(description: String) {
+    Row (
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Start
+    ) {
+        Icon(
+            imageVector = Icons.Default.Storefront,
+            contentDescription = "Storefront",
+            tint = BrandSecondary,
+            modifier = Modifier.size(16.dp)
+        )
+        Spacer(modifier = Modifier.size(5.dp))
+        Text(
+            text = description,
+            style = Typography.bodyMedium,
+            color = BrandSecondary
+        )
+    }
 }
 
 

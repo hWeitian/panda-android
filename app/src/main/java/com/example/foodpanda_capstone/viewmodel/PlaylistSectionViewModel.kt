@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.foodpanda_capstone.model.PlaylistCategory
+import com.example.foodpanda_capstone.model.PlaylistOverview
 import com.example.foodpanda_capstone.model.PlaylistRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -22,15 +23,15 @@ import kotlinx.coroutines.withContext
 
 class PlaylistSectionViewModel(private val repository: PlaylistRepository) : ViewModel() {
 
-    private val _categoryPlaylist = MutableStateFlow(PlaylistCategory("", emptyList()))
-    val categoryPlaylist: StateFlow<PlaylistCategory> = _categoryPlaylist
+    private val _categoryPlaylist = MutableStateFlow<List<PlaylistOverview>>(emptyList())
+    val categoryPlaylist: StateFlow<List<PlaylistOverview>> = _categoryPlaylist
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
     fun getCategoryPlaylist(categoryName: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            while (categoryPlaylist.value.list.isEmpty()) {
+            while (categoryPlaylist.value.isEmpty()) {
                 withContext(Dispatchers.Main) {
                     _isLoading.value = true
                     delay(1000)
@@ -42,7 +43,7 @@ class PlaylistSectionViewModel(private val repository: PlaylistRepository) : Vie
                 } catch (e: Exception) {
                     logErrorMsg("getAllPlaylist", e)
                 }
-                if (categoryPlaylist.value.list.isNotEmpty()) {
+                if (categoryPlaylist.value.isNotEmpty()) {
                     withContext(Dispatchers.Main) {
                         _isLoading.value = false
                     }
