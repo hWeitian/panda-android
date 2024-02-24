@@ -64,7 +64,27 @@ fun PlaylistListScreen(navController: NavController) {
                 PlaylistSection(userPlaylists, "Your Subscription", navController)
                 PlaylistSection(publicPlaylists, "Discover More", navController)
             }
-            PlaylistListScreenButtons(navController, Modifier.weight(1f))
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(top = 25.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Bottom
+            ) {
+                Column (
+                    modifier = Modifier.fillMaxHeight(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(text = "Want a tailored experience?", style = Typography.titleMedium)
+                    Spacer(modifier = Modifier.size(10.dp))
+                    PrimaryButton(name = "Build your mix!", null) {
+                        navController.navigate("Playlist Form")
+                    }
+                }
+
+            }
             ScreenBottomSpacer()
         }
     }
@@ -72,9 +92,10 @@ fun PlaylistListScreen(navController: NavController) {
 }
 
 @Composable
-fun PlaylistListScreenButtons(navController: NavController, modifier: Modifier) {
+fun PlaylistListScreenButtons(navController: NavController) {
     Column(
-        modifier
+        modifier = Modifier
+//            .weight(1f)
             .fillMaxWidth()
             .padding(top = 25.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
