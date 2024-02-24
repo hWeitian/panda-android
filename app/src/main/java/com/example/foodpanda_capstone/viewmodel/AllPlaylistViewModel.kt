@@ -26,11 +26,11 @@ class AllPlaylistViewModel(private val repository: PlaylistRepository) : ViewMod
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-    init {
-        getAllPlaylist()
-    }
+//    init {
+//        getAllPlaylist()
+//    }
 
-    private fun getAllPlaylist() {
+    fun getAllPlaylist(userId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             while (publicPlaylists.value.isEmpty()) {
                 withContext(Dispatchers.Main) {
@@ -39,7 +39,7 @@ class AllPlaylistViewModel(private val repository: PlaylistRepository) : ViewMod
                 }
                 try {
                     // TODO: Update userId to the userId given by firebase.
-                    repository.fetchAllPlaylist(0).collect { playlists ->
+                    repository.fetchAllPlaylist(userId).collect { playlists ->
                         _publicPlaylists.value = playlists.publicPlaylist
                         _userPlaylists.value = playlists.userPlaylist
                     }

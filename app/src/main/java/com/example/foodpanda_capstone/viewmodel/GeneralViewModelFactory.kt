@@ -3,17 +3,19 @@ package com.example.foodpanda_capstone.viewmodel
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.foodpanda_capstone.model.PlaylistRepository
 import java.lang.IllegalArgumentException
+import kotlin.reflect.KFunction1
 
 class GeneralViewModelFactory<T : ViewModel, R>(
     private val viewModelClass: Class<T>,
     private val factory: (R) -> T, // Factory function with one parameter
-    private val repository: R
+    private val repository: R,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(viewModelClass)) {
             @Suppress("UNCHECKED_CAST")
-            return factory(repository) as T
+            return  factory(repository) as T
         }
         throw IllegalArgumentException("${viewModelClass.simpleName} Class not found")
     }

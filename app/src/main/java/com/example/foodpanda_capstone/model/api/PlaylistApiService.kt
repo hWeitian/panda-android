@@ -13,7 +13,7 @@ import retrofit2.http.Query
 
 interface PlaylistApiService {
     @GET("playlists/latest/{userId}")
-    suspend fun getAllPlaylist(@Path("userId") userId: Int): AllPlaylist
+    suspend fun getAllPlaylist(@Path("userId") userId: String): AllPlaylist
 
     @GET("playlists/current/{id}")
     suspend fun getOnePlaylist(@Path("id") id: Int): Playlist

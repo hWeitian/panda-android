@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.flow
 
 class PlaylistRepository(private val apiService: PlaylistApiService) {
 
-    fun fetchAllPlaylist(userId: Int): Flow<AllPlaylist> = flow {
+    fun fetchAllPlaylist(userId: String): Flow<AllPlaylist> = flow {
         val result = apiService.getAllPlaylist(userId)
         emit(result)
     }.catch { e ->

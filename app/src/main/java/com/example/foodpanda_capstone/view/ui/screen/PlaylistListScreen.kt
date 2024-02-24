@@ -7,6 +7,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -31,20 +32,24 @@ import com.example.foodpanda_capstone.viewmodel.AllPlaylistViewModel
 import com.example.foodpanda_capstone.viewmodel.GeneralViewModelFactory
 
 @Composable
-fun PlaylistListScreen(navController: NavController, isUserLoggedIn: Boolean) {
+fun PlaylistListScreen(navController: NavController, isUserLoggedIn: Boolean, userId: String = "1") {
 
     val apiService: PlaylistApiService = PlaylistApiClient.apiService
     val repository = PlaylistRepository(apiService)
     val viewModelFactory = GeneralViewModelFactory(
         viewModelClass = AllPlaylistViewModel::class.java,
         repository = repository,
-        factory = ::AllPlaylistViewModel // This refers to the constructor of AllPlaylistViewModel
+        factory = ::AllPlaylistViewModel,
     )
     val viewModel: AllPlaylistViewModel = viewModel(factory = viewModelFactory)
 
     val publicPlaylists by viewModel.publicPlaylists.collectAsState()
     val userPlaylists by viewModel.userPlaylists.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
+
+    LaunchedEffect(userId) {
+        viewModel.getAllPlaylist(userId)
+    }
 
     if (isLoading) {
         LoadingScreen()
