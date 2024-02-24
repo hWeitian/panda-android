@@ -39,7 +39,7 @@ class AllPlaylistViewModel(private val repository: PlaylistRepository) : ViewMod
                 }
                 try {
                     // TODO: Update userId to the userId given by firebase.
-                    repository.fetchAllPlaylist(1).collect { playlists ->
+                    repository.fetchAllPlaylist(0).collect { playlists ->
                         _publicPlaylists.value = playlists.publicPlaylist
                         _userPlaylists.value = playlists.userPlaylist
                     }

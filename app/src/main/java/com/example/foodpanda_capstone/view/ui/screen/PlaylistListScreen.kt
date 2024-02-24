@@ -1,6 +1,5 @@
 package com.example.foodpanda_capstone.view.ui.screen
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -8,10 +7,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layout
@@ -19,8 +16,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.foodpanda_capstone.model.Playlist
-import com.example.foodpanda_capstone.model.PlaylistCategory
 import com.example.foodpanda_capstone.model.PlaylistOverview
 import com.example.foodpanda_capstone.model.PlaylistRepository
 import com.example.foodpanda_capstone.model.api.PlaylistApiClient
@@ -36,7 +31,7 @@ import com.example.foodpanda_capstone.viewmodel.AllPlaylistViewModel
 import com.example.foodpanda_capstone.viewmodel.GeneralViewModelFactory
 
 @Composable
-fun PlaylistListScreen(navController: NavController) {
+fun PlaylistListScreen(navController: NavController, isUserLoggedIn: Boolean) {
 
     val apiService: PlaylistApiService = PlaylistApiClient.apiService
     val repository = PlaylistRepository(apiService)
@@ -51,7 +46,7 @@ fun PlaylistListScreen(navController: NavController) {
     val userPlaylists by viewModel.userPlaylists.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
 
-    if(isLoading) {
+    if (isLoading) {
         LoadingScreen()
     } else {
         Column(
@@ -60,19 +55,54 @@ fun PlaylistListScreen(navController: NavController) {
                 .fillMaxHeight(),
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
-            Column {
-                PlaylistSection(userPlaylists, "Your Subscription", navController)
-                PlaylistSection(publicPlaylists, "Discover More", navController)
+            if(!isUserLoggedIn ) {
+                PlaylistListScreenButtons(
+                    descriptionText = "Log in / sign up to view your subscriptions",
+                    buttonText = "Log in / Sign up",
+                    navigateDestination = "Welcome",
+                    navController,
+                    Modifier.weight(1f)
+                )
+                Column {
+                    PlaylistSection(publicPlaylists, "Discover More", navController)
+                }
+            } else if(userPlaylists.isNullOrEmpty()) {
+                PlaylistListScreenButtons(
+                    descriptionText = "You haven't subscribed to any playlists.",
+                    buttonText = "Build your mix!",
+                    navigateDestination = "Playlist Form",
+                    navController,
+                    Modifier.weight(1f)
+                )
+                Column {
+                    PlaylistSection(publicPlaylists, "Discover More", navController)
+                }
+            } else {
+                Column {
+                    PlaylistSection(userPlaylists, "Your Subscription", navController)
+                    PlaylistSection(publicPlaylists, "Discover More", navController)
+                }
+                PlaylistListScreenButtons(
+                    descriptionText = "Want a tailored experience?",
+                    buttonText = "Build your mix!",
+                    navigateDestination = "Playlist Form",
+                    navController,
+                    Modifier.weight(1f)
+                )
             }
-            PlaylistListScreenButtons(navController, Modifier.weight(1f))
             ScreenBottomSpacer()
         }
     }
-
 }
 
 @Composable
-fun PlaylistListScreenButtons(navController: NavController, modifier: Modifier) {
+fun PlaylistListScreenButtons(
+    descriptionText: String,
+    buttonText: String,
+    navigateDestination: String,
+    navController: NavController,
+    modifier: Modifier
+) {
     Column(
         modifier
             .fillMaxWidth()
@@ -85,10 +115,10 @@ fun PlaylistListScreenButtons(navController: NavController, modifier: Modifier) 
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Want a tailored experience?", style = Typography.titleMedium)
-            Spacer(modifier = Modifier.size(10.dp))
-            PrimaryButton(name = "Build your mix!", null) {
-                navController.navigate("Playlist Form")
+            Text(text = descriptionText, style = Typography.titleSmall)
+            Spacer(modifier = Modifier.size(15.dp))
+            PrimaryButton(name = buttonText, null) {
+                navController.navigate(navigateDestination)
             }
         }
 
@@ -141,7 +171,7 @@ fun PlaylistSection(dataList: List<PlaylistOverview>, title: String, navControll
 
 
 @Composable
-fun PlaylistCard(playlist: Playlist, cardClicked: () -> Unit) {
+fun PlaylistCard(playlist: PlaylistOverview, cardClicked: () -> Unit) {
     Column(
         modifier = Modifier
             .width(150.dp)

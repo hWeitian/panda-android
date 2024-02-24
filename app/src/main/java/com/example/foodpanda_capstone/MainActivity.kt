@@ -22,19 +22,7 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
@@ -306,6 +294,7 @@ fun Navigation() {
     val isSignedUp by authViewModel.signupState.collectAsState()
 
     Log.d("Navigation", "isLoggedIn: $isLoggedIn")
+    Log.d("Navigation", "isSignedUp: $isSignedUp")
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
@@ -384,7 +373,7 @@ fun Navigation() {
                                 text = AnnotatedString("Login / Create Account"),
                                 onClick = {
                                     // Navigate to the login screen when the link is clicked
-                                    navController.navigate("onBoarding Screen")
+                                    navController.navigate("Welcome")
                                     // Close the navigation drawer
                                     scope.launch {
                                         drawerState.close()
@@ -722,7 +711,7 @@ fun Navigation() {
                     composable("Login Form") {
                         LoginScreen(viewModel = authViewModel, navController = navController)
                     }
-                    composable("onBoarding Screen") {
+                    composable("Welcome") {
                         onBoardingScreen(navController = navController)
                     }
                     composable("SignUp Form") {
@@ -734,7 +723,7 @@ fun Navigation() {
                     composable(
                         "Playlist List",
                     ) {
-                        PlaylistListScreen(navController)
+                        PlaylistListScreen(navController, isLoggedIn || isSignedUp)
                     }
                     composable(
                         "Playlist Form",
