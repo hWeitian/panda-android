@@ -53,6 +53,7 @@ class LoginFormRepository(private val networkService: NetworkService) : UserRepo
 //    }
 
     override suspend fun login(email: String, password: String): Boolean {
+
         try {
             // Validate credentials through network service
             val isValidCredentials = networkService.validatorLoginCredentials(email, password)

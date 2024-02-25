@@ -36,3 +36,9 @@ object PlaylistApiClient {
         RetrofitClient.retrofit.create(PlaylistApiService::class.java)
     }
 }
+
+object LoginFormApiClient {
+    val apiService: LoginFormApiService by lazy {
+        RetrofitClient.retrofit.create(LoginFormApiService::class.java)
+    }
+}
