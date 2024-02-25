@@ -18,11 +18,12 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
     private val _navigateToHome = MutableStateFlow(false)
     val navigateToHome: StateFlow<Boolean> = _navigateToHome
 
+
     //sus and await?
     fun signUp(firstName: String, lastName: String, email: String, password: String) {
         viewModelScope.launch {
             try {
-                authRepository.signUp(firstName, lastName, email, password)
+                 authRepository.signUp(firstName, lastName, email, password)
                 _signupState.value = true  // Signal signup success
             } catch (e: Exception) {
                 // Handle signup failure if needed
