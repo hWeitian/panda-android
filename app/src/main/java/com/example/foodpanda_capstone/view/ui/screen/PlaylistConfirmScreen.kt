@@ -54,6 +54,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.foodpanda_capstone.model.Days
 import com.example.foodpanda_capstone.model.FoodItem
+import com.example.foodpanda_capstone.model.timeOfDelivery
 import com.example.foodpanda_capstone.view.ui.composable.FoodItemDescriptionText
 import com.example.foodpanda_capstone.view.ui.composable.FoodItemNameText
 import com.example.foodpanda_capstone.view.ui.composable.ImageHolder
@@ -78,7 +79,7 @@ fun PlaylistConfirmScreen(viewModel: PlaylistViewModel, navController: NavContro
     val currentPlaylist by viewModel.currentPlaylist.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val daysOfWeek by viewModel.daysOfWeek.collectAsState()
-    val timeOfDelivery by viewModel.timeOfDelivery.collectAsState()
+    val selectedTimeOfDelivery by viewModel.selectedTimeOfDelivery.observeAsState("")
 
     var selectedIndex by remember { mutableStateOf(-1) }
 
@@ -154,7 +155,10 @@ fun PlaylistConfirmScreen(viewModel: PlaylistViewModel, navController: NavContro
                         label = "Select Time",
                         items = timeOfDelivery,
                         selectedIndex = selectedIndex,
-                        onItemSelected = { index, _ -> selectedIndex = index },
+                        onItemSelected = { index, item ->
+                            selectedIndex = index
+                            viewModel.updateSelectedTimeOfDelivery(item)
+                        },
                     )
 
                     Spacer(modifier = Modifier.padding(top = 8.dp))
@@ -182,7 +186,7 @@ fun PlaylistConfirmScreen(viewModel: PlaylistViewModel, navController: NavContro
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.Bottom
                 ) {
-                    Row (
+                    Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
@@ -279,7 +283,7 @@ fun ClickableDaysOfWeek(daysOfWeek: List<Days>, onDayClick: (Int) -> Unit) {
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        daysOfWeek.forEachIndexed {index, day ->
+        daysOfWeek.forEachIndexed { index, day ->
             Row(modifier = Modifier.weight(1f)) {
                 DayOfWeekBox(day.name, index, day.isSelected, onDayClick)
             }
@@ -290,7 +294,7 @@ fun ClickableDaysOfWeek(daysOfWeek: List<Days>, onDayClick: (Int) -> Unit) {
 @Composable
 fun DayOfWeekBox(day: String, index: Int, isSelected: Boolean, onDayClick: (Int) -> Unit) {
 
-    val shape = when(index) {
+    val shape = when (index) {
         0 -> RoundedCornerShape(topStart = 8.dp, bottomStart = 8.dp)
         6 -> RoundedCornerShape(topEnd = 8.dp, bottomEnd = 8.dp)
         else -> RoundedCornerShape(0.dp)
@@ -306,7 +310,7 @@ fun DayOfWeekBox(day: String, index: Int, isSelected: Boolean, onDayClick: (Int)
             .border(1.dp, color = Color.Black, shape = shape),
         contentAlignment = Alignment.Center,
     ) {
-        Text(text = day, color = if(isSelected) Color.White else Color.Black)
+        Text(text = day, color = if (isSelected) Color.White else Color.Black)
     }
 }
 
