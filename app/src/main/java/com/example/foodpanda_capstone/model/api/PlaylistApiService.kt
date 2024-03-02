@@ -3,7 +3,6 @@ package com.example.foodpanda_capstone.model.api
 import com.example.foodpanda_capstone.model.AllPlaylist
 import com.example.foodpanda_capstone.model.FoodItem
 import com.example.foodpanda_capstone.model.Playlist
-import com.example.foodpanda_capstone.model.PlaylistCategory
 import com.example.foodpanda_capstone.model.PlaylistOverview
 import retrofit2.Call
 import retrofit2.http.DELETE

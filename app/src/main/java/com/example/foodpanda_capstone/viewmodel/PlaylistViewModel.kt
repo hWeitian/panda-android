@@ -9,6 +9,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.foodpanda_capstone.model.Days
 import com.example.foodpanda_capstone.model.FoodItem
 import com.example.foodpanda_capstone.model.Playlist
 import com.example.foodpanda_capstone.model.PlaylistRepository
@@ -59,6 +60,43 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
     val cuisines: MutableState<String> =  mutableStateOf("")
     val numOfDish: MutableState<String> =  mutableStateOf("")
     val maxBudget: MutableState<String> =  mutableStateOf("")
+
+    private val _daysOfWeek = MutableStateFlow(listOf(
+        Days("Mon", false),
+        Days("Tue", false),
+        Days("Wed", false),
+        Days("Thu", false),
+        Days("Fri", false),
+        Days("Sat", false),
+        Days("Sun", false),
+    ))
+    val daysOfWeek: StateFlow<List<Days>> = _daysOfWeek
+
+    private val _timeOfDelivery = MutableStateFlow(listOf(
+        "11:00 - 11:30",
+        "11:30 - 12:00",
+        "12:00 - 12:30",
+        "12:30 - 13:00",
+        "13:00 - 13:30",
+        "13:30 - 14:00",
+        "17:00 - 17:30",
+        "17:30 - 18:00",
+        "18:00 - 18:30",
+        "18:30 - 19:00",
+        "19:00 - 19:30",
+        "19:30 - 20:00",
+        "20:00 - 20:30",
+        "20:30 - 21:00",
+    ))
+    val timeOfDelivery: StateFlow<List<String>> = _timeOfDelivery
+
+
+    fun onDayClick(index: Int) {
+        var newListOfDays = daysOfWeek.value.toMutableList()
+        val newDay = Days(newListOfDays[index].name, !newListOfDays[index].isSelected)
+        newListOfDays[index] = newDay
+        _daysOfWeek.value = newListOfDays
+    }
 
     fun clearFormText() {
         cuisines.value = ""
@@ -323,6 +361,7 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
                     .fetchRandomPlaylist(cuisines.value, numOfDishInt, maxBudgetInt)
                     .collect { playlist ->
                         _currentPlaylist.value = playlist
+                        println(playlist)
                     }
                 withContext(Dispatchers.Main) {
                     _isLoading.value = false

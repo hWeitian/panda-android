@@ -107,7 +107,6 @@ import com.example.foodpanda_capstone.view.ui.screen.PlaylistConfirmScreen
 import com.example.foodpanda_capstone.view.ui.screen.PlaylistFormScreen
 import com.example.foodpanda_capstone.view.ui.screen.PlaylistListScreen
 import com.example.foodpanda_capstone.view.ui.screen.PlaylistScreen
-import com.example.foodpanda_capstone.view.ui.screen.foodItemConfirm
 import com.example.foodpanda_capstone.view.ui.screen.PlaylistSectionScreen
 import com.example.foodpanda_capstone.view.ui.screen.onBoardingScreen
 import com.example.foodpanda_capstone.view.ui.screen.signUpForm
@@ -746,7 +745,7 @@ fun Navigation() {
                         HomeAppBar(navController)
                     }
                     composable("Playlist Confirm") { backStackEntry ->
-                        PlaylistConfirmScreen(foodItemConfirm, navController)
+                        PlaylistConfirmScreen(playlistViewModel, navController)
                     }
                     composable("ViewCategoryPlaylist/{title}/{isPublic}/{userId}",
                         arguments = listOf(

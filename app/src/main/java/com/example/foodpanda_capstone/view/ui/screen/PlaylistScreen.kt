@@ -3,6 +3,8 @@ package com.example.foodpanda_capstone.view.ui.screen
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -61,12 +63,9 @@ fun PlaylistScreen(navController: NavController, id: Int?, viewModel: PlaylistVi
             .background(Color.White)
     ) {
         if (!isLoading) {
-            Column(
-                modifier = Modifier
-                    .verticalScroll(rememberScrollState())
-            ) {
-                currentPlaylist?.let {
-                    Column(Modifier.padding(top = 10.dp)) {
+            currentPlaylist?.let {
+                LazyColumn(Modifier.padding(top = 10.dp)) {
+                    item {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
@@ -80,23 +79,43 @@ fun PlaylistScreen(navController: NavController, id: Int?, viewModel: PlaylistVi
                                 style = Typography.titleMedium
                             )
                         }
-                        it.foodItems?.map { restaurantFoodItems ->
-                            Spacer(modifier = Modifier.size(20.dp))
-                            if (restaurantFoodItems != null) {
-                                RestaurantSection(restaurantFoodItems)
+                    }
+
+                    items(it.foodItems.orEmpty()) { restaurantFoodItems ->
+                        if (restaurantFoodItems != null) {
+                            Spacer(modifier = Modifier.height(20.dp))
+                            RestaurantNameText(restaurantFoodItems.restaurantName)
+                            restaurantFoodItems.foodItems.map { item ->
+                                FoodItemContainer(item)
                             }
                         }
+                    }
 
-                        if(it.isPublic == true){
-                            PublicPlaylistButtons(navController, it.name, viewModel)
-                        } else {
-                            PrivatePlayListButtons(openModal, navController, it.name)
+                    item {
+                        when {
+                            it.id == 0 -> RandomPlaylistButtons(
+                                navController = navController,
+                                playlistName = it.name,
+                                viewModel = viewModel
+                            )
+
+                            it.isPublic == true -> PublicPlaylistButtons(
+                                navController = navController,
+                                playlistName = it.name,
+                                viewModel = viewModel
+                            )
+
+                            else -> PrivatePlayListButtons(
+                                openModal = openModal,
+                                navController = navController,
+                                playlistName = it.name
+                            )
                         }
                         ScreenBottomSpacer()
                     }
+
                 }
             }
-
         } else {
             LoadingScreen()
         }
@@ -121,7 +140,7 @@ fun FoodItemContainer(foodItem: FoodItem) {
 }
 
 @Composable
-fun PublicPlaylistButtons(navController: NavController, playlistName: String, viewModel: PlaylistViewModel) {
+fun RandomPlaylistButtons(navController: NavController, playlistName: String, viewModel: PlaylistViewModel) {
     CustomTextBtn(
         name = "Edit Playlist",
         iconVector = null,
@@ -134,6 +153,20 @@ fun PublicPlaylistButtons(navController: NavController, playlistName: String, vi
     }
 
     Spacer(modifier = Modifier.size(10.dp))
+
+    PrimaryButton(name = "Subscribe", width = null) {
+        navController.navigate("Playlist Confirm")
+    }
+}
+
+@Composable
+fun PublicPlaylistButtons(navController: NavController, playlistName: String, viewModel: PlaylistViewModel) {
+    CustomTextBtn(
+        name = "Edit Playlist",
+        iconVector = null,
+        iconImgId = R.drawable.baseline_edit_24_white) { navController.navigate("EditPlaylist/Editing $playlistName")}
+
+    Spacer(modifier = Modifier.size(40.dp))
 
     PrimaryButton(name = "Subscribe", width = null) {
         navController.navigate("Playlist Confirm")
