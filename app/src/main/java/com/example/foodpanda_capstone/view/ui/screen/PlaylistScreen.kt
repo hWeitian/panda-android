@@ -88,7 +88,7 @@ fun PlaylistScreen(navController: NavController, id: Int?, viewModel: PlaylistVi
                         }
 
                         if(it.isPublic == true){
-                            PublicPlaylistButtons(navController, it.name)
+                            PublicPlaylistButtons(navController, it.name, viewModel)
                         } else {
                             PrivatePlayListButtons(openModal, navController, it.name)
                         }
@@ -121,7 +121,7 @@ fun FoodItemContainer(foodItem: FoodItem) {
 }
 
 @Composable
-fun PublicPlaylistButtons(navController: NavController, playlistName: String) {
+fun PublicPlaylistButtons(navController: NavController, playlistName: String, viewModel: PlaylistViewModel) {
     CustomTextBtn(
         name = "Edit Playlist",
         iconVector = null,
@@ -130,7 +130,7 @@ fun PublicPlaylistButtons(navController: NavController, playlistName: String) {
     Spacer(modifier = Modifier.size(40.dp))
 
     CustomOutlinedBtn(name = "Not Happy? Regenerate", width = null) {
-        Log.i("Panda", "Regenerate playlist btn clicked") // TODO: Add regenerate playlist logic
+        viewModel.getRandomPlaylist()
     }
 
     Spacer(modifier = Modifier.size(10.dp))

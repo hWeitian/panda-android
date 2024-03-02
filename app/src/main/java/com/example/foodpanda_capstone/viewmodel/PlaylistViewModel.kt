@@ -1,6 +1,10 @@
 package com.example.foodpanda_capstone.viewmodel
 
 import android.util.Log
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -51,6 +55,17 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
 
     private val _isInputOnFocus = MutableStateFlow(false)
     val isInputOnFocus: StateFlow<Boolean> = _isInputOnFocus
+
+    val cuisines: MutableState<String> =  mutableStateOf("")
+    val numOfDish: MutableState<String> =  mutableStateOf("")
+    val maxBudget: MutableState<String> =  mutableStateOf("")
+
+    fun clearFormText() {
+        cuisines.value = ""
+        numOfDish.value = ""
+        maxBudget.value = ""
+    }
+
 
     fun updateIsInputOnFocusState(isFocus: Boolean) {
         _isInputOnFocus.value = isFocus
@@ -292,6 +307,29 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
         } catch (e: Exception) {
             logErrorMsg("updateSearchResults", e)
             throw e
+        }
+    }
+
+    fun getRandomPlaylist() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                withContext(Dispatchers.Main) {
+                    _isLoading.value = true
+                    delay(1000)
+                }
+                val numOfDishInt = Integer.parseInt(numOfDish.value)
+                val maxBudgetInt = Integer.parseInt(maxBudget.value)
+                repository
+                    .fetchRandomPlaylist(cuisines.value, numOfDishInt, maxBudgetInt)
+                    .collect { playlist ->
+                        _currentPlaylist.value = playlist
+                    }
+                withContext(Dispatchers.Main) {
+                    _isLoading.value = false
+                }
+            } catch (e: Exception) {
+                logErrorMsg("getRandomPlaylist", e)
+            }
         }
     }
 

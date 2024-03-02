@@ -23,6 +23,13 @@ interface PlaylistApiService {
     @GET("playlists/public")
     suspend fun getAllPubliPlaylist(): List<PlaylistOverview>
 
+    @GET("playlists/random/{cuisine}/{numOfDishes}/{maxBudget}")
+    suspend fun getRandomPlaylist(
+        @Path("cuisine") cuisine: String,
+        @Path("numOfDishes") numOfDishes: Int,
+        @Path("maxBudget") maxBudget: Int
+    ): Playlist
+
     @GET("dishes/search/{keyword}")
     suspend fun getSearchResults(@Path("keyword") keyword: String): List<FoodItem>
 

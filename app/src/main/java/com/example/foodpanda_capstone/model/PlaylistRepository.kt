@@ -45,6 +45,7 @@ class PlaylistRepository(private val apiService: PlaylistApiService) {
         RecentSearch(2, "Korean"),
         RecentSearch(3, "Sushi"),
     )
+
     fun fetchRecentSearch(userId: Int): Flow<List<RecentSearch>> = flow {
         val result = mockData // TODO: Add function to get recent search
         emit(result)
@@ -62,5 +63,12 @@ class PlaylistRepository(private val apiService: PlaylistApiService) {
         emit(result)
     }.catch { e ->
         Log.e("PdError", "Error at fetchSearchResults - ${e.message}")
+    }
+
+    fun fetchRandomPlaylist(cuisine: String, numOfDish: Int, maxBudget: Int) = flow {
+        val result = apiService.getRandomPlaylist(cuisine, numOfDish, maxBudget)
+        emit(result)
+    }.catch { e ->
+        Log.e("PdError", "Error at fetchRandomPlaylist - ${e.message}")
     }
 }

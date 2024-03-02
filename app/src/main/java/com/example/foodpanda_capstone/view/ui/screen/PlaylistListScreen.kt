@@ -60,6 +60,7 @@ fun PlaylistListScreen(navController: NavController, isUserLoggedIn: Boolean, us
                 .fillMaxHeight(),
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
+
             Column {
                 PlaylistSection(
                     dataList = userPlaylists,
@@ -84,7 +85,7 @@ fun PlaylistListScreen(navController: NavController, isUserLoggedIn: Boolean, us
                 Modifier.weight(1f)
             )
 
-//            if(!isUserLoggedIn ) {
+//            if (!isUserLoggedIn) {
 //                PlaylistListScreenButtons(
 //                    descriptionText = "Log in / sign up to view your subscriptions",
 //                    buttonText = "Log in / Sign up",
@@ -93,9 +94,15 @@ fun PlaylistListScreen(navController: NavController, isUserLoggedIn: Boolean, us
 //                    Modifier.weight(1f)
 //                )
 //                Column {
-//                    PlaylistSection(publicPlaylists, "Discover More", navController)
+//                    PlaylistSection(
+//                        dataList = publicPlaylists,
+//                        title = "Discover More",
+//                        navController = navController,
+//                        isPublic = true,
+//                        userId = userId
+//                    )
 //                }
-//            } else if(userPlaylists.isNullOrEmpty()) {
+//            } else if (userPlaylists.isNullOrEmpty()) {
 //                PlaylistListScreenButtons(
 //                    descriptionText = "You haven't subscribed to any playlists.",
 //                    buttonText = "Build your mix!",
@@ -104,12 +111,30 @@ fun PlaylistListScreen(navController: NavController, isUserLoggedIn: Boolean, us
 //                    Modifier.weight(1f)
 //                )
 //                Column {
-//                    PlaylistSection(publicPlaylists, "Discover More", navController)
+//                    PlaylistSection(
+//                        dataList = publicPlaylists,
+//                        title = "Discover More",
+//                        navController = navController,
+//                        isPublic = true,
+//                        userId = userId
+//                    )
 //                }
 //            } else {
 //                Column {
-//                    PlaylistSection(userPlaylists, "Your Subscription", navController)
-//                    PlaylistSection(publicPlaylists, "Discover More", navController)
+//                    PlaylistSection(
+//                        dataList = userPlaylists,
+//                        title = "Your Subscription",
+//                        navController = navController,
+//                        isPublic = false,
+//                        userId = userId
+//                    )
+//                    PlaylistSection(
+//                        dataList = publicPlaylists,
+//                        title = "Discover More",
+//                        navController = navController,
+//                        isPublic = true,
+//                        userId = userId
+//                    )
 //                }
 //                PlaylistListScreenButtons(
 //                    descriptionText = "Want a tailored experience?",
@@ -119,6 +144,8 @@ fun PlaylistListScreen(navController: NavController, isUserLoggedIn: Boolean, us
 //                    Modifier.weight(1f)
 //                )
 //            }
+
+
             ScreenBottomSpacer()
         }
     }
@@ -155,7 +182,13 @@ fun PlaylistListScreenButtons(
 }
 
 @Composable
-fun PlaylistSection(dataList: List<PlaylistOverview>, title: String, navController: NavController, isPublic: Boolean, userId: String) {
+fun PlaylistSection(
+    dataList: List<PlaylistOverview>,
+    title: String,
+    navController: NavController,
+    isPublic: Boolean,
+    userId: String
+) {
     Column(
         modifier = Modifier
             .wrapContentHeight()
@@ -221,7 +254,7 @@ fun PlaylistCard(playlist: PlaylistOverview, cardClicked: () -> Unit) {
                 fontWeight = FontWeight.Normal
             )
         }
-        if(playlist.isPublic == false) {
+        if (playlist.isPublic == false) {
             Text(text = "Deliver every ${playlist.deliveryDay}", style = Typography.bodyMedium, color = BrandSecondary)
         }
     }

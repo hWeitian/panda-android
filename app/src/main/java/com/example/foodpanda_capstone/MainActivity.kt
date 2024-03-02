@@ -723,7 +723,7 @@ fun Navigation() {
                     composable(
                         "Playlist Form",
                     ) {
-                        PlaylistFormScreen(navController)
+                        PlaylistFormScreen(navController, playlistViewModel)
                     }
                     composable(
                         "Playlist/{playlistId}/{title}",
@@ -742,17 +742,12 @@ fun Navigation() {
                     ) { backStackEntry ->
                         EditPlaylistScreen(navController, playlistViewModel)
                     }
-
-
                     composable("Home AppBar") { backStackEntry ->
                         HomeAppBar(navController)
                     }
-
-
                     composable("Playlist Confirm") { backStackEntry ->
                         PlaylistConfirmScreen(foodItemConfirm, navController)
                     }
-
                     composable("ViewCategoryPlaylist/{title}/{isPublic}/{userId}",
                         arguments = listOf(
                             navArgument("title") { type = NavType.StringType },
@@ -766,9 +761,11 @@ fun Navigation() {
                             PlaylistSectionScreen(navController, isPublic, userId)
                         }
                     }
-
                     composable("Search") { backStackEntry ->
                         SearchScreen(navController, playlistViewModel)
+                    }
+                    composable("Playlist Random") { backStackEntry ->
+                        PlaylistScreen(navController, null, playlistViewModel)
                     }
                 }
             }
