@@ -14,6 +14,7 @@ import com.example.foodpanda_capstone.model.Playlist
 import com.example.foodpanda_capstone.model.PlaylistRepository
 import com.example.foodpanda_capstone.model.RecentSearch
 import com.example.foodpanda_capstone.model.RestaurantFoodItems
+import com.example.foodpanda_capstone.utils.UserUtils
 import com.example.foodpanda_capstone.utils.addMapToMap
 import com.example.foodpanda_capstone.utils.getCurrentPlaylistDishIds
 import com.example.foodpanda_capstone.utils.getCurrentPlaylistRestaurantNames
@@ -80,21 +81,24 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
         generateFinalPlaylistSubscriptionData()
     }
 
-    private fun generateFinalPlaylistSubscriptionData() {
-//        println(_currentPlaylist.value)
-        val finalPlaylist = FinalPlaylist(
-            id = _currentPlaylist.value.id,
-            name = _currentPlaylist.value.name,
-            imageUrl = _currentPlaylist.value.imageUrl,
-            cost = _currentPlaylist.value.cost,
-            deliveryDay = concatSelectDays(),
-            foodItems = _currentPlaylist.value.foodItems,
-            isPublic = false,
-            deliverTime = _selectedTimeOfDelivery.value,
-            userId = "sssss",
-            status = "Subscribed"
-        )
-        println(finalPlaylist)
+    private fun generateFinalPlaylistSubscriptionData(): FinalPlaylist? {
+
+        val userId = UserUtils.getUserUID()
+        val finalPlaylist = userId?.let {
+            FinalPlaylist(
+                id = _currentPlaylist.value.id,
+                name = _currentPlaylist.value.name,
+                imageUrl = _currentPlaylist.value.imageUrl,
+                cost = _currentPlaylist.value.cost,
+                deliveryDay = concatSelectDays(),
+                foodItems = _currentPlaylist.value.foodItems,
+                isPublic = false,
+                deliverTime = _selectedTimeOfDelivery.value,
+                userId = it,
+                status = "Subscribed"
+            )
+        }
+        return finalPlaylist
     }
 
     private fun concatSelectDays(): String {
