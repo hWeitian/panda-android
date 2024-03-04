@@ -2,14 +2,13 @@ package com.example.foodpanda_capstone.viewmodel
 
 import android.util.Log
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableDoubleStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.foodpanda_capstone.model.Days
+import com.example.foodpanda_capstone.model.FinalPlaylist
 import com.example.foodpanda_capstone.model.FoodItem
 import com.example.foodpanda_capstone.model.Playlist
 import com.example.foodpanda_capstone.model.PlaylistRepository
@@ -76,6 +75,39 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
     val selectedTimeOfDelivery: LiveData<String> = _selectedTimeOfDelivery
 
 
+    fun onConfirmSubscriptionClick() {
+        println("onConfirmSubscriptionClick")
+        generateFinalPlaylistSubscriptionData()
+    }
+
+    private fun generateFinalPlaylistSubscriptionData() {
+//        println(_currentPlaylist.value)
+        val finalPlaylist = FinalPlaylist(
+            id = _currentPlaylist.value.id,
+            name = _currentPlaylist.value.name,
+            imageUrl = _currentPlaylist.value.imageUrl,
+            cost = _currentPlaylist.value.cost,
+            deliveryDay = concatSelectDays(),
+            foodItems = _currentPlaylist.value.foodItems,
+            isPublic = false,
+            deliverTime = _selectedTimeOfDelivery.value,
+            userId = "sssss",
+            status = "Subscribed"
+        )
+        println(finalPlaylist)
+    }
+
+    private fun concatSelectDays(): String {
+        var selectedDaysString: String = ""
+        _daysOfWeek.value.forEach { day ->
+            if (day.isSelected) {
+                selectedDaysString += "${day.name},"
+            }
+        }
+        return selectedDaysString.trim { it == ',' }
+    }
+
+
     fun updateSelectedTimeOfDelivery(inputText: String) {
         _selectedTimeOfDelivery.value = inputText
     }
@@ -85,6 +117,18 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
         val newDay = Days(newListOfDays[index].name, !newListOfDays[index].isSelected)
         newListOfDays[index] = newDay
         _daysOfWeek.value = newListOfDays
+    }
+
+    fun resetDaysOfWeek() {
+        _daysOfWeek.value = listOf(
+            Days("Mon", false),
+            Days("Tue", false),
+            Days("Wed", false),
+            Days("Thu", false),
+            Days("Fri", false),
+            Days("Sat", false),
+            Days("Sun", false),
+        )
     }
 
     fun clearFormText() {

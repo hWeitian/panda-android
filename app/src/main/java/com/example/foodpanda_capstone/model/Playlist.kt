@@ -12,6 +12,19 @@ data class Playlist(
     val isPublic: Boolean?
 )
 
+data class FinalPlaylist(
+    val id: Int,
+    val name: String,
+    val imageUrl: String?,
+    val cost: BigDecimal,
+    val deliveryDay: String?,
+    val foodItems: List<RestaurantFoodItems?>?,
+    val isPublic: Boolean?,
+    val deliverTime: String?,
+    val userId: String,
+    val status: String = "Subscribed"
+)
+
 //data class PlaylistCategory(
 //    val categoryTitle: String,
 //    val list: List<Playlist>

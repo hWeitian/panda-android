@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.Storefront
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -82,6 +83,12 @@ fun PlaylistConfirmScreen(viewModel: PlaylistViewModel, navController: NavContro
     val selectedTimeOfDelivery by viewModel.selectedTimeOfDelivery.observeAsState("")
 
     var selectedIndex by remember { mutableStateOf(-1) }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.resetDaysOfWeek()
+        }
+    }
 
     if (!isLoading && currentPlaylist !== null) {
         LazyColumn(
@@ -209,8 +216,8 @@ fun PlaylistConfirmScreen(viewModel: PlaylistViewModel, navController: NavContro
             item {
                 Spacer(modifier = Modifier.size(15.dp))
                 PrimaryButton(name = "Confirm", null) {
-                    Log.i("Confimed", "Confirmed playlist order")
-                    // TODO: Add POST function to send playlist data to backend
+                    viewModel.onConfirmSubscriptionClick()
+                    // TODO: Navigate to Playlist page
                 }
                 ScreenBottomSpacer()
             }
