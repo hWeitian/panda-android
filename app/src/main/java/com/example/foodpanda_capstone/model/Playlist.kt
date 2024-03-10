@@ -26,11 +26,6 @@ data class FinalPlaylist(
     val status: String = "Subscribed"
 )
 
-//data class PlaylistCategory(
-//    val categoryTitle: String,
-//    val list: List<Playlist>
-//)
-
 data class PlaylistOverview (
     val id: Int,
     val name: String,
