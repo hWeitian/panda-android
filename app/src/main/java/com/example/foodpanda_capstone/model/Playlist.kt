@@ -9,7 +9,8 @@ data class Playlist(
     val cost: BigDecimal,
     val deliveryDay: String,
     val foodItems: List<RestaurantFoodItems?>?,
-    val isPublic: Boolean?
+    val isPublic: Boolean?,
+    val deliveryTime: String?
 )
 
 data class FinalPlaylist(

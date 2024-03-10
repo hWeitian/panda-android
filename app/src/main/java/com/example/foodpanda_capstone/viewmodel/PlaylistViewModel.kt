@@ -38,7 +38,8 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
             cost = BigDecimal(0),
             deliveryDay = "",
             foodItems = emptyList(),
-            isPublic = false
+            isPublic = false,
+            deliveryTime = ""
         )
     )
     val currentPlaylist: StateFlow<Playlist> = _currentPlaylist.asStateFlow()
@@ -75,19 +76,15 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
     )
     val daysOfWeek: StateFlow<List<Days>> = _daysOfWeek
 
-    private val _selectedTimeOfDelivery = MutableLiveData("")
-    val selectedTimeOfDelivery: LiveData<String> = _selectedTimeOfDelivery
+    private val _selectedTimeOfDelivery = MutableStateFlow("")
+    val selectedTimeOfDelivery: StateFlow<String> = _selectedTimeOfDelivery
 
     private val _canNavigate = MutableLiveData(false)
     val canNavigate: LiveData<Boolean> = _canNavigate
 
 
     fun onConfirmSubscriptionClick() {
-        println("onConfirmSubscriptionClick")
-        println("onConfirmSubscriptionClick: ${_daysOfWeek.value}")
-
         viewModelScope.launch(Dispatchers.IO) {
-
             withContext(Dispatchers.Main) {
                 _isLoading.value = true
                 delay(1000)
@@ -103,7 +100,6 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
             } catch (e: Exception) {
                 logErrorMsg("onConfirmSubscriptionClick", e)
             }
-
             withContext(Dispatchers.Main) {
                 _canNavigate.value = true
                 delay(3000)
@@ -132,7 +128,6 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
     }
 
     private fun concatSelectDays(): String {
-        println("concatSelectDays: ${_daysOfWeek.value}")
         var selectedDaysString: String = ""
         _daysOfWeek.value.forEach { day ->
             if (day.isSelected) {
@@ -165,7 +160,7 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
     fun resetData() {
         resetDaysOfWeek()
         resetCanNavigate()
-
+        updateSelectedTimeOfDelivery("")
     }
 
     private fun createNewListOfDays(): List<Days> {
@@ -187,11 +182,9 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
     ): MutableList<Days> {
         selectedDays.forEach { day ->
             if (day.name == nameOfDay) {
-                println("name equals")
                 day.isSelected = true
             }
         }
-        println(selectedDays)
         return selectedDays
     }
 
@@ -202,7 +195,6 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
         selectedDays.forEach { day ->
             val selectedDay = selectedDaysMap[day.name]
             if (selectedDay != null && day.name == selectedDay) {
-                println("name equals")
                 day.isSelected = true
             }
         }
@@ -495,7 +487,6 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
                     .fetchRandomPlaylist(cuisines.value, numOfDishInt, maxBudgetInt)
                     .collect { playlist ->
                         _currentPlaylist.value = playlist
-                        println(playlist)
                     }
                 withContext(Dispatchers.Main) {
                     _isLoading.value = false
@@ -516,7 +507,10 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
                 try {
                     repository.fetchOnePlaylist(playlistId).collect { playlist ->
                         _currentPlaylist.value = playlist
-                        playlist.deliveryDay?.let { assignDaysOfWeek(it) }
+                        assignDaysOfWeek(playlist.deliveryDay)
+                        playlist.deliveryTime?.let {
+                            updateSelectedTimeOfDelivery(it)
+                        }
                     }
                 } catch (e: Exception) {
                     logErrorMsg("getOnePlaylist", e)

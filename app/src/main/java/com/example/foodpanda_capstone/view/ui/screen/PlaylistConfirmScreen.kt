@@ -80,7 +80,7 @@ fun PlaylistConfirmScreen(viewModel: PlaylistViewModel, navController: NavContro
     val currentPlaylist by viewModel.currentPlaylist.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val daysOfWeek by viewModel.daysOfWeek.collectAsState()
-    val selectedTimeOfDelivery by viewModel.selectedTimeOfDelivery.observeAsState("")
+    val selectedTimeOfDelivery by viewModel.selectedTimeOfDelivery.collectAsState()
     val canNavigate by viewModel.canNavigate.observeAsState()
 
     var selectedIndex by remember { mutableStateOf(-1) }
@@ -96,11 +96,15 @@ fun PlaylistConfirmScreen(viewModel: PlaylistViewModel, navController: NavContro
         if (deliveryDay != "") {
             viewModel.assignDaysOfWeek(deliveryDay)
         }
+        if (selectedTimeOfDelivery.isNotBlank() || selectedTimeOfDelivery.isNotEmpty()) {
+            selectedIndex = timeOfDelivery.indexOf(selectedTimeOfDelivery)
+        }
     }
 
     DisposableEffect(Unit) {
         onDispose {
             viewModel.resetData()
+            selectedIndex = -1
         }
     }
 
