@@ -7,7 +7,7 @@ data class Playlist(
     val name: String,
     val imageUrl: String?,
     val cost: BigDecimal,
-    val deliveryDay: String?,
+    val deliveryDay: String,
     val foodItems: List<RestaurantFoodItems?>?,
     val isPublic: Boolean?
 )

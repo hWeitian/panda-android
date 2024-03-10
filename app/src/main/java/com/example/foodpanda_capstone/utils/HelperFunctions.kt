@@ -32,3 +32,6 @@ fun addMapToMap(
     return currentPlaylistDishIds
 }
 
+fun isCharFoundInText(char: String, text: String): Boolean {
+    return text.contains(char)
+}

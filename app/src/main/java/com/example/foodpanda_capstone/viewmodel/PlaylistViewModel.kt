@@ -18,6 +18,7 @@ import com.example.foodpanda_capstone.utils.UserUtils
 import com.example.foodpanda_capstone.utils.addMapToMap
 import com.example.foodpanda_capstone.utils.getCurrentPlaylistDishIds
 import com.example.foodpanda_capstone.utils.getCurrentPlaylistRestaurantNames
+import com.example.foodpanda_capstone.utils.isCharFoundInText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -77,9 +78,13 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
     private val _selectedTimeOfDelivery = MutableLiveData("")
     val selectedTimeOfDelivery: LiveData<String> = _selectedTimeOfDelivery
 
+    private val _canNavigate = MutableLiveData(false)
+    val canNavigate: LiveData<Boolean> = _canNavigate
+
 
     fun onConfirmSubscriptionClick() {
         println("onConfirmSubscriptionClick")
+        println("onConfirmSubscriptionClick: ${_daysOfWeek.value}")
 
         viewModelScope.launch(Dispatchers.IO) {
 
@@ -88,11 +93,11 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
                 delay(1000)
             }
             try {
-//                val userId = "asdasdasdadsasdasdad"
-                val userId = getUserId()
+                // TODO: Remove dummy user name
+                val userId = "asdasdasdadsasdasdad"
+//                val userId = getUserId()
                 if (userId != null) {
                     val finalPlaylist = generateFinalPlaylistSubscriptionData(userId)
-                    println(finalPlaylist)
                     repository.subscribePlaylist(playlist = finalPlaylist, userId = userId)
                 }
             } catch (e: Exception) {
@@ -100,6 +105,8 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
             }
 
             withContext(Dispatchers.Main) {
+                _canNavigate.value = true
+                delay(3000)
                 _isLoading.value = false
             }
         }
@@ -125,6 +132,7 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
     }
 
     private fun concatSelectDays(): String {
+        println("concatSelectDays: ${_daysOfWeek.value}")
         var selectedDaysString: String = ""
         _daysOfWeek.value.forEach { day ->
             if (day.isSelected) {
@@ -146,8 +154,22 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
         _daysOfWeek.value = newListOfDays
     }
 
-    fun resetDaysOfWeek() {
-        _daysOfWeek.value = listOf(
+    private fun resetDaysOfWeek() {
+        _daysOfWeek.value = createNewListOfDays()
+    }
+
+    private fun resetCanNavigate() {
+        _canNavigate.value = false
+    }
+
+    fun resetData() {
+        resetDaysOfWeek()
+        resetCanNavigate()
+
+    }
+
+    private fun createNewListOfDays(): List<Days> {
+        return listOf(
             Days("Mon", false),
             Days("Tue", false),
             Days("Wed", false),
@@ -156,6 +178,58 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
             Days("Sat", false),
             Days("Sun", false),
         )
+    }
+
+
+    private fun updateSelectedDays(
+        selectedDays: MutableList<Days>,
+        nameOfDay: String
+    ): MutableList<Days> {
+        selectedDays.forEach { day ->
+            if (day.name == nameOfDay) {
+                println("name equals")
+                day.isSelected = true
+            }
+        }
+        println(selectedDays)
+        return selectedDays
+    }
+
+    private fun updateSelectedDays(
+        selectedDays: MutableList<Days>,
+        selectedDaysMap: Map<String, String>
+    ): MutableList<Days> {
+        selectedDays.forEach { day ->
+            val selectedDay = selectedDaysMap[day.name]
+            if (selectedDay != null && day.name == selectedDay) {
+                println("name equals")
+                day.isSelected = true
+            }
+        }
+        return selectedDays
+    }
+
+    private fun createCopyOfDaysOfWeek(daysOfWeek: List<Days>): MutableList<Days> {
+        var newList = emptyList<Days>().toMutableList()
+        for (day in _daysOfWeek.value) {
+            newList.add(day.copy())
+        }
+        return newList
+    }
+
+    fun assignDaysOfWeek(selectedDays: String) {
+        var newDaysOfWeek = _daysOfWeek.value.toMutableList()
+
+        if (isCharFoundInText(",", selectedDays)) {
+            val selectedDaysMap = emptyMap<String, String>().toMutableMap()
+            selectedDays.split(",").forEach { day ->
+                selectedDaysMap[day] = day
+            }
+            newDaysOfWeek = updateSelectedDays(newDaysOfWeek, selectedDaysMap)
+        } else {
+            newDaysOfWeek = updateSelectedDays(newDaysOfWeek, selectedDays)
+        }
+        _daysOfWeek.value = newDaysOfWeek.toList()
     }
 
     fun clearFormText() {
@@ -442,6 +516,7 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
                 try {
                     repository.fetchOnePlaylist(playlistId).collect { playlist ->
                         _currentPlaylist.value = playlist
+                        playlist.deliveryDay?.let { assignDaysOfWeek(it) }
                     }
                 } catch (e: Exception) {
                     logErrorMsg("getOnePlaylist", e)

@@ -51,8 +51,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.Observer
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.foodpanda_capstone.model.Days
 import com.example.foodpanda_capstone.model.FoodItem
 import com.example.foodpanda_capstone.model.timeOfDelivery
@@ -81,12 +81,26 @@ fun PlaylistConfirmScreen(viewModel: PlaylistViewModel, navController: NavContro
     val isLoading by viewModel.isLoading.collectAsState()
     val daysOfWeek by viewModel.daysOfWeek.collectAsState()
     val selectedTimeOfDelivery by viewModel.selectedTimeOfDelivery.observeAsState("")
+    val canNavigate by viewModel.canNavigate.observeAsState()
 
     var selectedIndex by remember { mutableStateOf(-1) }
 
+    LaunchedEffect(canNavigate) {
+        if (canNavigate == true) {
+            navController.navigate("Playlist List")
+        }
+    }
+
+    LaunchedEffect(currentPlaylist) {
+        val deliveryDay = currentPlaylist.deliveryDay
+        if (deliveryDay != "") {
+            viewModel.assignDaysOfWeek(deliveryDay)
+        }
+    }
+
     DisposableEffect(Unit) {
         onDispose {
-            viewModel.resetDaysOfWeek()
+            viewModel.resetData()
         }
     }
 
@@ -217,7 +231,6 @@ fun PlaylistConfirmScreen(viewModel: PlaylistViewModel, navController: NavContro
                 Spacer(modifier = Modifier.size(15.dp))
                 PrimaryButton(name = "Confirm", null) {
                     viewModel.onConfirmSubscriptionClick()
-                    navController.navigate("Playlist List")
                 }
                 ScreenBottomSpacer()
             }
