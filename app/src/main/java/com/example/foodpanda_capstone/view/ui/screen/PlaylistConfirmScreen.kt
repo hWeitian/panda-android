@@ -217,7 +217,7 @@ fun PlaylistConfirmScreen(viewModel: PlaylistViewModel, navController: NavContro
                 Spacer(modifier = Modifier.size(15.dp))
                 PrimaryButton(name = "Confirm", null) {
                     viewModel.onConfirmSubscriptionClick()
-                    // TODO: Navigate to Playlist page
+                    navController.navigate("Playlist List")
                 }
                 ScreenBottomSpacer()
             }

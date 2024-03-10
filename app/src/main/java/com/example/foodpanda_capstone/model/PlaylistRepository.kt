@@ -71,4 +71,9 @@ class PlaylistRepository(private val apiService: PlaylistApiService) {
     }.catch { e ->
         Log.e("PdError", "Error at fetchRandomPlaylist - ${e.message}")
     }
+
+    suspend fun subscribePlaylist(playlist: FinalPlaylist, userId: String) {
+        println("At subscribePlaylist")
+        apiService.postPlaylist(playlist, userId)
+    }
 }

@@ -57,19 +57,21 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
     private val _isInputOnFocus = MutableStateFlow(false)
     val isInputOnFocus: StateFlow<Boolean> = _isInputOnFocus
 
-    val cuisines: MutableState<String> =  mutableStateOf("")
-    val numOfDish: MutableState<String> =  mutableStateOf("")
-    val maxBudget: MutableState<String> =  mutableStateOf("")
+    val cuisines: MutableState<String> = mutableStateOf("")
+    val numOfDish: MutableState<String> = mutableStateOf("")
+    val maxBudget: MutableState<String> = mutableStateOf("")
 
-    private val _daysOfWeek = MutableStateFlow(listOf(
-        Days("Mon", false),
-        Days("Tue", false),
-        Days("Wed", false),
-        Days("Thu", false),
-        Days("Fri", false),
-        Days("Sat", false),
-        Days("Sun", false),
-    ))
+    private val _daysOfWeek = MutableStateFlow(
+        listOf(
+            Days("Mon", false),
+            Days("Tue", false),
+            Days("Wed", false),
+            Days("Thu", false),
+            Days("Fri", false),
+            Days("Sat", false),
+            Days("Sun", false),
+        )
+    )
     val daysOfWeek: StateFlow<List<Days>> = _daysOfWeek
 
     private val _selectedTimeOfDelivery = MutableLiveData("")
@@ -78,27 +80,48 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
 
     fun onConfirmSubscriptionClick() {
         println("onConfirmSubscriptionClick")
-        generateFinalPlaylistSubscriptionData()
+
+        viewModelScope.launch(Dispatchers.IO) {
+
+            withContext(Dispatchers.Main) {
+                _isLoading.value = true
+                delay(1000)
+            }
+            try {
+//                val userId = "asdasdasdadsasdasdad"
+                val userId = getUserId()
+                if (userId != null) {
+                    val finalPlaylist = generateFinalPlaylistSubscriptionData(userId)
+                    println(finalPlaylist)
+                    repository.subscribePlaylist(playlist = finalPlaylist, userId = userId)
+                }
+            } catch (e: Exception) {
+                logErrorMsg("onConfirmSubscriptionClick", e)
+            }
+
+            withContext(Dispatchers.Main) {
+                _isLoading.value = false
+            }
+        }
     }
 
-    private fun generateFinalPlaylistSubscriptionData(): FinalPlaylist? {
+    private fun getUserId(): String? {
+        return UserUtils.getUserUID()
+    }
 
-        val userId = UserUtils.getUserUID()
-        val finalPlaylist = userId?.let {
-            FinalPlaylist(
-                id = _currentPlaylist.value.id,
-                name = _currentPlaylist.value.name,
-                imageUrl = _currentPlaylist.value.imageUrl,
-                cost = _currentPlaylist.value.cost,
-                deliveryDay = concatSelectDays(),
-                foodItems = _currentPlaylist.value.foodItems,
-                isPublic = false,
-                deliverTime = _selectedTimeOfDelivery.value,
-                userId = it,
-                status = "Subscribed"
-            )
-        }
-        return finalPlaylist
+    private fun generateFinalPlaylistSubscriptionData(userId: String): FinalPlaylist {
+        return FinalPlaylist(
+            id = _currentPlaylist.value.id,
+            name = _currentPlaylist.value.name,
+            imageUrl = _currentPlaylist.value.imageUrl,
+            cost = _currentPlaylist.value.cost,
+            deliveryDay = concatSelectDays(),
+            foodItems = _currentPlaylist.value.foodItems,
+            isPublic = false,
+            deliverTime = _selectedTimeOfDelivery.value,
+            userId = userId,
+            status = "Subscribed"
+        )
     }
 
     private fun concatSelectDays(): String {
