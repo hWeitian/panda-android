@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.foodpanda_capstone.model.Playlist
-import com.example.foodpanda_capstone.model.PlaylistCategory
 import com.example.foodpanda_capstone.model.PlaylistOverview
 import com.example.foodpanda_capstone.model.PlaylistRepository
 import kotlinx.coroutines.Dispatchers
@@ -26,10 +25,6 @@ class AllPlaylistViewModel(private val repository: PlaylistRepository) : ViewMod
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-//    init {
-//        getAllPlaylist()
-//    }
-
     fun getAllPlaylist(userId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             while (publicPlaylists.value.isEmpty()) {
@@ -38,7 +33,6 @@ class AllPlaylistViewModel(private val repository: PlaylistRepository) : ViewMod
                     delay(1000)
                 }
                 try {
-                    // TODO: Update userId to the userId given by firebase.
                     repository.fetchAllPlaylist(userId).collect { playlists ->
                         _publicPlaylists.value = playlists.publicPlaylist
                         _userPlaylists.value = playlists.userPlaylist

@@ -9,12 +9,21 @@ data class Playlist(
     val cost: BigDecimal,
     val deliveryDay: String,
     val foodItems: List<RestaurantFoodItems?>?,
-    val isPublic: Boolean?
+    val isPublic: Boolean?,
+    val deliveryTime: String?
 )
 
-data class PlaylistCategory(
-    val categoryTitle: String,
-    val list: List<Playlist>
+data class FinalPlaylist(
+    val id: Int,
+    val name: String,
+    val imageUrl: String?,
+    val cost: BigDecimal,
+    val deliveryDay: String?,
+    val foodItems: List<RestaurantFoodItems?>?,
+    val isPublic: Boolean?,
+    val deliverTime: String?,
+    val userId: String,
+    val status: String = "Subscribed"
 )
 
 data class PlaylistOverview (
@@ -30,4 +39,9 @@ data class PlaylistOverview (
 data class AllPlaylist(
     val publicPlaylist: List<PlaylistOverview>,
     val userPlaylist: List<PlaylistOverview>
+)
+
+data class Days (
+    val name: String,
+    var isSelected: Boolean
 )

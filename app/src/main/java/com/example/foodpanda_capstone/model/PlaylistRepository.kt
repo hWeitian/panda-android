@@ -24,12 +24,20 @@ class PlaylistRepository(private val apiService: PlaylistApiService) {
         Log.e("PdError", "Error at fetchOnePlaylist - ${e.message}")
     }
 
-    fun fetchCategoryPlaylist(category: String): Flow<List<PlaylistOverview>> = flow {
-        val result = apiService.getCategoryPlaylist(category)
+    fun fetchAllPublicPlaylist(): Flow<List<PlaylistOverview>> = flow {
+        val result = apiService.getAllPubliPlaylist()
         emit(result)
     }.catch { e ->
-        Log.e("PdError", "Error at fetchCategoryPlaylist - ${e.message}")
+        Log.e("PdError", "Error at fetchAllPublicPlaylist - ${e.message}")
     }
+
+    fun fetchAllUserPlaylist(userId: String): Flow<List<PlaylistOverview>> = flow {
+        val result = apiService.getAllUserPlaylist(userId)
+        emit(result)
+    }.catch { e ->
+        Log.e("PdError", "Error at fetchAllUserPlaylist - ${e.message}")
+    }
+
 
     // TODO: Remove mockData once backend is ready
     private var mockData = listOf(
@@ -37,6 +45,7 @@ class PlaylistRepository(private val apiService: PlaylistApiService) {
         RecentSearch(2, "Korean"),
         RecentSearch(3, "Sushi"),
     )
+
     fun fetchRecentSearch(userId: Int): Flow<List<RecentSearch>> = flow {
         val result = mockData // TODO: Add function to get recent search
         emit(result)
@@ -54,5 +63,17 @@ class PlaylistRepository(private val apiService: PlaylistApiService) {
         emit(result)
     }.catch { e ->
         Log.e("PdError", "Error at fetchSearchResults - ${e.message}")
+    }
+
+    fun fetchRandomPlaylist(cuisine: String, numOfDish: Int, maxBudget: Int) = flow {
+        val result = apiService.getRandomPlaylist(cuisine, numOfDish, maxBudget)
+        emit(result)
+    }.catch { e ->
+        Log.e("PdError", "Error at fetchRandomPlaylist - ${e.message}")
+    }
+
+    suspend fun subscribePlaylist(playlist: FinalPlaylist, userId: String) {
+        println("At subscribePlaylist")
+        apiService.postPlaylist(playlist, userId)
     }
 }
