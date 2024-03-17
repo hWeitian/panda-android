@@ -63,7 +63,7 @@ fun onBoardingScreen(navController: NavController) {
 //    }
 
 
-    Column(modifier = Modifier.background(BrandPrimary)) {
+    Column(modifier = Modifier.background(BrandPrimary).fillMaxWidth()) {
         Image(
             modifier = Modifier
                 .fillMaxWidth()

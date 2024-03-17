@@ -85,7 +85,7 @@ fun AddressFormScreen(
                     LazyColumn {
                         items(addresses) { address ->
                             RoundCheckBoxWithText(
-                                index = addresses.indexOf(address), // Pass the index here
+                                index = addresses.indexOf(address),
                                 address = address.address,
                                 city = address.city,
                                 zipCode = address.zipCode,

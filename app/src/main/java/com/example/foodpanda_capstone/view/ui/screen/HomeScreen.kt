@@ -51,7 +51,7 @@ fun HomeScreen(navController: NavController) {
                 Row(modifier = Modifier.padding(top=8.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)){
                     CustomCard(width = 180.dp, height = 250.dp, text = "Food Delivery", content = "Big savings on delivery!", R.drawable.food_delivery, navController = navController)
-                    CustomCard(width = 180.dp, height = 250.dp, text = "Playlist", content = "Preview/List of playlist", R.drawable.playlist_home_thumbnail, navController = navController)
+                    CustomCard(width = 180.dp, height = 250.dp, text = "Playlist", content = "Preview/List of playlist", R.drawable.burger, navController = navController)
                 }
             }
 
@@ -67,8 +67,8 @@ fun HomeScreen(navController: NavController) {
             item {
                 Row(modifier = Modifier,
                     horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                    CustomCard(width = 180.dp, height = 100.dp, text = "Pick-up", content = "Up to 50% off", R.drawable.pick_up, navController = navController)
-                    CustomCard(width = 180.dp, height = 100.dp, text = "Pandago", content = "Send Parcel", R.drawable.panda_go, navController = navController)
+                    CustomCard(width = 180.dp, height = 200.dp, text = "Pick-up", content = "Up to 50% off", R.drawable.pick_up, navController = navController)
+                    CustomCard(width = 180.dp, height = 200.dp, text = "Pandago", content = "Send Parcel", R.drawable.panda_go, navController = navController)
                 }
 
             }
@@ -76,8 +76,8 @@ fun HomeScreen(navController: NavController) {
                 Row(modifier = Modifier,
                     horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                     // Add cards with different sizes
-                    CustomCard(width = 180.dp, height = 100.dp, text = "Dine-in", content = "Up to 50% off Enter Bill", R.drawable.dine_in, navController = navController)
-                    CustomCard(width = 180.dp, height = 100.dp, text = "", content = "", R.drawable.ic_arrow_tail_back, navController = navController)
+                    CustomCard(width = 480.dp, height = 200.dp, text = "Dine-in", content = "Up to 50% off Enter Bill", R.drawable.dine_in, navController = navController)
+//                    CustomCard(width = 180.dp, height = 100.dp, text = "", content = "", R.drawable.ic_arrow_tail_back, navController = navController)
                 }
 
             }
@@ -157,8 +157,7 @@ fun ContentInsideColumn(color: Color, text: String) {
             .height(200.dp)
             .background(color)
     ) {
-        // Your content inside the column
-        // You can customize the content based on your requirements
+
     }
 }
 

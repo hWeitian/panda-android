@@ -3,6 +3,7 @@ package com.example.foodpanda_capstone.view.ui.composable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,7 +20,7 @@ fun LoadingScreen () {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loading_animation_pink))
 
     Surface(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxWidth(),
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),

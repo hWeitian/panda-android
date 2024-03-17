@@ -171,15 +171,20 @@ fun LoginScreen(viewModel: AuthViewModel, navController: NavController) {
 //            PrimaryButton(name = "Cancel", width = null) {
 //                navController.navigate("Home")
 
-            // Display login result text
+//             Display login result text
             loginResultText?.let {
                 Text(it, color = if (it.contains("Success")) Color.Green else Color.Red)
             }
+//
+//            when (loginState) {
+//                true -> Text("Login Successful", color = Color.Green)
+//                false -> Text("Login Failed", color = Color.Red)
+//                else -> ""
+//            }
 
-            when (loginState) {
-                true -> Text("Login Successful", color = Color.Green)
-                false -> Text("Login Failed", color = Color.Red)
-                else -> Unit
+            when {
+                loginState && isButtonClicked -> Text("Login Successful", color = Color.Green)
+                !loginState && isButtonClicked -> Text("Login Failed", color = Color.Red)
             }
 
             Spacer(modifier = Modifier.padding(8.dp))
