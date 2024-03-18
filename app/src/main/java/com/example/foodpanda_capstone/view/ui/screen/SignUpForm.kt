@@ -66,7 +66,7 @@ fun signUpForm(viewModel: AuthViewModel, navController: NavController) {
         .padding(8.dp)) {
         Image(
             modifier = Modifier
-q                .fillMaxWidth()
+                .fillMaxWidth()
                 .weight(1f),
             painter = painterResource(id = R.drawable.signup_profile), contentDescription = "onboard image"
         )
