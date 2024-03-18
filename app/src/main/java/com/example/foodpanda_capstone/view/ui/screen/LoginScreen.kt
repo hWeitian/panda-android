@@ -59,14 +59,14 @@ fun LoginScreen(viewModel: AuthViewModel, navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(8.dp, top = 100.dp)
+            .padding(8.dp, top = 150.dp)
     ) {
         Text(
             text = "Login with your email",
-            style = MaterialTheme.typography.headlineMedium
+            style = MaterialTheme.typography.titleMedium
         )
 
-        Spacer(modifier = Modifier.padding(8.dp))
+        Spacer(modifier = Modifier.padding(16.dp))
 
         OutlinedTextField(
             value = email,
@@ -74,7 +74,7 @@ fun LoginScreen(viewModel: AuthViewModel, navController: NavController) {
             label = { Text("Email") },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 10.dp),
+                .padding(bottom = 24.dp),
             colors = OutlinedTextFieldDefaults.colors(
                 cursorColor = BrandSecondary,
                 focusedBorderColor = BrandSecondary,
@@ -88,7 +88,7 @@ fun LoginScreen(viewModel: AuthViewModel, navController: NavController) {
             label = { Text("Password") },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 10.dp),
+                .padding(bottom = 24.dp),
             colors = OutlinedTextFieldDefaults.colors(
                 cursorColor = BrandSecondary,
                 focusedBorderColor = BrandSecondary,
@@ -114,14 +114,14 @@ fun LoginScreen(viewModel: AuthViewModel, navController: NavController) {
 
         Spacer(modifier = Modifier.padding(4.dp))
 
-        Text(
-            text = "I forgot my password",
-            style = MaterialTheme.typography.bodyMedium
-        )
+//        Text(
+//            text = "I forgot my password",
+//            style = MaterialTheme.typography.bodyMedium
+//        )
 
         Column(
-            modifier = Modifier
-                .padding(top = 300.dp)
+            modifier = Modifier.weight(1f),
+//                .padding(top = 400.dp)
         ) {
             PrimaryButton(name = "Login", width = null) {
                 isButtonClicked = true

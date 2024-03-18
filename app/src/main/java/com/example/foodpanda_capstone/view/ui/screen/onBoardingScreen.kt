@@ -36,6 +36,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.foodpanda_capstone.R
 import com.example.foodpanda_capstone.view.ui.composable.PrimaryButton
 import com.example.foodpanda_capstone.view.ui.theme.BrandPrimary
+import com.example.foodpanda_capstone.view.ui.theme.Typography
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
@@ -86,11 +87,11 @@ fun onBoardingScreen(navController: NavController) {
                     .fillMaxWidth()
                     .padding(16.dp) // Adjust padding as needed
             ) {
-                Text(fontSize = 24.sp,text = "Sign up or Log in")
+                Text(style = Typography.titleLarge,text = "Sign up or Log in")
 
                 Spacer(modifier = Modifier.padding(top = 8.dp))
 
-                Text(text = "Select your preferred method to continue", fontSize = 16.sp)
+                Text(text = "Select your preferred method to continue", style = Typography.bodyLarge)
 
                 Spacer(modifier = Modifier.weight(1f))
 
