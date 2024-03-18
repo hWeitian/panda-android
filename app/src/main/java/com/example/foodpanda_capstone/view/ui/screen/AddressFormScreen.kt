@@ -3,7 +3,6 @@ package com.example.foodpanda_capstone.view.ui.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,8 +35,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.Center
-import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,11 +42,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewModelScope
-import com.example.foodpanda_capstone.model.mock_data.AddressData
+import com.example.foodpanda_capstone.model.AddressData
 import com.example.foodpanda_capstone.view.ui.theme.BrandPrimary
 import com.example.foodpanda_capstone.viewmodel.AddressViewModel
-import kotlinx.coroutines.launch
 import setSharedPreferenceAddressData
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -76,7 +71,6 @@ fun AddressFormScreen(
         ModalBottomSheet(
             onDismissRequest = {toggleBottomSheet()},
             sheetState = sheetState) {
-                // Define your input fields and buttons inside the BottomSheet
                 Column(
                     modifier = Modifier
                         .padding(16.dp)

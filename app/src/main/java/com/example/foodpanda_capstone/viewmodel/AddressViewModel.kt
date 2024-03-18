@@ -4,8 +4,8 @@ import addAddressList
 import android.content.Context
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
+import com.example.foodpanda_capstone.model.AddressData
 import com.example.foodpanda_capstone.model.AddressRepository
-import com.example.foodpanda_capstone.model.mock_data.AddressData
 import getAddressList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
