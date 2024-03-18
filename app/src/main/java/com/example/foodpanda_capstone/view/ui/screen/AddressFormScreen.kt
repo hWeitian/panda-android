@@ -3,6 +3,7 @@ package com.example.foodpanda_capstone.view.ui.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,14 +36,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.Center
+import androidx.compose.ui.Alignment.Companion.CenterEnd
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewModelScope
 import com.example.foodpanda_capstone.model.mock_data.AddressData
 import com.example.foodpanda_capstone.view.ui.theme.BrandPrimary
 import com.example.foodpanda_capstone.viewmodel.AddressViewModel
+import kotlinx.coroutines.launch
 import setSharedPreferenceAddressData
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -78,7 +85,7 @@ fun AddressFormScreen(
                     LazyColumn {
                         items(addresses) { address ->
                             RoundCheckBoxWithText(
-                                index = addresses.indexOf(address), // Pass the index here
+                                index = addresses.indexOf(address),
                                 address = address.address,
                                 city = address.city,
                                 zipCode = address.zipCode,
@@ -87,7 +94,8 @@ fun AddressFormScreen(
                                 viewModel = addressViewModel,
                                 toggleBottomSheet = toggleBottomSheet,
                                 setAddressOnAppbar = setAddressOnAppbar,
-                            ) { selectedAddress = it
+                            ) {
+                                selectedAddress = it
                             }
                         }
                     }
@@ -96,7 +104,7 @@ fun AddressFormScreen(
 
                     // Clickable text with an icon
                     Row(
-                        verticalAlignment = Alignment.CenterVertically,
+                        verticalAlignment = CenterVertically,
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
@@ -106,10 +114,14 @@ fun AddressFormScreen(
                         Icon(
                             imageVector = Icons.Default.Add,
                             contentDescription = "Add address",
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(24.dp),
+                            tint = BrandPrimary
                         )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(text = "Add your address here")
+                        Spacer(modifier = Modifier.width(24.dp))
+                        Text(text = "Add your address here",
+                            color = BrandPrimary,
+                            fontSize = 20.sp
+                        )
                     }
                 }
                 if (isAddressInputFormVisible) {
@@ -162,7 +174,7 @@ fun AddressInputForm(
         onDismissRequest = { onDismissRequest() },
         title = {
             // Title of the AlertDialog
-            Text("Add Address")
+            Text("Add / Edit your address here.", fontSize = 15.sp)
         },
         text = {
             // Content of the AlertDialog
@@ -191,19 +203,28 @@ fun AddressInputForm(
                         onDismissRequest()
                     }
                 ) {
-                    Text("Add Address")
+                    if (editedAddress != null) {
+                        Text("Edit",  modifier = Modifier.padding(start = 16.dp, end = 16.dp),)
+                    } else {
+                        Text("Add",  modifier = Modifier.padding(start = 16.dp, end = 16.dp),)
+                    }
                 }
 
+                Spacer(modifier = Modifier.padding(4.dp))
                 Button(
                     onClick = {
                         //address from input which has yet to be saved. If the address from database is not null, update old with new address.
                         //Else just save into database with the new input address.
                         viewModel.removeAddress(AddressData(address, city, zipCode))
-
-                        onDismissRequest()
-                    }
+//                        viewModel.viewModelScope.launch {
+//                            viewModel.addresses.collect { addresses ->
+//                                println(addresses)
+//                            }
+                            onDismissRequest()
+                        }
+//                    }
                 ) {
-                    Text("Remove Address")
+                    Text("Remove")
                 }
             }
 
@@ -228,7 +249,8 @@ fun RoundCheckBoxWithText(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         val isChecked = selectedAddress == address
         var isAddressInputFormVisible by remember { mutableStateOf(false) }
@@ -262,18 +284,23 @@ fun RoundCheckBoxWithText(
             }
         }
 
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(24.dp))
 
         Column(
             modifier = Modifier
-                .align(Alignment.CenterVertically)
+                .align(CenterVertically)
+                .weight(1f)
         ) {
             Text(
                 text = "Address: $address",
                 style = MaterialTheme.typography.bodySmall,
             )
             Text(
-                text = "City: $city, Zip Code: $zipCode",
+                text = "City: $city",
+                style = MaterialTheme.typography.bodySmall,
+            )
+            Text(
+                text = "Zip Code: $zipCode",
                 style = MaterialTheme.typography.bodySmall,
             )
         }
@@ -281,7 +308,7 @@ fun RoundCheckBoxWithText(
             imageVector = Icons.Default.Edit,
             contentDescription = "Edit Address",
             modifier = Modifier
-                .fillMaxWidth()
+//                .fillMaxWidth()
                 .size(24.dp)
                 .clickable {
                     editAddress = AddressData(address, city, zipCode)

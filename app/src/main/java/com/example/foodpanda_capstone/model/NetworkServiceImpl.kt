@@ -11,7 +11,6 @@ class NetworkServiceImpl : NetworkService {
 //        // Log the value
 //        Log.d("LoginValidation", "Login is correct: $loginIsCorrect")
 //        return loginIsCorrect
-
         return LoginFormData.any { it.email == email && it.password == password }
     }
 

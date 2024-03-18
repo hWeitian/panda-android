@@ -110,6 +110,7 @@ import com.example.foodpanda_capstone.view.ui.screen.PlaylistScreen
 import com.example.foodpanda_capstone.view.ui.screen.PlaylistSectionScreen
 import com.example.foodpanda_capstone.view.ui.screen.onBoardingScreen
 import com.example.foodpanda_capstone.view.ui.screen.signUpForm
+import com.example.foodpanda_capstone.view.ui.theme.BrandHighlight
 import com.example.foodpanda_capstone.view.ui.theme.BrandPrimary
 import com.example.foodpanda_capstone.view.ui.theme.BrandSecondary
 import com.example.foodpanda_capstone.view.ui.theme.FoodpandaCapstoneTheme
@@ -256,9 +257,7 @@ fun Navigation() {
 
     val drawerItem = listOf(
         DrawerItems(Icons.Default.Face, "Profile", 0, false),
-        DrawerItems(Icons.Filled.Email, "Inbox", 32, true),
         DrawerItems(Icons.Filled.Favorite, "Favorite", 32, true),
-        DrawerItems(Icons.Filled.Info, "Help Center", 0, false),
         DrawerItems(Icons.Filled.ThumbUp, "Invite Friends", 0, false)
     )
 
@@ -266,12 +265,10 @@ fun Navigation() {
 //        DrawerItems(Icons.Default.Share, "Share", 0, false),
         DrawerItems(Icons.Filled.Star, "Rate", 0, false),
         DrawerItems(Icons.Filled.Settings, "Setting", 0, false),
-        DrawerItems(Icons.Filled.MoreVert, "Terms & Conditions / Policy", 0, false),
         DrawerItems(Icons.Filled.ExitToApp, "Logout", 0, false),
     )
 
     val drawerItem3 = listOf(
-        DrawerItems(Icons.Filled.Info, "Help Center", 0, false),
         DrawerItems(Icons.Filled.ThumbUp, "Invite Friends", 0, false)
     )
 
@@ -592,7 +589,7 @@ fun Navigation() {
                                 ),
                                 title = {
                                     Column(
-                                        verticalArrangement = Arrangement.SpaceEvenly,
+                                        verticalArrangement = Arrangement.spacedBy(8.dp),
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(start = 16.dp, bottom = 8.dp, top = 16.dp)
@@ -607,7 +604,7 @@ fun Navigation() {
                                         selectedAddress?.let {
                                             Text(
                                                 text = it,
-                                                style = Typography.bodySmall
+                                                style = Typography.bodyLarge
                                             )
                                         }
 
@@ -626,13 +623,13 @@ fun Navigation() {
                                     }
 
                                     Spacer(modifier = Modifier.height(8.dp))
-                                    Text(text = searchResult, style = MaterialTheme.typography.bodyMedium)
+//                                    Text(text = searchResult, style = MaterialTheme.typography.bodyMedium)
 
                                 },
 
                                 navigationIcon = {
                                     IconButton(modifier = Modifier
-                                        .padding(top = 14.dp)
+                                        .padding(top = 24.dp)
                                         .size(40.dp)
                                         .background(BrandPrimary),
                                         onClick = {
@@ -665,7 +662,8 @@ fun Navigation() {
                                     titleContentColor = Color.Black,
                                 ),
                                 title = {
-                                    Text(text = pageTitle ?: currentRoute, style = Typography.titleMedium)
+                                    Text(text = "", style = Typography.titleMedium)
+//                                    Text(text = pageTitle ?: currentRoute, style = Typography.titleMedium)
                                 },
                                 navigationIcon = {
                                     IconButton(onClick = { navController.popBackStack() }) {

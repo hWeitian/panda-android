@@ -35,9 +35,7 @@ import com.example.foodpanda_capstone.view.ui.theme.BrandSecondary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-//fun LoginScreen(loginFormViewModel: LoginFormViewModel, navController: NavController) {
 
-//fun LoginScreen(loginFormViewModel: LoginFormViewModel, navController: NavController) {
 fun LoginScreen(viewModel: AuthViewModel, navController: NavController) {
 
     var email by remember { mutableStateOf("") }
@@ -45,10 +43,6 @@ fun LoginScreen(viewModel: AuthViewModel, navController: NavController) {
     var isButtonClicked by remember { mutableStateOf(false) }
     var isPasswordVisible by remember { mutableStateOf(false) }
 
-    //observes the navigateToHome state from the LoginFormViewModel.
-    //When it detects that navigation is required, it triggers the navigation using the NavController.
-//    val navigateToHome by loginFormViewModel.navigateToHome.collectAsState()
-//    val loginState by loginFormViewModel.loginState.collectAsState()
     var loginResultText by remember { mutableStateOf<String?>(null) }
     val loginState by viewModel.loginState.collectAsState()
 
@@ -59,14 +53,14 @@ fun LoginScreen(viewModel: AuthViewModel, navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(8.dp, top = 100.dp)
+            .padding(8.dp, top = 150.dp)
     ) {
         Text(
             text = "Login with your email",
-            style = MaterialTheme.typography.headlineMedium
+            style = MaterialTheme.typography.titleMedium
         )
 
-        Spacer(modifier = Modifier.padding(8.dp))
+        Spacer(modifier = Modifier.padding(16.dp))
 
         OutlinedTextField(
             value = email,
@@ -74,7 +68,7 @@ fun LoginScreen(viewModel: AuthViewModel, navController: NavController) {
             label = { Text("Email") },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 10.dp),
+                .padding(bottom = 24.dp),
             colors = OutlinedTextFieldDefaults.colors(
                 cursorColor = BrandSecondary,
                 focusedBorderColor = BrandSecondary,
@@ -88,7 +82,7 @@ fun LoginScreen(viewModel: AuthViewModel, navController: NavController) {
             label = { Text("Password") },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 10.dp),
+                .padding(bottom = 24.dp),
             colors = OutlinedTextFieldDefaults.colors(
                 cursorColor = BrandSecondary,
                 focusedBorderColor = BrandSecondary,
@@ -114,72 +108,24 @@ fun LoginScreen(viewModel: AuthViewModel, navController: NavController) {
 
         Spacer(modifier = Modifier.padding(4.dp))
 
-        Text(
-            text = "I forgot my password",
-            style = MaterialTheme.typography.bodyMedium
-        )
 
         Column(
-            modifier = Modifier
-                .padding(top = 300.dp)
+            modifier = Modifier.weight(1f),
         ) {
             PrimaryButton(name = "Login", width = null) {
                 isButtonClicked = true
-//                loginWithEmailPassword(email, password, navController) {
-//                        resultText ->
-//                    loginResultText = resultText
-//                }
                 viewModel.signIn(email, password) }
-//            }
-
-//            PrimaryButton(name = "Login", width = null) {
-//                isButtonClicked = true
-//                loginFormViewModel.login(email, password)
-//            }
-//             Button(modifier = Modifier
-//                 .padding(8.dp), onClick = {
-//                 isButtonClicked = true
-//                 // Trigger login when the button is pressed
-//                 loginFormViewModel.login(email, password)
-//                 Log.d("LoginScreen", "Login button clicked")}
-//
-//                  )
-//             {
-//                 Text(text = "Login")
-
-//             }
-
-//            LaunchedEffect(navigateToHome) {
-//                if (navigateToHome) {
-//                    Log.d("LoginScreen", "Navigating to Home")
-//                    navController.navigate("Home")
-//                    loginFormViewModel.onNavigationComplete()
-//                    Log.d("LoginScreen", "Navigating to Login Form")
-//
-//                }
-//            }
 
 
             Spacer(modifier = Modifier.padding(8.dp))
 
-//            when {
-//
-//                loginState && isButtonClicked -> Text("Login Successful", color = Color.Green)
-//                !loginState && isButtonClicked -> Text("Login Failed", color = Color.Red)
-//            }
-//            Log.d("Navigation", "isLoggedIn: $loginState")
-//            PrimaryButton(name = "Cancel", width = null) {
-//                navController.navigate("Home")
-
-            // Display login result text
             loginResultText?.let {
                 Text(it, color = if (it.contains("Success")) Color.Green else Color.Red)
             }
 
-            when (loginState) {
-                true -> Text("Login Successful", color = Color.Green)
-                false -> Text("Login Failed", color = Color.Red)
-                else -> Unit
+            when {
+                loginState && isButtonClicked -> Text("Login Successful", color = Color.Green)
+                !loginState && isButtonClicked -> Text("Login Failed", color = Color.Red)
             }
 
             Spacer(modifier = Modifier.padding(8.dp))

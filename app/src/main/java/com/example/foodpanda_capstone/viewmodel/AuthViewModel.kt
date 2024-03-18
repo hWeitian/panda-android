@@ -19,7 +19,6 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
     val navigateToHome: StateFlow<Boolean> = _navigateToHome
 
 
-    //sus and await?
     fun signUp(firstName: String, lastName: String, email: String, password: String) {
         viewModelScope.launch {
             try {

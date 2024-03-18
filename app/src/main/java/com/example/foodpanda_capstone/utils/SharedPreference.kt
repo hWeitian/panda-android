@@ -2,7 +2,7 @@
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.example.foodpanda_capstone.model.mock_data.AddressData
+import com.example.foodpanda_capstone.model.AddressData
 import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
 
@@ -63,10 +63,11 @@ fun Context.addAddressList(newAddress: AddressData) {
 
 fun Context.removeAddressFromList(addressToRemove: AddressData) {
     // Retrieve the current list of addresses from SharedPreferences
-    val currentAddresses = getAddressList().toMutableList()
+    val currentAddresses: MutableList<AddressData> = getAddressList().toMutableList()
 
     // Remove the desired address from the list
-    currentAddresses.remove(addressToRemove)
+    var removeSucceeded: Boolean =  currentAddresses.remove(addressToRemove)
+    print(removeSucceeded)
 
     // Serialize the updated list to JSON
     val gson = Gson()
