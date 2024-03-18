@@ -1,7 +1,5 @@
 package com.example.foodpanda_capstone.model
 
-import com.example.foodpanda_capstone.model.mock_data.AddressData
-
 class AddressRepository {
     private val _addresses = mutableListOf<AddressData>()
 
