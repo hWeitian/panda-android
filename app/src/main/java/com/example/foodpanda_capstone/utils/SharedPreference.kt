@@ -2,7 +2,7 @@
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.example.foodpanda_capstone.model.mock_data.AddressData
+import com.example.foodpanda_capstone.model.AddressData
 import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
 

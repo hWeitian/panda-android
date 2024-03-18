@@ -1,4 +1,4 @@
-package com.example.foodpanda_capstone.model.mock_data
+package com.example.foodpanda_capstone.model
 
 data class AddressData (
     val address: String,

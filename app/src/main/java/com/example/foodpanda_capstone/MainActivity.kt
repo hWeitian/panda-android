@@ -256,9 +256,7 @@ fun Navigation() {
 
     val drawerItem = listOf(
         DrawerItems(Icons.Default.Face, "Profile", 0, false),
-        DrawerItems(Icons.Filled.Email, "Inbox", 32, true),
         DrawerItems(Icons.Filled.Favorite, "Favorite", 32, true),
-        DrawerItems(Icons.Filled.Info, "Help Center", 0, false),
         DrawerItems(Icons.Filled.ThumbUp, "Invite Friends", 0, false)
     )
 
@@ -266,12 +264,10 @@ fun Navigation() {
 //        DrawerItems(Icons.Default.Share, "Share", 0, false),
         DrawerItems(Icons.Filled.Star, "Rate", 0, false),
         DrawerItems(Icons.Filled.Settings, "Setting", 0, false),
-        DrawerItems(Icons.Filled.MoreVert, "Terms & Conditions / Policy", 0, false),
         DrawerItems(Icons.Filled.ExitToApp, "Logout", 0, false),
     )
 
     val drawerItem3 = listOf(
-        DrawerItems(Icons.Filled.Info, "Help Center", 0, false),
         DrawerItems(Icons.Filled.ThumbUp, "Invite Friends", 0, false)
     )
 
