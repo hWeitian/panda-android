@@ -21,7 +21,7 @@ data class FinalPlaylist(
     val deliveryDay: String?,
     val foodItems: List<RestaurantFoodItems?>?,
     val isPublic: Boolean?,
-    val deliverTime: String?,
+    val deliveryTime: String?,
     val userId: String,
     val status: String = "Subscribed"
 )
@@ -34,6 +34,7 @@ data class PlaylistOverview (
     val deliveryDay: String,
     val category: String,
     val cost: BigDecimal,
+    val status: String
 )
 
 data class AllPlaylist(

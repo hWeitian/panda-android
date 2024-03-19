@@ -46,20 +46,19 @@ class PlaylistRepository(private val apiService: PlaylistApiService) {
         RecentSearch(3, "Sushi"),
     )
 
-    fun fetchRecentSearch(userId: Int): Flow<List<RecentSearch>> = flow {
-        val result = mockData // TODO: Add function to get recent search
+    fun fetchRecentSearch(userId: String): Flow<List<RecentSearch>> = flow {
+        val result = apiService.getRecentSearch(userId)
         emit(result)
     }.catch { e ->
         Log.e("PdError", "Error at fetchRecentSearch - ${e.message}")
     }
 
-    fun deleteRecentSearch(userId: Int, keyword: String) {
-        // TODO: Add function to delete recent search from database
-        mockData = mockData.filterNot { it.keyword == keyword }
+    suspend fun deleteRecentSearch(userId: String, keyword: String) {
+        apiService.deleteRecentSearch(userId, keyword)
     }
 
-    fun fetchSearchResults(keyword: String): Flow<List<FoodItem>> = flow {
-        val result = apiService.getSearchResults(keyword)
+    fun fetchSearchResults(userId: String, keyword: String): Flow<List<FoodItem>> = flow {
+        val result = apiService.getSearchResults(userId, keyword)
         emit(result)
     }.catch { e ->
         Log.e("PdError", "Error at fetchSearchResults - ${e.message}")
@@ -73,7 +72,14 @@ class PlaylistRepository(private val apiService: PlaylistApiService) {
     }
 
     suspend fun subscribePlaylist(playlist: FinalPlaylist, userId: String) {
-        println("At subscribePlaylist")
         apiService.postPlaylist(playlist, userId)
+    }
+
+    suspend fun amendPlaylist(playlist: FinalPlaylist, userId: String) {
+        apiService.updatePlaylist(playlist, userId)
+    }
+
+    suspend fun cancelSubscription(userId: String, playlistId: Int) {
+        apiService.cancelSubscription(userId, playlistId)
     }
 }
