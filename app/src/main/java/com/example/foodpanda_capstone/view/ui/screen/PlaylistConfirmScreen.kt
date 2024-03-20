@@ -179,7 +179,7 @@ fun PlaylistConfirmScreen(viewModel: PlaylistViewModel, navController: NavContro
                     icon = Icons.Default.Loyalty,
                     modifier = Modifier
                 ) {
-                    navController.navigate("View")
+                    navController.navigate("EditPlaylist/${currentPlaylist.name}")
                 }
             }
 
