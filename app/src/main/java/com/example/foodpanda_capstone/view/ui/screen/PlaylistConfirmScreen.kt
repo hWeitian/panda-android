@@ -160,6 +160,7 @@ fun PlaylistConfirmScreen(viewModel: PlaylistViewModel, navController: NavContro
     DisposableEffect(Unit) {
         onDispose {
             viewModel.resetData()
+            viewModel.updateSelectedTimeOfDelivery("")
             selectedIndex = -1
         }
     }
