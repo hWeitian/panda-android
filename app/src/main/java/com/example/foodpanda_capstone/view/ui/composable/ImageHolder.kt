@@ -12,9 +12,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.example.foodpanda_capstone.model.api.BaseUrl
 
 @Composable
 fun ImageHolder(imageUrl: String, height: Int, description: String?) {
+
+    val firstCharOfImgUrl = imageUrl.first()
+    val finalImageUrl = if (firstCharOfImgUrl != 'h') BaseUrl.BASE_URL + imageUrl else imageUrl
+
     Card(
         modifier = Modifier
             .height(height.dp)
@@ -23,7 +28,7 @@ fun ImageHolder(imageUrl: String, height: Int, description: String?) {
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
     ) {
         AsyncImage(
-            model = imageUrl,
+            model = finalImageUrl,
             contentDescription = description,
             contentScale = ContentScale.FillBounds,
             modifier = Modifier.fillMaxSize()
