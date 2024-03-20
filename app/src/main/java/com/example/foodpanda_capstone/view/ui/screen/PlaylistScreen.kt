@@ -14,6 +14,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -49,10 +50,23 @@ fun PlaylistScreen(navController: NavController, id: Int?, viewModel: PlaylistVi
     val openModal = remember { mutableStateOf(false) }
     val currentPlaylist by viewModel.currentPlaylist.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
+    val canNavigate by viewModel.canNavigate.observeAsState()
 
     LaunchedEffect(id) {
         if (id != null) {
             viewModel.getOnePlaylist(id)
+        }
+    }
+
+    LaunchedEffect(canNavigate) {
+        if (canNavigate == true) {
+            navController.navigate("Playlist List")
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.resetData()
         }
     }
 
@@ -120,14 +134,16 @@ fun PlaylistScreen(navController: NavController, id: Int?, viewModel: PlaylistVi
             LoadingScreen()
         }
 
-        if(openModal.value){
-            // TODO: Logic to cancel subscription
+        if (openModal.value) {
             Modal (
                 title = "Cancel Subscription",
                 description = "Cancellation of playlist subscription will start next week.\r\n\nAre you sure you want to cancel?",
                 buttonTitle = "Confirm",
-                onDismissRequest = { openModal.value = false},
-                onConfirmation = { Log.i("Panda", "Cancel Subscription button clicked.") } // TODO: Add cancel subscription logic}
+                onDismissRequest = { openModal.value = false },
+                onConfirmation = {
+                    viewModel.onConfirmCancelSubscriptionClick()
+                    openModal.value = false
+                }
             )
         }
 

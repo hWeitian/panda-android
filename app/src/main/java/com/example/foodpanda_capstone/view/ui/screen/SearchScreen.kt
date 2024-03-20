@@ -57,6 +57,7 @@ import com.example.foodpanda_capstone.model.FoodItem
 import com.example.foodpanda_capstone.model.RecentSearch
 import com.example.foodpanda_capstone.view.ui.composable.SectionTitleAndBtn
 import com.example.foodpanda_capstone.view.ui.theme.LightGrey
+import com.example.foodpanda_capstone.view.ui.theme.Typography
 import com.example.foodpanda_capstone.viewmodel.PlaylistViewModel
 
 
@@ -141,7 +142,8 @@ fun RecentSearch(
     Box {
         if (recentSearches.isNotEmpty()) {
             Column {
-                SectionTitleAndBtn(title = "Recent Search", btnTitle = "Clear all", icon = null) {}
+                Text(text = "Recent Search", style = Typography.titleSmall)
+//                SectionTitleAndBtn(title = "Recent Search", btnTitle = "Clear all", icon = null) {}
                 LazyColumn {
                     items(recentSearches) { keyword ->
                         SearchKeyword(

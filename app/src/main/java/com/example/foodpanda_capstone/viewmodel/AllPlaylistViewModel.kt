@@ -34,8 +34,8 @@ class AllPlaylistViewModel(private val repository: PlaylistRepository) : ViewMod
                 }
                 try {
                     repository.fetchAllPlaylist(userId).collect { playlists ->
-                        _publicPlaylists.value = playlists.publicPlaylist
-                        _userPlaylists.value = playlists.userPlaylist
+                        _publicPlaylists.value = playlists.publicPlaylist.filter { it.status != "Cancelled" }
+                        _userPlaylists.value = playlists.userPlaylist.filter { it.status != "Cancelled" }
                     }
                 } catch (e: Exception) {
                     logErrorMsg("getAllPlaylist", e)

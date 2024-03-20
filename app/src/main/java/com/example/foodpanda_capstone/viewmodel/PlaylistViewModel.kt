@@ -30,6 +30,8 @@ import java.math.BigDecimal
 
 class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel() {
 
+    private val userId = "1"
+
     private val _currentPlaylist = MutableStateFlow(
         Playlist(
             id = 0,
@@ -90,15 +92,36 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
                 delay(1000)
             }
             try {
-                // TODO: Remove dummy user name
-                val userId = "asdasdasdadsasdasdad"
-//                val userId = getUserId()
-                if (userId != null) {
-                    val finalPlaylist = generateFinalPlaylistSubscriptionData(userId)
+                val finalPlaylist = generateFinalPlaylistSubscriptionData(userId)
+
+                if (_currentPlaylist.value.id == 0 || _currentPlaylist.value.isPublic == true) {
                     repository.subscribePlaylist(playlist = finalPlaylist, userId = userId)
+                } else {
+                    repository.amendPlaylist(playlist = finalPlaylist, userId = userId)
                 }
+
             } catch (e: Exception) {
                 logErrorMsg("onConfirmSubscriptionClick", e)
+            }
+            withContext(Dispatchers.Main) {
+                _canNavigate.value = true
+                delay(3000)
+                _isLoading.value = false
+            }
+        }
+    }
+
+
+    fun onConfirmCancelSubscriptionClick() {
+        viewModelScope.launch(Dispatchers.IO) {
+            withContext(Dispatchers.Main) {
+                _isLoading.value = true
+                delay(1000)
+            }
+            try {
+                repository.cancelSubscription(userId = userId, playlistId = _currentPlaylist.value.id)
+            } catch (e: Exception) {
+                logErrorMsg("onConfirmCancelSubscriptionClick", e)
             }
             withContext(Dispatchers.Main) {
                 _canNavigate.value = true
@@ -121,7 +144,7 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
             deliveryDay = concatSelectDays(),
             foodItems = _currentPlaylist.value.foodItems,
             isPublic = false,
-            deliverTime = _selectedTimeOfDelivery.value,
+            deliveryTime = _selectedTimeOfDelivery.value,
             userId = userId,
             status = "Subscribed"
         )
@@ -235,7 +258,7 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
         _isInputOnFocus.value = isFocus
     }
 
-    fun getRecentSearch(userId: Int = 1) {
+    fun getRecentSearch() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 repository.fetchRecentSearch(userId).collect {
@@ -263,7 +286,7 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
                 delay(1000)
             }
             try {
-                repository.fetchSearchResults(searchText.value.toString()).collect { searchResult ->
+                repository.fetchSearchResults(userId, searchText.value.toString()).collect { searchResult ->
                     _searchResults.value = updateSearchedDishQuantity(searchResult)
                 }
             } catch (e: Exception) {
@@ -322,7 +345,7 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
     fun deleteRecentSearchKeyword(keyword: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                repository.deleteRecentSearch(userId = 1, keyword = keyword)
+                repository.deleteRecentSearch(userId = userId, keyword = keyword)
                 getRecentSearch()
             } catch (e: Exception) {
                 logErrorMsg("deleteRecentSearchKeyword", e)
