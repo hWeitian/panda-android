@@ -61,89 +61,97 @@ fun PlaylistListScreen(navController: NavController, isUserLoggedIn: Boolean, us
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
 
-            Column {
-                PlaylistSection(
-                    dataList = userPlaylists,
-                    title = "Your Subscription",
-                    navController = navController,
-                    isPublic = false,
-                    userId = userId
-                    )
-                PlaylistSection(
-                    dataList = publicPlaylists,
-                    title = "Discover More",
-                    navController = navController,
-                    isPublic = true,
-                    userId = userId
-                )
-            }
-            PlaylistListScreenButtons(
-                descriptionText = "Want a tailored experience?",
-                buttonText = "Build your mix!",
-                navigateDestination = "Playlist Form",
-                navController,
-                Modifier.weight(1f)
-            )
+            /*
+            Start to disable user Login
+            */
 
-//            if (!isUserLoggedIn) {
-//                PlaylistListScreenButtons(
-//                    descriptionText = "Log in / sign up to view your subscriptions",
-//                    buttonText = "Log in / Sign up",
-//                    navigateDestination = "Welcome",
-//                    navController,
-//                    Modifier.weight(1f)
-//                )
-//                Column {
-//                    PlaylistSection(
-//                        dataList = publicPlaylists,
-//                        title = "Discover More",
-//                        navController = navController,
-//                        isPublic = true,
-//                        userId = userId
+//            Column {
+//                PlaylistSection(
+//                    dataList = userPlaylists,
+//                    title = "Your Subscription",
+//                    navController = navController,
+//                    isPublic = false,
+//                    userId = userId
 //                    )
-//                }
-//            } else if (userPlaylists.isNullOrEmpty()) {
-//                PlaylistListScreenButtons(
-//                    descriptionText = "You haven't subscribed to any playlists.",
-//                    buttonText = "Build your mix!",
-//                    navigateDestination = "Playlist Form",
-//                    navController,
-//                    Modifier.weight(1f)
-//                )
-//                Column {
-//                    PlaylistSection(
-//                        dataList = publicPlaylists,
-//                        title = "Discover More",
-//                        navController = navController,
-//                        isPublic = true,
-//                        userId = userId
-//                    )
-//                }
-//            } else {
-//                Column {
-//                    PlaylistSection(
-//                        dataList = userPlaylists,
-//                        title = "Your Subscription",
-//                        navController = navController,
-//                        isPublic = false,
-//                        userId = userId
-//                    )
-//                    PlaylistSection(
-//                        dataList = publicPlaylists,
-//                        title = "Discover More",
-//                        navController = navController,
-//                        isPublic = true,
-//                        userId = userId
-//                    )
-//                }
-//                PlaylistListScreenButtons(
-//                    descriptionText = "Want a tailored experience?",
-//                    buttonText = "Build your mix!",
-//                    navigateDestination = "Playlist Form",
-//                    navController,
-//                    Modifier.weight(1f)
+//                PlaylistSection(
+//                    dataList = publicPlaylists,
+//                    title = "Discover More",
+//                    navController = navController,
+//                    isPublic = true,
+//                    userId = userId
 //                )
 //            }
+//            PlaylistListScreenButtons(
+//                descriptionText = "Want a tailored experience?",
+//                buttonText = "Build your mix!",
+//                navigateDestination = "Playlist Form",
+//                navController,
+//                Modifier.weight(1f)
+//            )
+
+            /*
+            Start to enable user Login
+            */
+
+            if (!isUserLoggedIn) {
+                PlaylistListScreenButtons(
+                    descriptionText = "Log in / sign up to view your subscriptions",
+                    buttonText = "Log in / Sign up",
+                    navigateDestination = "Welcome",
+                    navController,
+                    Modifier.weight(1f)
+                )
+                Column {
+                    PlaylistSection(
+                        dataList = publicPlaylists,
+                        title = "Discover More",
+                        navController = navController,
+                        isPublic = true,
+                        userId = userId
+                    )
+                }
+            } else if (userPlaylists.isNullOrEmpty()) {
+                PlaylistListScreenButtons(
+                    descriptionText = "You haven't subscribed to any playlists.",
+                    buttonText = "Build your mix!",
+                    navigateDestination = "Playlist Form",
+                    navController,
+                    Modifier.weight(1f)
+                )
+                Column {
+                    PlaylistSection(
+                        dataList = publicPlaylists,
+                        title = "Discover More",
+                        navController = navController,
+                        isPublic = true,
+                        userId = userId
+                    )
+                }
+            } else {
+                Column {
+                    PlaylistSection(
+                        dataList = userPlaylists,
+                        title = "Your Subscription",
+                        navController = navController,
+                        isPublic = false,
+                        userId = userId
+                    )
+                    PlaylistSection(
+                        dataList = publicPlaylists,
+                        title = "Discover More",
+                        navController = navController,
+                        isPublic = true,
+                        userId = userId
+                    )
+                }
+                PlaylistListScreenButtons(
+                    descriptionText = "Want a tailored experience?",
+                    buttonText = "Build your mix!",
+                    navigateDestination = "Playlist Form",
+                    navController,
+                    Modifier.weight(1f)
+                )
+            }
 
 
             ScreenBottomSpacer()
