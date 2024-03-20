@@ -297,9 +297,6 @@ fun Navigation() {
     val toggleAddressFormVisibility = { isAddressFormVisible = !isAddressFormVisible }
 
 
-
-
-
     val savedAddress = context.getStringSharedPreference(PREF_KEY_CURRENT_ADDRESS)
     val savedZipCode = context.getStringSharedPreference(PREF_KEY_CURRENT_ZIPCODE)
     val savedCity = context.getStringSharedPreference(PREF_KEY_CURRENT_CITY)
@@ -608,14 +605,15 @@ fun Navigation() {
                                             )
                                         }
 
-                                        if(isAddressFormVisible) {
+                                        if (isAddressFormVisible) {
                                             AddressFormScreen(
                                                 addressViewModel = addressFormViewModel,
                                                 isVisible = isAddressFormVisible,
                                                 showBottomSheet = isAddressFormVisible,
                                                 toggleBottomSheet = { toggleAddressFormVisibility() },
                                                 setAddressOnAppbar = setAddressOnAppbar,
-                                                onAddressSelected = selectedAddress)
+                                                onAddressSelected = selectedAddress
+                                            )
 
                                         }
                                         //Sample search bar to filter database
@@ -663,7 +661,7 @@ fun Navigation() {
                                 ),
                                 title = {
                                     Text(text = "", style = Typography.titleMedium)
-//                                    Text(text = pageTitle ?: currentRoute, style = Typography.titleMedium)
+                                    Text(text = pageTitle ?: currentRoute, style = Typography.titleMedium)
                                 },
                                 navigationIcon = {
                                     IconButton(onClick = { navController.popBackStack() }) {
@@ -764,6 +762,7 @@ fun Navigation() {
                     composable("Playlist Random") { backStackEntry ->
                         PlaylistScreen(navController, null, playlistViewModel)
                     }
+
                 }
             }
         }

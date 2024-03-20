@@ -195,7 +195,8 @@ fun PlaylistSection(
             .padding(vertical = 10.dp)
     ) {
 
-        SectionTitleAndBtn(title = title, btnTitle = "See all", icon = null) {
+        SectionTitleAndBtn(title = title, btnTitle = "See all", icon = null,
+            modifier = Modifier) {
             navController.navigate("ViewCategoryPlaylist/$title/$isPublic/$userId")
         }
 

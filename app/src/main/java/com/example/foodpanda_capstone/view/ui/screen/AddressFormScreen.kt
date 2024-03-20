@@ -101,6 +101,7 @@ fun AddressFormScreen(
                         verticalAlignment = CenterVertically,
                         modifier = Modifier
                             .fillMaxWidth()
+                            .align(Alignment.CenterHorizontally)
                             .clickable {
                                 isAddressInputFormVisible = true
                             }

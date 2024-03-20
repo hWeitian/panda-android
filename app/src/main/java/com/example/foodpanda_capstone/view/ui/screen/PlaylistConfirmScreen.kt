@@ -1,5 +1,9 @@
 package com.example.foodpanda_capstone.view.ui.screen
 
+import PREF_KEY_CURRENT_ADDRESS
+import PREF_KEY_CURRENT_CITY
+import PREF_KEY_CURRENT_ZIPCODE
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -43,6 +47,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -52,9 +57,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.Observer
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.example.foodpanda_capstone.model.AddressRepository
 import com.example.foodpanda_capstone.model.Days
 import com.example.foodpanda_capstone.model.FoodItem
+import com.example.foodpanda_capstone.model.PlaylistRepository
+import com.example.foodpanda_capstone.model.api.PlaylistApiService
 import com.example.foodpanda_capstone.model.timeOfDelivery
 import com.example.foodpanda_capstone.view.ui.composable.FoodItemDescriptionText
 import com.example.foodpanda_capstone.view.ui.composable.FoodItemNameText
@@ -69,14 +79,14 @@ import com.example.foodpanda_capstone.view.ui.theme.BrandDark
 import com.example.foodpanda_capstone.view.ui.theme.BrandPrimary
 import com.example.foodpanda_capstone.view.ui.theme.BrandSecondary
 import com.example.foodpanda_capstone.view.ui.theme.Typography
+import com.example.foodpanda_capstone.viewmodel.AddressViewModel
+import com.example.foodpanda_capstone.viewmodel.GeneralViewModelFactoryDoubleParam
 import com.example.foodpanda_capstone.viewmodel.PlaylistViewModel
-import com.google.android.material.color.MaterialColors.ALPHA_DISABLED
-import com.google.android.material.color.MaterialColors.ALPHA_FULL
-import java.math.BigDecimal
+import sharedPreferences
 
 @Composable
 fun PlaylistConfirmScreen(viewModel: PlaylistViewModel, navController: NavController) {
-
+    val context = LocalContext.current
     val currentPlaylist by viewModel.currentPlaylist.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val daysOfWeek by viewModel.daysOfWeek.collectAsState()
@@ -84,6 +94,52 @@ fun PlaylistConfirmScreen(viewModel: PlaylistViewModel, navController: NavContro
     val canNavigate by viewModel.canNavigate.observeAsState()
 
     var selectedIndex by remember { mutableStateOf(-1) }
+    var isAddressFormVisible by remember { mutableStateOf(false) }
+    // Function to toggle the visibility of the AddressFormScreen
+    val toggleAddressFormVisibility = { isAddressFormVisible = !isAddressFormVisible }
+
+    fun Context.getStringSharedPreference(preferenceKey: String): String {
+        val sharedPreferences = this.sharedPreferences
+        return sharedPreferences.getString(preferenceKey, null) ?: ""
+    }
+
+    fun Context.saveAddressToSharedPreferences(address: String, city: String, zipCode: String) {
+        val sharedPreferences = this.sharedPreferences
+        with(sharedPreferences.edit()) {
+            putString(PREF_KEY_CURRENT_ADDRESS, address)
+            putString(PREF_KEY_CURRENT_CITY, city)
+            putString(PREF_KEY_CURRENT_ZIPCODE, zipCode)
+            apply()
+        }
+    }
+
+
+    val addressRepository = AddressRepository()
+    val addressViewModelFactory = GeneralViewModelFactoryDoubleParam(
+        viewModelClass = AddressViewModel::class.java,
+        repository = addressRepository,
+        factory = ::AddressViewModel,
+        context = context,
+    )
+
+    val addressFormViewModel: AddressViewModel = viewModel(factory = addressViewModelFactory)
+
+    val savedAddress = context.getStringSharedPreference(PREF_KEY_CURRENT_ADDRESS)
+    val savedZipCode = context.getStringSharedPreference(PREF_KEY_CURRENT_ZIPCODE)
+    val savedCity = context.getStringSharedPreference(PREF_KEY_CURRENT_CITY)
+
+    var selectedAddress = if (savedAddress != null && savedZipCode != null && savedCity != null) {
+        "$savedAddress $savedZipCode $savedCity"
+    } else {
+        "Type your address here"
+    }
+
+    // Define the setAddressOnUI function
+    val setAddressOnScreen: (String, String, String) -> Unit = { address, city, zipCode ->
+        selectedAddress = "$address, $city, $zipCode"
+        context.saveAddressToSharedPreferences(address, city, zipCode)
+
+    }
 
     LaunchedEffect(canNavigate) {
         if (canNavigate == true) {
@@ -119,7 +175,8 @@ fun PlaylistConfirmScreen(viewModel: PlaylistViewModel, navController: NavContro
                 SectionTitleAndBtn(
                     title = "Subscription Details",
                     btnTitle = "Edit",
-                    icon = Icons.Default.Loyalty
+                    icon = Icons.Default.Loyalty,
+                    modifier = Modifier
                 ) {
                     navController.navigate("View")
                 }
@@ -141,19 +198,41 @@ fun PlaylistConfirmScreen(viewModel: PlaylistViewModel, navController: NavContro
                 SectionTitleAndBtn(
                     title = "Delivery Address",
                     btnTitle = "Edit",
-                    icon = Icons.Default.Home
+                    icon = Icons.Default.Home,
+                    modifier = Modifier
+//                    modifier = Modifier.clickable {
+//                        toggleAddressFormVisibility()
+//                        isAddressFormVisible = true
+//                    }
                 ) {
                     // TODO: Open edit address bottom sheet
-                    // navController.navigate("View")
+                    toggleAddressFormVisibility()
+                    isAddressFormVisible = true
+                    Unit
                 }
             }
 
 
             item {
                 Column(modifier = Modifier.padding(8.dp)) {
-                    Text(text = "Address 1 xxxxx")
-                    Text(text = "Address 2 xxxxx")
-                    Text(text = "Address 3 xxxxx")
+                    selectedAddress?.let {
+                        Text(
+                            text = it,
+                            style = Typography.bodyLarge
+                        )
+                    }
+
+                    if (isAddressFormVisible) {
+                        AddressFormScreen(
+                            addressViewModel = addressFormViewModel,
+                            isVisible = isAddressFormVisible,
+                            showBottomSheet = isAddressFormVisible,
+                            toggleBottomSheet = { toggleAddressFormVisibility() },
+                            setAddressOnAppbar = setAddressOnScreen,
+                            onAddressSelected = selectedAddress
+                        )
+
+                    }
                 }
 
             }
@@ -163,7 +242,8 @@ fun PlaylistConfirmScreen(viewModel: PlaylistViewModel, navController: NavContro
                 SectionTitleAndBtn(
                     title = "Delivery Day & Time",
                     btnTitle = null,
-                    icon = Icons.Default.DateRange
+                    icon = Icons.Default.DateRange,
+                    modifier = Modifier
                 ) { null }
                 ClickableDaysOfWeek(
                     daysOfWeek = daysOfWeek,
@@ -382,9 +462,12 @@ fun DropdownOptionsBox() {
     }
 }
 
-
-//@Preview(showBackground = true)
+//@Preview
 //@Composable
 //fun PlaylistConfirmScreenPreview() {
-//    PlaylistConfirmScreen(foodItemConfirm, navController = rememberNavController())
+//    val apiService =  PlaylistApiService
+//    val repository = PlaylistRepository(apiService)
+//    val viewModel = PlaylistViewModel(repository) // Initialize your ViewModel as needed
+//    val navController = rememberNavController() // Initialize NavController as needed
+//    PlaylistConfirmScreen(viewModel = viewModel, navController = navController)
 //}
