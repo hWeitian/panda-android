@@ -19,9 +19,9 @@ import com.example.foodpanda_capstone.view.ui.theme.BrandPrimary
 import com.example.foodpanda_capstone.view.ui.theme.Typography
 
 @Composable
-fun SectionTitleAndBtn(title: String, btnTitle: String?, icon: ImageVector?, btnClicked: () -> Unit?) {
+fun SectionTitleAndBtn(modifier: Modifier,title: String, btnTitle: String?, icon: ImageVector?, btnClicked: () -> Unit?) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(40.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
