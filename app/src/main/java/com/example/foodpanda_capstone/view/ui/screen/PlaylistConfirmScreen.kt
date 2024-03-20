@@ -149,8 +149,12 @@ fun PlaylistConfirmScreen(viewModel: PlaylistViewModel, navController: NavContro
 
     LaunchedEffect(currentPlaylist) {
         val deliveryDay = currentPlaylist.deliveryDay
+        val deliveryTime = currentPlaylist.deliveryTime
         if (deliveryDay != "") {
             viewModel.assignDaysOfWeek(deliveryDay)
+        }
+        if (deliveryTime != "" && deliveryTime != null) {
+            viewModel.updateSelectedTimeOfDelivery(deliveryTime)
         }
         if (selectedTimeOfDelivery.isNotBlank() || selectedTimeOfDelivery.isNotEmpty()) {
             selectedIndex = timeOfDelivery.indexOf(selectedTimeOfDelivery)
@@ -178,7 +182,7 @@ fun PlaylistConfirmScreen(viewModel: PlaylistViewModel, navController: NavContro
                     icon = Icons.Default.Loyalty,
                     modifier = Modifier
                 ) {
-                    navController.navigate("View")
+                    navController.navigate("EditPlaylist/${currentPlaylist.name}")
                 }
             }
 

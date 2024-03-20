@@ -21,6 +21,7 @@ fun PlaylistFormScreen(navController: NavController, viewModel: PlaylistViewMode
 
     LaunchedEffect(Unit) {
         viewModel.clearFormText()
+        viewModel.updateSelectedTimeOfDelivery("")
     }
 
     Box(modifier = Modifier.fillMaxSize()) {

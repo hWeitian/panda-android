@@ -183,7 +183,6 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
     fun resetData() {
         resetDaysOfWeek()
         resetCanNavigate()
-        updateSelectedTimeOfDelivery("")
     }
 
     private fun createNewListOfDays(): List<Days> {
@@ -529,7 +528,13 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
                 }
                 try {
                     repository.fetchOnePlaylist(playlistId).collect { playlist ->
-                        _currentPlaylist.value = playlist
+                        if(playlist.isPublic == false) {
+                            _currentPlaylist.value = playlist
+                        } else {
+                            playlist.deliveryDay = ""
+                            playlist.deliveryTime = ""
+                            _currentPlaylist.value = playlist
+                        }
                         assignDaysOfWeek(playlist.deliveryDay)
                         playlist.deliveryTime?.let {
                             updateSelectedTimeOfDelivery(it)

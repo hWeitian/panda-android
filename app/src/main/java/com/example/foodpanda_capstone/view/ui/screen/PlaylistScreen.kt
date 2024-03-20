@@ -135,7 +135,7 @@ fun PlaylistScreen(navController: NavController, id: Int?, viewModel: PlaylistVi
         }
 
         if (openModal.value) {
-            Modal (
+            Modal(
                 title = "Cancel Subscription",
                 description = "Cancellation of playlist subscription will start next week.\r\n\nAre you sure you want to cancel?",
                 buttonTitle = "Confirm",
@@ -160,7 +160,8 @@ fun RandomPlaylistButtons(navController: NavController, playlistName: String, vi
     CustomTextBtn(
         name = "Edit Playlist",
         iconVector = null,
-        iconImgId = R.drawable.baseline_edit_24_white) { navController.navigate("EditPlaylist/Editing $playlistName")}
+        iconImgId = R.drawable.baseline_edit_24_white
+    ) { navController.navigate("EditPlaylist/Editing $playlistName") }
 
     Spacer(modifier = Modifier.size(40.dp))
 
@@ -180,7 +181,8 @@ fun PublicPlaylistButtons(navController: NavController, playlistName: String, vi
     CustomTextBtn(
         name = "Edit Playlist",
         iconVector = null,
-        iconImgId = R.drawable.baseline_edit_24_white) { navController.navigate("EditPlaylist/Editing $playlistName")}
+        iconImgId = R.drawable.baseline_edit_24_white
+    ) { navController.navigate("EditPlaylist/Editing $playlistName") }
 
     Spacer(modifier = Modifier.size(40.dp))
 
@@ -194,7 +196,8 @@ fun PrivatePlayListButtons(openModal: MutableState<Boolean>, navController: NavC
     CustomTextBtn(
         name = "Cancel Subscription",
         iconVector = null,
-        iconImgId = R.drawable.baseline_cancel_24_white) { openModal.value = true }
+        iconImgId = R.drawable.baseline_cancel_24_white
+    ) { openModal.value = true }
 
     Spacer(modifier = Modifier.size(40.dp))
 

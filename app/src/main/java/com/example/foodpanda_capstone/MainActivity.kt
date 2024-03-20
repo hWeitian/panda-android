@@ -660,7 +660,6 @@ fun Navigation() {
                                     titleContentColor = Color.Black,
                                 ),
                                 title = {
-                                    Text(text = "", style = Typography.titleMedium)
                                     Text(text = pageTitle ?: currentRoute, style = Typography.titleMedium)
                                 },
                                 navigationIcon = {

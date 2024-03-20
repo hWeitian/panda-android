@@ -7,10 +7,10 @@ data class Playlist(
     val name: String,
     val imageUrl: String?,
     val cost: BigDecimal,
-    val deliveryDay: String,
+    var deliveryDay: String,
     val foodItems: List<RestaurantFoodItems?>?,
     val isPublic: Boolean?,
-    val deliveryTime: String?
+    var deliveryTime: String?
 )
 
 data class FinalPlaylist(
