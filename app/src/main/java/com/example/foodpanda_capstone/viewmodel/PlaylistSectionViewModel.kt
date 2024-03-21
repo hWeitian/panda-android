@@ -17,6 +17,12 @@ class PlaylistSectionViewModel(private val repository: PlaylistRepository) : Vie
     private val _categoryPlaylist = MutableStateFlow<List<PlaylistOverview>>(emptyList())
     val categoryPlaylist: StateFlow<List<PlaylistOverview>> = _categoryPlaylist
 
+    private val _cancelledPlaylist = MutableStateFlow<List<PlaylistOverview>>(emptyList())
+    val cancelledPlaylist: StateFlow<List<PlaylistOverview>> = _cancelledPlaylist
+
+    private val _otherPlaylist = MutableStateFlow<List<PlaylistOverview>>(emptyList())
+    val otherPlaylist: StateFlow<List<PlaylistOverview>> = _otherPlaylist
+
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
@@ -52,7 +58,10 @@ class PlaylistSectionViewModel(private val repository: PlaylistRepository) : Vie
                 }
                 try {
                     repository.fetchAllUserPlaylist(userId).collect { playlists ->
+                        _cancelledPlaylist.value = playlists.filter { it.status == "Cancelled" }
+                        _otherPlaylist.value = playlists.filter { it.status != "Cancelled" }
                         _categoryPlaylist.value = playlists
+//                        println(_cancelledPlaylist.value)
                     }
                 } catch (e: Exception) {
                     logErrorMsg("getUserPlaylist", e)
@@ -64,6 +73,22 @@ class PlaylistSectionViewModel(private val repository: PlaylistRepository) : Vie
                 }
             }
         }
+    }
+
+    private fun filterPlaylist(
+        status: String,
+        secondStatus: String = "",
+        completeList: List<PlaylistOverview>
+    ): List<PlaylistOverview> {
+        println(completeList)
+        var result = mutableListOf<PlaylistOverview>()
+        for (playlistOverview in completeList) {
+            if (playlistOverview.status == status || playlistOverview.status == secondStatus) {
+                result.add(playlistOverview)
+            }
+        }
+        println(result)
+        return result
     }
 }
 

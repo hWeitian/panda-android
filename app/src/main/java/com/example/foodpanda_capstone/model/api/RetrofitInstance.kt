@@ -10,7 +10,6 @@ import retrofit2.create
 object RetrofitClient {
     private const val BASE_URL = BaseUrl.BASE_URL
     private val okHttp3Client = OkHttpClient.Builder()
-
     init {
         val logging = HttpLoggingInterceptor()
         logging.level = HttpLoggingInterceptor.Level.BODY
