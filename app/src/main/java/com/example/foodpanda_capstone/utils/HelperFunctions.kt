@@ -1,6 +1,14 @@
 package com.example.foodpanda_capstone.utils
 
 import android.util.Log
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
+import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.text.toUpperCase
 import com.example.foodpanda_capstone.model.FoodItem
 import com.example.foodpanda_capstone.model.RestaurantFoodItems
@@ -68,4 +76,21 @@ object DaysMap {
         "Sat" to "Saturday",
         "Sun" to "Sunday"
     )
+}
+
+fun Modifier.grayScale(): Modifier {
+    val saturationMatrix = ColorMatrix().apply { setToSaturation(0f) }
+    val saturationFilter = ColorFilter.colorMatrix(saturationMatrix)
+    val paint = Paint().apply { colorFilter = saturationFilter }
+
+    return drawWithCache {
+        val canvasBounds = Rect(Offset.Zero, size)
+        onDrawWithContent {
+            drawIntoCanvas {
+                it.saveLayer(canvasBounds, paint)
+                drawContent()
+                it.restore()
+            }
+        }
+    }
 }

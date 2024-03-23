@@ -21,6 +21,7 @@ import com.example.foodpanda_capstone.model.PlaylistOverview
 import com.example.foodpanda_capstone.model.PlaylistRepository
 import com.example.foodpanda_capstone.model.api.PlaylistApiClient
 import com.example.foodpanda_capstone.model.api.PlaylistApiService
+import com.example.foodpanda_capstone.utils.grayScale
 import com.example.foodpanda_capstone.view.ui.composable.ImageHolder
 import com.example.foodpanda_capstone.view.ui.composable.LoadingScreen
 import com.example.foodpanda_capstone.view.ui.composable.PrimaryButton
@@ -243,12 +244,18 @@ fun PlaylistSection(
 
 @Composable
 fun PlaylistCard(playlist: PlaylistOverview, cardClicked: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .width(150.dp)
-            .clickable { cardClicked() }
-    ) {
 
+    val modifier = if (playlist.status == "Cancelled") Modifier
+        .width(150.dp)
+        .grayScale()
+        .clickable { cardClicked() }
+    else Modifier
+        .width(150.dp)
+        .clickable { cardClicked() }
+
+    Column(
+        modifier = modifier
+    ) {
         playlist.imageUrl?.let { ImageHolder(it, null, "Playlist Image") }
         Row(
             modifier = Modifier
@@ -263,7 +270,7 @@ fun PlaylistCard(playlist: PlaylistOverview, cardClicked: () -> Unit) {
                 fontWeight = FontWeight.Normal
             )
         }
-        if (playlist.isPublic == false) {
+        if (playlist.isPublic == false && playlist.status != "Cancelled") {
             Text(text = "Deliver every ${playlist.deliveryDay}", style = Typography.bodyMedium, color = BrandSecondary)
         }
     }
