@@ -74,12 +74,18 @@ fun EditPlaylistScreen(navController: NavController, viewModel: PlaylistViewMode
                         Column {
                             if (restaurantFoodItems != null) {
                                 RestaurantNameText(restaurantFoodItems.restaurantName)
-                            }
-                            restaurantFoodItems?.foodItems?.map { item ->
-                                EditableFoodItemContainer(item,
-                                    { viewModel.onAddButtonClicked(item.id) },
-                                    { viewModel.onMinusButtonClicked(item.id) }
-                                )
+                                Spacer(modifier = Modifier.size(5.dp))
+                                restaurantFoodItems.foodItems.mapIndexed { index, item ->
+                                    EditableFoodItemContainer(item,
+                                        { viewModel.onAddButtonClicked(item.id) },
+                                        { viewModel.onMinusButtonClicked(item.id) }
+                                    )
+                                    if (index != restaurantFoodItems.foodItems.size - 1) {
+                                        Spacer(modifier = Modifier.size(
+                                            dimensionResource(R.dimen.food_item_container_space)
+                                        ))
+                                    }
+                                }
                             }
                         }
                     }

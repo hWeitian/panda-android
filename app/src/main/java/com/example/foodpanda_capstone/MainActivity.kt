@@ -715,7 +715,7 @@ fun Navigation() {
                         PlaylistListScreen(navController, isLoggedIn || isSignedUp)
                     }
                     composable(
-                        "Playlist Form",
+                        "Build your mix",
                     ) {
                         PlaylistFormScreen(navController, playlistViewModel)
                     }

@@ -49,10 +49,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.foodpanda_capstone.R
 import com.example.foodpanda_capstone.model.FoodItem
 import com.example.foodpanda_capstone.model.RecentSearch
 import com.example.foodpanda_capstone.view.ui.composable.SectionTitleAndBtn
@@ -127,6 +129,7 @@ fun SearchResults(searchResults: List<FoodItem>, viewModel: PlaylistViewModel) {
                 foodItem = result,
                 addQuantity = { viewModel.onSearchResultDishAddBtnClicked(result.id, result.quantity, index) })
             { viewModel.onSearchResultDishMinusBtnClicked(result.id, index) }
+            Spacer(modifier = Modifier.size(dimensionResource(R.dimen.search_food_item_container_space)))
         }
     }
 }
@@ -215,12 +218,11 @@ fun SearchInput(
     }
 
     LaunchedEffect(isInputOnFocus) {
-        if(isInputOnFocus !== null && !isInputOnFocus) {
+        if (isInputOnFocus !== null && !isInputOnFocus) {
             keyboardController?.hide()
             focusManager.clearFocus(force = true)
         }
     }
-
 
     TextField(
         placeholder = { Text(text = placeholderText) },
@@ -229,7 +231,7 @@ fun SearchInput(
         leadingIcon = { Icon(imageVector = Icons.Default.Search, "Search Icon") },
         onValueChange = { updateInput(it) },
         keyboardActions = KeyboardActions(
-            onSearch =  {
+            onSearch = {
                 if (onSearch != null) {
                     onSearch()
                 }
@@ -257,5 +259,4 @@ fun SearchInput(
             keyboardType = KeyboardType.Text
         )
     )
-
 }

@@ -31,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.foodpanda_capstone.R
@@ -126,7 +127,7 @@ fun PlaylistScreen(navController: NavController, id: Int?, viewModel: PlaylistVi
                                             )
                                             Spacer(modifier = Modifier.width(8.dp))
                                             Text(
-                                                text = it.deliveryTime,
+                                                text = "${it.deliveryTime} hrs",
                                                 style = Typography.bodyLarge
                                             )
                                         }
@@ -144,7 +145,9 @@ fun PlaylistScreen(navController: NavController, id: Int?, viewModel: PlaylistVi
                             restaurantFoodItems.foodItems.mapIndexed { index, item ->
                                 FoodItemContainer(item)
                                 if (index != restaurantFoodItems.foodItems.size - 1) {
-                                    Spacer(modifier = Modifier.size(10.dp))
+                                    Spacer(modifier = Modifier.size(
+                                        dimensionResource(R.dimen.food_item_container_space)
+                                    ))
                                 }
                             }
                         }

@@ -66,9 +66,18 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
     private val _isInputOnFocus = MutableStateFlow(false)
     val isInputOnFocus: StateFlow<Boolean> = _isInputOnFocus
 
-    val cuisines: MutableState<String> = mutableStateOf("")
-    val numOfDish: MutableState<String> = mutableStateOf("")
-    val maxBudget: MutableState<String> = mutableStateOf("")
+//    val cuisines: MutableState<String> = mutableStateOf("")
+//    val numOfDish: MutableState<String> = mutableStateOf("")
+//    val maxBudget: MutableState<String> = mutableStateOf("")
+
+    private val _cuisines = MutableLiveData("")
+    val cuisines: LiveData<String> = _cuisines
+
+    private val _numOfDish = MutableLiveData("")
+    val numOfDish: LiveData<String> = _numOfDish
+
+    private val _maxBudget = MutableLiveData("")
+    val maxBudget: LiveData<String> = _maxBudget
 
     private val _daysOfWeek = MutableStateFlow(
         listOf(
@@ -89,6 +98,30 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
     private val _canNavigate = MutableLiveData(false)
     val canNavigate: LiveData<Boolean> = _canNavigate
 
+
+    fun updateCuisines(inputText: String) {
+        _cuisines.value = inputText
+    }
+
+    fun clearCuisines() {
+        _cuisines.value = ""
+    }
+
+    fun updateNumOfDish(inputText: String) {
+        _numOfDish.value = inputText
+    }
+
+    fun clearNumOfDish() {
+        _numOfDish.value = ""
+    }
+
+    fun updateMaxBudget(inputText: String) {
+        _maxBudget.value = inputText
+    }
+
+    fun clearMaxBudget() {
+        _maxBudget.value = ""
+    }
 
     fun onConfirmSubscriptionClick() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -240,10 +273,6 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
         var newDaysOfWeek = _daysOfWeek.value.toMutableList()
 
         if (isCharFoundInText(",", selectedDays)) {
-//            val selectedDaysMap = emptyMap<String, String>().toMutableMap()
-//            selectedDays.split(",").forEach { day ->
-//                selectedDaysMap[day] = day
-//            }
             val selectedDaysMap = splitDaysToMap(selectedDays)
             newDaysOfWeek = updateSelectedDays(newDaysOfWeek, selectedDaysMap)
         } else {
@@ -253,9 +282,9 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
     }
 
     fun clearFormText() {
-        cuisines.value = ""
-        numOfDish.value = ""
-        maxBudget.value = ""
+        clearCuisines()
+        clearNumOfDish()
+        clearMaxBudget()
     }
 
 
@@ -509,10 +538,10 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
                     _isLoading.value = true
                     delay(1000)
                 }
-                val numOfDishInt = Integer.parseInt(numOfDish.value)
-                val maxBudgetInt = Integer.parseInt(maxBudget.value)
+                val numOfDishInt = Integer.parseInt(numOfDish.value.toString())
+                val maxBudgetInt = Integer.parseInt(maxBudget.value.toString())
                 repository
-                    .fetchRandomPlaylist(cuisines.value, numOfDishInt, maxBudgetInt)
+                    .fetchRandomPlaylist(cuisines.value.toString(), numOfDishInt, maxBudgetInt)
                     .collect { playlist ->
                         _currentPlaylist.value = playlist
                     }
@@ -646,11 +675,8 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
         var daysString = ""
         if (isCharFoundInText(",", deliveryDays)) {
             val daysList = splitDaysToList(deliveryDays)
-            println(daysList)
             for (i in daysList.indices) {
-                println(daysList[i].trim())
-               val day = DaysMap.map[daysList[i].trim()]
-//                println(day)
+                val day = DaysMap.map[daysList[i].trim()]
                 if (i != daysList.size - 1) {
                     daysString += "$day, "
                 } else {

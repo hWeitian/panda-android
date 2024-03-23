@@ -2,4 +2,6 @@
 <resources>
     <dimen name="base_side_padding">15dp</dimen>
     <dimen name="page_bottom_padding">20dp</dimen>
+    <dimen name="food_item_container_space">10dp</dimen>
+    <dimen name="search_food_item_container_space">15dp</dimen>
 </resources>

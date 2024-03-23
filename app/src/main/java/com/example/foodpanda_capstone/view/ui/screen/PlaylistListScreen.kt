@@ -85,7 +85,7 @@ fun PlaylistListScreen(navController: NavController, isUserLoggedIn: Boolean, us
             PlaylistListScreenButtons(
                 descriptionText = "Want a tailored experience?",
                 buttonText = "Build your mix!",
-                navigateDestination = "Playlist Form",
+                navigateDestination = "Build your mix",
                 navController,
                 Modifier.weight(1f)
             )
