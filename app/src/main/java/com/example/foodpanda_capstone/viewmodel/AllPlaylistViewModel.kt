@@ -1,12 +1,10 @@
 package com.example.foodpanda_capstone.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.foodpanda_capstone.model.Playlist
 import com.example.foodpanda_capstone.model.PlaylistOverview
 import com.example.foodpanda_capstone.model.PlaylistRepository
+import com.example.foodpanda_capstone.utils.logErrorMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

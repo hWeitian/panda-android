@@ -82,7 +82,7 @@ fun FoodItemContainerCard(foodItemContent: @Composable () -> Unit) {
                 strokeWidth = 1f,
             )
         }
-        .padding(bottom = 10.dp, top = 18.dp),
+        .padding(bottom = 10.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         shape = RoundedCornerShape(0.dp)
     ) {

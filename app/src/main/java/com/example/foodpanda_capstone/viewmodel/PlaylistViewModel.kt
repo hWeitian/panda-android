@@ -14,11 +14,15 @@ import com.example.foodpanda_capstone.model.Playlist
 import com.example.foodpanda_capstone.model.PlaylistRepository
 import com.example.foodpanda_capstone.model.RecentSearch
 import com.example.foodpanda_capstone.model.RestaurantFoodItems
+import com.example.foodpanda_capstone.utils.DaysMap
 import com.example.foodpanda_capstone.utils.UserUtils
 import com.example.foodpanda_capstone.utils.addMapToMap
 import com.example.foodpanda_capstone.utils.getCurrentPlaylistDishIds
 import com.example.foodpanda_capstone.utils.getCurrentPlaylistRestaurantNames
 import com.example.foodpanda_capstone.utils.isCharFoundInText
+import com.example.foodpanda_capstone.utils.logErrorMsg
+import com.example.foodpanda_capstone.utils.splitDaysToList
+import com.example.foodpanda_capstone.utils.splitDaysToMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,7 +45,8 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
             deliveryDay = "",
             foodItems = emptyList(),
             isPublic = false,
-            deliveryTime = ""
+            deliveryTime = "",
+            status = null
         )
     )
     val currentPlaylist: StateFlow<Playlist> = _currentPlaylist.asStateFlow()
@@ -154,10 +159,10 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
         var selectedDaysString: String = ""
         _daysOfWeek.value.forEach { day ->
             if (day.isSelected) {
-                selectedDaysString += "${day.name},"
+                selectedDaysString += "${day.name}, "
             }
         }
-        return selectedDaysString.trim { it == ',' }
+        return selectedDaysString.trim().trim { it == ',' }
     }
 
 
@@ -235,10 +240,11 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
         var newDaysOfWeek = _daysOfWeek.value.toMutableList()
 
         if (isCharFoundInText(",", selectedDays)) {
-            val selectedDaysMap = emptyMap<String, String>().toMutableMap()
-            selectedDays.split(",").forEach { day ->
-                selectedDaysMap[day] = day
-            }
+//            val selectedDaysMap = emptyMap<String, String>().toMutableMap()
+//            selectedDays.split(",").forEach { day ->
+//                selectedDaysMap[day] = day
+//            }
+            val selectedDaysMap = splitDaysToMap(selectedDays)
             newDaysOfWeek = updateSelectedDays(newDaysOfWeek, selectedDaysMap)
         } else {
             newDaysOfWeek = updateSelectedDays(newDaysOfWeek, selectedDays)
@@ -521,33 +527,29 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
 
     fun getOnePlaylist(playlistId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            while (currentPlaylist.value.name.isBlank() || currentPlaylist.value.id != playlistId) {
+            try {
                 withContext(Dispatchers.Main) {
                     _isLoading.value = true
                     delay(1000)
                 }
-                try {
-                    repository.fetchOnePlaylist(playlistId).collect { playlist ->
-                        if(playlist.isPublic == false) {
-                            _currentPlaylist.value = playlist
-                        } else {
-                            playlist.deliveryDay = ""
-                            playlist.deliveryTime = ""
-                            _currentPlaylist.value = playlist
-                        }
-                        assignDaysOfWeek(playlist.deliveryDay)
-                        playlist.deliveryTime?.let {
-                            updateSelectedTimeOfDelivery(it)
-                        }
+                repository.fetchOnePlaylist(playlistId).collect { playlist ->
+                    if (playlist.isPublic == false) {
+                        _currentPlaylist.value = playlist
+                    } else {
+                        playlist.deliveryDay = ""
+                        playlist.deliveryTime = ""
+                        _currentPlaylist.value = playlist
                     }
-                } catch (e: Exception) {
-                    logErrorMsg("getOnePlaylist", e)
-                }
-                if (currentPlaylist.value.name.isNotBlank() || currentPlaylist.value.id == playlistId) {
-                    withContext(Dispatchers.Main) {
-                        _isLoading.value = false
+                    assignDaysOfWeek(playlist.deliveryDay)
+                    playlist.deliveryTime?.let {
+                        updateSelectedTimeOfDelivery(it)
                     }
                 }
+                withContext(Dispatchers.Main) {
+                    _isLoading.value = false
+                }
+            } catch (e: Exception) {
+                logErrorMsg("getOnePlaylist", e)
             }
         }
     }
@@ -638,6 +640,27 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
             }
         }
         return totalCost
+    }
+
+    fun generateCompleteDeliveryDays(deliveryDays: String): String {
+        var daysString = ""
+        if (isCharFoundInText(",", deliveryDays)) {
+            val daysList = splitDaysToList(deliveryDays)
+            println(daysList)
+            for (i in daysList.indices) {
+                println(daysList[i].trim())
+               val day = DaysMap.map[daysList[i].trim()]
+//                println(day)
+                if (i != daysList.size - 1) {
+                    daysString += "$day, "
+                } else {
+                    daysString += day
+                }
+            }
+        } else {
+            daysString = DaysMap.map[deliveryDays].toString()
+        }
+        return daysString
     }
 
 

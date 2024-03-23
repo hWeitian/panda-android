@@ -10,7 +10,8 @@ data class Playlist(
     var deliveryDay: String,
     val foodItems: List<RestaurantFoodItems?>?,
     val isPublic: Boolean?,
-    var deliveryTime: String?
+    var deliveryTime: String,
+    val status: String?
 )
 
 data class FinalPlaylist(

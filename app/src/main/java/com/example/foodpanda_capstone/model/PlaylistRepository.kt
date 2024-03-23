@@ -2,7 +2,6 @@ package com.example.foodpanda_capstone.model
 
 import android.util.Log
 import com.example.foodpanda_capstone.model.api.PlaylistApiService
-import com.example.foodpanda_capstone.viewmodel.logErrorMsg
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch

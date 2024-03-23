@@ -80,7 +80,7 @@ fun PlaylistSectionScreen(navController: NavController, isPublic: Boolean, userI
                     item(
                         span = { GridItemSpan(2) }
                     ) {
-                        Text(text = "Currently Subscribed", style = Typography.titleSmall)
+                        Text(text = "Currently Subscribed", style = Typography.titleMedium)
                     }
                     items(otherPlaylist.size) { index ->
                         PlaylistCard(otherPlaylist[index]) { navController.navigate("Playlist/${otherPlaylist[index].id}/${otherPlaylist[index].name}") }
@@ -89,7 +89,10 @@ fun PlaylistSectionScreen(navController: NavController, isPublic: Boolean, userI
                         item(
                             span = { GridItemSpan(2) }
                         ) {
-                            Text(text = "Cancelled", style = Typography.titleSmall)
+                            Column {
+                                Spacer(modifier = Modifier.size(20.dp))
+                                Text(text = "Cancelled", style = Typography.titleMedium)
+                            }
                         }
                         items(cancelledPlaylist.size) { index ->
                             PlaylistCard(cancelledPlaylist[index]) { navController.navigate("Playlist/${cancelledPlaylist[index].id}/${cancelledPlaylist[index].name}") }

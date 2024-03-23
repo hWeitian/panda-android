@@ -1,6 +1,7 @@
 package com.example.foodpanda_capstone.utils
 
 import android.util.Log
+import androidx.compose.ui.text.toUpperCase
 import com.example.foodpanda_capstone.model.FoodItem
 import com.example.foodpanda_capstone.model.RestaurantFoodItems
 
@@ -34,4 +35,37 @@ fun addMapToMap(
 
 fun isCharFoundInText(char: String, text: String): Boolean {
     return text.contains(char)
+}
+
+fun logErrorMsg(functionName: String, error: Exception){
+    Log.e("PdError", "Error at $functionName - $error")
+}
+
+fun splitDaysToMap(days: String): Map<String, String> {
+    val daysMap = emptyMap<String, String>().toMutableMap()
+    days.split(",").forEach { day ->
+        daysMap[day] = day
+    }
+    return daysMap
+}
+
+fun splitDaysToList(days: String): List<String> {
+    val daysList = mutableListOf<String>()
+    days.split(",").forEach { day ->
+        day.trim().trim { it == ',' }
+        daysList.add(day)
+    }
+    return daysList
+}
+
+object DaysMap {
+    val map = mapOf(
+        "Mon" to "Monday",
+        "Tue" to "Tuesday",
+        "Wed" to "Wednesday",
+        "Thu" to "Thursday",
+        "Fri" to "Friday",
+        "Sat" to "Saturday",
+        "Sun" to "Sunday"
+    )
 }
