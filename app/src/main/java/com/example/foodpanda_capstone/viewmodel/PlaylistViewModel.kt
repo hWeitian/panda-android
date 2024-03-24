@@ -54,6 +54,10 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
+    private val _isError = MutableStateFlow(false)
+    val isError: StateFlow<Boolean> = _isError
+
+
     private val _searchText = MutableLiveData("")
     val searchText: LiveData<String> = _searchText
 
@@ -221,6 +225,11 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
     fun resetData() {
         resetDaysOfWeek()
         resetCanNavigate()
+        resetErrorState()
+    }
+
+    fun resetErrorState() {
+        _isError.value = false
     }
 
     private fun createNewListOfDays(): List<Days> {
@@ -285,6 +294,7 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
         clearCuisines()
         clearNumOfDish()
         clearMaxBudget()
+        resetErrorState()
     }
 
 
@@ -533,6 +543,7 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
 
     fun getRandomPlaylist() {
         viewModelScope.launch(Dispatchers.IO) {
+            resetErrorState()
             try {
                 withContext(Dispatchers.Main) {
                     _isLoading.value = true
@@ -549,6 +560,21 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
                     _isLoading.value = false
                 }
             } catch (e: Exception) {
+                _currentPlaylist.value = Playlist(
+                    id = 0,
+                    name = "",
+                    imageUrl = "",
+                    cost = BigDecimal(0),
+                    deliveryDay = "",
+                    foodItems = emptyList(),
+                    isPublic = false,
+                    deliveryTime = "",
+                    status = null
+                )
+                _isError.value = true
+                withContext(Dispatchers.Main) {
+                    _isLoading.value = false
+                }
                 logErrorMsg("getRandomPlaylist", e)
             }
         }

@@ -67,6 +67,7 @@ class PlaylistRepository(private val apiService: PlaylistApiService) {
         val result = apiService.getRandomPlaylist(cuisine, numOfDish, maxBudget)
         emit(result)
     }.catch { e ->
+        throw e
         Log.e("PdError", "Error at fetchRandomPlaylist - ${e.message}")
     }
 

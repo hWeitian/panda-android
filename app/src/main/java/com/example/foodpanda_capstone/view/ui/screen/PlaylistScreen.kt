@@ -48,6 +48,7 @@ fun PlaylistScreen(navController: NavController, id: Int?, viewModel: PlaylistVi
     val currentPlaylist by viewModel.currentPlaylist.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val canNavigate by viewModel.canNavigate.observeAsState()
+    val isError by viewModel.isError.collectAsState()
 
     LaunchedEffect(Unit) {
         if (id != null) {
@@ -73,113 +74,122 @@ fun PlaylistScreen(navController: NavController, id: Int?, viewModel: PlaylistVi
             .fillMaxSize()
             .background(Color.White)
     ) {
-        if (!isLoading) {
-            currentPlaylist?.let {
-                LazyColumn {
-                    item {
-                        Column(
-                            modifier = Modifier.padding(top = 10.dp)
+        if (!isLoading && !isError) {
+
+            LazyColumn {
+                item {
+                    Column(
+                        modifier = Modifier.padding(top = 10.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Row(
+                            Text(
+                                text = currentPlaylist.name,
+                                style = Typography.titleMedium
+                            )
+                            Text(
+                                text = "S$ ${"%.2f".format(currentPlaylist.cost)}",
+                                style = Typography.titleMedium
+                            )
+                        }
+                        if (currentPlaylist.isPublic == false) {
+                            Spacer(modifier = Modifier.size(10.dp))
+                            Column(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween
+                                horizontalAlignment = Alignment.Start,
+                                verticalArrangement = Arrangement.Center,
                             ) {
-                                Text(
-                                    text = it.name,
-                                    style = Typography.titleMedium
-                                )
-                                Text(
-                                    text = "S$ ${"%.2f".format(it.cost)}",
-                                    style = Typography.titleMedium
-                                )
-                            }
-                            if (it.isPublic == false) {
+                                if (currentPlaylist.deliveryDay.isNotBlank()) {
+                                    Row {
+                                        Icon(
+                                            imageVector = Icons.Default.LocalShipping,
+                                            contentDescription = "Delivery Icon",
+                                            tint = BrandDark,
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text(
+                                            text = "Every ${viewModel.generateCompleteDeliveryDays(currentPlaylist.deliveryDay)}",
+                                            style = Typography.bodyLarge
+                                        )
+                                    }
+
+                                }
+                                if (currentPlaylist.deliveryTime.isNotBlank()) {
+                                    Spacer(modifier = Modifier.size(5.dp))
+                                    Row {
+                                        Icon(
+                                            imageVector = Icons.Default.AccessTime,
+                                            contentDescription = "Delivery Icon",
+                                            tint = BrandDark,
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text(
+                                            text = "${currentPlaylist.deliveryTime} hrs",
+                                            style = Typography.bodyLarge
+                                        )
+                                    }
+                                }
                                 Spacer(modifier = Modifier.size(10.dp))
-                                Column(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalAlignment = Alignment.Start,
-                                    verticalArrangement = Arrangement.Center,
-                                ) {
-                                    if (it.deliveryDay.isNotBlank()) {
-                                        Row {
-                                            Icon(
-                                                imageVector = Icons.Default.LocalShipping,
-                                                contentDescription = "Delivery Icon",
-                                                tint = BrandDark,
-                                                modifier = Modifier.size(20.dp)
-                                            )
-                                            Spacer(modifier = Modifier.width(8.dp))
-                                            Text(
-                                                text = "Every ${viewModel.generateCompleteDeliveryDays(it.deliveryDay)}",
-                                                style = Typography.bodyLarge
-                                            )
-                                        }
-
-                                    }
-                                    if (it.deliveryTime.isNotBlank()) {
-                                        Spacer(modifier = Modifier.size(5.dp))
-                                        Row {
-                                            Icon(
-                                                imageVector = Icons.Default.AccessTime,
-                                                contentDescription = "Delivery Icon",
-                                                tint = BrandDark,
-                                                modifier = Modifier.size(20.dp)
-                                            )
-                                            Spacer(modifier = Modifier.width(8.dp))
-                                            Text(
-                                                text = "${it.deliveryTime} hrs",
-                                                style = Typography.bodyLarge
-                                            )
-                                        }
-                                    }
-                                    Spacer(modifier = Modifier.size(10.dp))
-                                }
                             }
                         }
                     }
-                    items(it.foodItems.orEmpty()) { restaurantFoodItems ->
-                        if (restaurantFoodItems != null) {
-                            Spacer(modifier = Modifier.height(20.dp))
-                            RestaurantNameText(restaurantFoodItems.restaurantName)
-                            Spacer(modifier = Modifier.size(5.dp))
-                            restaurantFoodItems.foodItems.mapIndexed { index, item ->
-                                FoodItemContainer(item)
-                                if (index != restaurantFoodItems.foodItems.size - 1) {
-                                    Spacer(modifier = Modifier.size(
-                                        dimensionResource(R.dimen.food_item_container_space)
-                                    ))
-                                }
-                            }
-                        }
-                    }
-
-                    item {
-                        when {
-                            it.id == 0 -> RandomPlaylistButtons(
-                                navController = navController,
-                                playlistName = it.name,
-                                viewModel = viewModel
-                            )
-
-                            it.isPublic == true || it.status == "Cancelled" -> PublicPlaylistButtons(
-                                navController = navController,
-                                playlistName = it.name,
-                                viewModel = viewModel
-                            )
-
-                            else -> PrivatePlayListButtons(
-                                openModal = openModal,
-                                navController = navController,
-                                playlistName = it.name
-                            )
-                        }
-                        ScreenBottomSpacer()
-                    }
-
                 }
+                items(currentPlaylist.foodItems.orEmpty()) { restaurantFoodItems ->
+                    if (restaurantFoodItems != null) {
+                        Spacer(modifier = Modifier.height(20.dp))
+                        RestaurantNameText(restaurantFoodItems.restaurantName)
+                        Spacer(modifier = Modifier.size(5.dp))
+                        restaurantFoodItems.foodItems.mapIndexed { index, item ->
+                            FoodItemContainer(item)
+                            if (index != restaurantFoodItems.foodItems.size - 1) {
+                                Spacer(
+                                    modifier = Modifier.size(
+                                        dimensionResource(R.dimen.food_item_container_space)
+                                    )
+                                )
+                            }
+                        }
+                    }
+                }
+
+                item {
+                    when {
+                        currentPlaylist.id == 0 -> RandomPlaylistButtons(
+                            navController = navController,
+                            playlistName = currentPlaylist.name,
+                            viewModel = viewModel
+                        )
+
+                        currentPlaylist.isPublic == true || currentPlaylist.status == "Cancelled" -> PublicPlaylistButtons(
+                            navController = navController,
+                            playlistName = currentPlaylist.name,
+                            viewModel = viewModel
+                        )
+
+                        else -> PrivatePlayListButtons(
+                            openModal = openModal,
+                            navController = navController,
+                            playlistName = currentPlaylist.name
+                        )
+                    }
+                    ScreenBottomSpacer()
+                }
+
             }
-        } else {
+
+        } else if (isLoading) {
             LoadingScreen()
+        } else {
+            ErrorScreen(
+                errorTitle = "No results found",
+                description = "Please try to amend your input",
+                buttonTitle = "Back",
+                onButtonClick = { navController.navigate("Build your mix") }
+            )
         }
 
         if (openModal.value) {

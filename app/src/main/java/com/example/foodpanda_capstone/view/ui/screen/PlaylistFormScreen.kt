@@ -14,7 +14,9 @@ import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.RamenDining
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
@@ -37,10 +39,13 @@ fun PlaylistFormScreen(navController: NavController, viewModel: PlaylistViewMode
     val cuisines by viewModel.cuisines.observeAsState("")
     val numOfDish by viewModel.numOfDish.observeAsState("")
     val maxBudget by viewModel.maxBudget.observeAsState("")
+    val isError by viewModel.isError.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.clearFormText()
         viewModel.updateSelectedTimeOfDelivery("")
+        if (!isError) {
+            viewModel.clearFormText()
+        }
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -58,7 +63,7 @@ fun PlaylistFormScreen(navController: NavController, viewModel: PlaylistViewMode
                 OrderedListItem(
                     num = "1 - ",
                     title = "Keyword",
-                    description = "Tell us your craving (e.g., spicy, italian, burgers)"
+                    description = "Tell us your craving (e.g., spicy, italian, burgers, all)"
                 )
                 Spacer(modifier = Modifier.size(10.dp))
                 OrderedListItem(
@@ -71,6 +76,12 @@ fun PlaylistFormScreen(navController: NavController, viewModel: PlaylistViewMode
                     num = "3 - ",
                     title = "Budget",
                     description = "Let us know your spending limit"
+                )
+                Spacer(modifier = Modifier.size(10.dp))
+                OrderedListItem(
+                    num = "4 - ",
+                    title = "Generate",
+                    description = "Click generate to build your random food playlist"
                 )
                 Spacer(modifier = Modifier.size(5.dp))
                 Column {
