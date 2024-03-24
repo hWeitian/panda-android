@@ -100,13 +100,13 @@ fun PlaylistScreen(
                             )
                         }
                         if (currentPlaylist.isPublic == false) {
-                            Spacer(modifier = Modifier.size(10.dp))
                             Column(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalAlignment = Alignment.Start,
                                 verticalArrangement = Arrangement.Center,
                             ) {
                                 if (currentPlaylist.deliveryDay.isNotBlank()) {
+                                    Spacer(modifier = Modifier.size(10.dp))
                                     Row {
                                         Icon(
                                             imageVector = Icons.Default.LocalShipping,
@@ -137,8 +137,8 @@ fun PlaylistScreen(
                                             style = Typography.bodyLarge
                                         )
                                     }
+                                    Spacer(modifier = Modifier.size(10.dp))
                                 }
-                                Spacer(modifier = Modifier.size(10.dp))
                             }
                         }
                     }

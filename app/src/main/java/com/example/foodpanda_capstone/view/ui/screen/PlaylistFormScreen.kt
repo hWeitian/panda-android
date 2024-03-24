@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.RamenDining
@@ -52,7 +54,8 @@ fun PlaylistFormScreen(navController: NavController, viewModel: PlaylistViewMode
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 25.dp, bottom = 20.dp),
+                .padding(top = 25.dp, bottom = 20.dp)
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column(
@@ -110,7 +113,7 @@ fun PlaylistFormScreen(navController: NavController, viewModel: PlaylistViewMode
                         icon = Icons.Default.AttachMoney
                     )
                 }
-                Spacer(modifier = Modifier.size(50.dp))
+                Spacer(modifier = Modifier.size(35.dp))
                 PrimaryButton(
                     name = "Generate",
                     width = null,
