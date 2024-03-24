@@ -57,6 +57,10 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
     private val _isError = MutableStateFlow(false)
     val isError: StateFlow<Boolean> = _isError
 
+    private val _shouldShowSnackbar = MutableStateFlow(false)
+    val shouldShowSnackbar: StateFlow<Boolean> = _shouldShowSnackbar
+
+    var snackbarMessage: String = ""
 
     private val _searchText = MutableLiveData("")
     val searchText: LiveData<String> = _searchText
@@ -69,10 +73,6 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
 
     private val _isInputOnFocus = MutableStateFlow(false)
     val isInputOnFocus: StateFlow<Boolean> = _isInputOnFocus
-
-//    val cuisines: MutableState<String> = mutableStateOf("")
-//    val numOfDish: MutableState<String> = mutableStateOf("")
-//    val maxBudget: MutableState<String> = mutableStateOf("")
 
     private val _cuisines = MutableLiveData("")
     val cuisines: LiveData<String> = _cuisines
@@ -127,6 +127,29 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
         _maxBudget.value = ""
     }
 
+    private fun resetDaysOfWeek() {
+        _daysOfWeek.value = createNewListOfDays()
+    }
+
+    private fun resetCanNavigate() {
+        _canNavigate.value = false
+    }
+
+    fun resetData() {
+        resetDaysOfWeek()
+        resetCanNavigate()
+        resetErrorState()
+    }
+
+    fun resetErrorState() {
+        _isError.value = false
+    }
+
+    fun resetSnackbarState() {
+        _shouldShowSnackbar.value = false
+        snackbarMessage = ""
+    }
+
     fun onConfirmSubscriptionClick() {
         viewModelScope.launch(Dispatchers.IO) {
             withContext(Dispatchers.Main) {
@@ -146,7 +169,10 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
                 logErrorMsg("onConfirmSubscriptionClick", e)
             }
             withContext(Dispatchers.Main) {
+                snackbarMessage =
+                    if (currentPlaylist.value.isPublic == true) "${currentPlaylist.value.name} subscribed!" else "${currentPlaylist.value.name} updated!"
                 _canNavigate.value = true
+                _shouldShowSnackbar.value = true
                 delay(3000)
                 _isLoading.value = false
             }
@@ -166,7 +192,9 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
                 logErrorMsg("onConfirmCancelSubscriptionClick", e)
             }
             withContext(Dispatchers.Main) {
+                snackbarMessage = "Subscription to ${currentPlaylist.value.name} cancelled!"
                 _canNavigate.value = true
+                _shouldShowSnackbar.value = true
                 delay(3000)
                 _isLoading.value = false
             }
@@ -212,24 +240,6 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
         val newDay = Days(newListOfDays[index].name, !newListOfDays[index].isSelected)
         newListOfDays[index] = newDay
         _daysOfWeek.value = newListOfDays
-    }
-
-    private fun resetDaysOfWeek() {
-        _daysOfWeek.value = createNewListOfDays()
-    }
-
-    private fun resetCanNavigate() {
-        _canNavigate.value = false
-    }
-
-    fun resetData() {
-        resetDaysOfWeek()
-        resetCanNavigate()
-        resetErrorState()
-    }
-
-    fun resetErrorState() {
-        _isError.value = false
     }
 
     private fun createNewListOfDays(): List<Days> {

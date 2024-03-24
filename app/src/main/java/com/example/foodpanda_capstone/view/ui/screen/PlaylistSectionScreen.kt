@@ -80,7 +80,7 @@ fun PlaylistSectionScreen(navController: NavController, isPublic: Boolean, userI
                     item(
                         span = { GridItemSpan(2) }
                     ) {
-                        Text(text = "Currently Subscribed", style = Typography.titleMedium)
+                        Text(text = "Subscribed", style = Typography.titleMedium)
                     }
                     items(otherPlaylist.size) { index ->
                         PlaylistCard(otherPlaylist[index]) { navController.navigate("Playlist/${otherPlaylist[index].id}/${otherPlaylist[index].name}") }

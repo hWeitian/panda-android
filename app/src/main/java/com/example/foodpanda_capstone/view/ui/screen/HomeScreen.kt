@@ -112,7 +112,7 @@ fun CustomCard(width: Dp, height: Dp, text: String, content: String, imgResource
             .border(16.dp, Color.White, shape = RoundedCornerShape(16.dp))
             .clickable {
             // Navigate to the desired destination when the card is clicked
-            navController.navigate("Playlist List") // Replace with your destination name
+            navController.navigate("Playlists") // Replace with your destination name
         },
         elevation = CardDefaults.cardElevation(defaultElevation = 16.dp)
     ) {

@@ -58,7 +58,7 @@ fun PlaylistScreen(navController: NavController, id: Int?, viewModel: PlaylistVi
 
     LaunchedEffect(canNavigate) {
         if (canNavigate == true) {
-            navController.navigate("Playlist List")
+            navController.navigate("Playlists")
         }
     }
 
@@ -231,7 +231,7 @@ fun RandomPlaylistButtons(navController: NavController, playlistName: String, vi
     Spacer(modifier = Modifier.size(10.dp))
 
     PrimaryButton(name = "Subscribe", width = null) {
-        navController.navigate("Playlist Confirm")
+        navController.navigate("Confirmation")
     }
 }
 
@@ -246,7 +246,7 @@ fun PublicPlaylistButtons(navController: NavController, playlistName: String, vi
     Spacer(modifier = Modifier.size(40.dp))
 
     PrimaryButton(name = "Subscribe", width = null) {
-        navController.navigate("Playlist Confirm")
+        navController.navigate("Confirmation")
     }
 }
 

@@ -29,34 +29,14 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.ThumbUp
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.Divider
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberDrawerState
-import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.material3.rememberTopAppBarState
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -110,6 +90,7 @@ import com.example.foodpanda_capstone.view.ui.screen.PlaylistScreen
 import com.example.foodpanda_capstone.view.ui.screen.PlaylistSectionScreen
 import com.example.foodpanda_capstone.view.ui.screen.onBoardingScreen
 import com.example.foodpanda_capstone.view.ui.screen.signUpForm
+import com.example.foodpanda_capstone.view.ui.theme.BrandDark
 import com.example.foodpanda_capstone.view.ui.theme.BrandHighlight
 import com.example.foodpanda_capstone.view.ui.theme.BrandPrimary
 import com.example.foodpanda_capstone.view.ui.theme.BrandSecondary
@@ -250,8 +231,6 @@ fun Navigation() {
     val scaffoldState = rememberTopAppBarState()
     val scope = rememberCoroutineScope()
 
-    //sidenav bar list.
-//              var selectedNavItem by remember { mutableStateOf(items[0]) }
     var isDrawerOpen by remember { mutableStateOf(false) }
 
 
@@ -262,7 +241,6 @@ fun Navigation() {
     )
 
     val drawerItem2 = listOf(
-//        DrawerItems(Icons.Default.Share, "Share", 0, false),
         DrawerItems(Icons.Filled.Star, "Rate", 0, false),
         DrawerItems(Icons.Filled.Settings, "Setting", 0, false),
         DrawerItems(Icons.Filled.ExitToApp, "Logout", 0, false),
@@ -318,8 +296,6 @@ fun Navigation() {
     //Side Nav bar
     ModalNavigationDrawer(drawerContent = {
         ModalDrawerSheet {
-
-//            Column(Modifier.fillMaxSize().background(Color.White), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Box(
                     modifier = Modifier
@@ -328,7 +304,6 @@ fun Navigation() {
                         .background(BrandPrimary),
                     contentAlignment = Alignment.Center
                 ) {
-
                     Column(
                         Modifier.wrapContentSize(),
                         verticalArrangement = Arrangement.SpaceAround,
@@ -614,17 +589,10 @@ fun Navigation() {
                                                 setAddressOnAppbar = setAddressOnAppbar,
                                                 onAddressSelected = selectedAddress
                                             )
-
                                         }
-                                        //Sample search bar to filter database
-//                                        SearchBar() { searchText -> searchResult = "Searching for: $searchText" }
                                     }
-
                                     Spacer(modifier = Modifier.height(8.dp))
-//                                    Text(text = searchResult, style = MaterialTheme.typography.bodyMedium)
-
                                 },
-
                                 navigationIcon = {
                                     IconButton(modifier = Modifier
                                         .padding(top = 24.dp)
@@ -663,7 +631,9 @@ fun Navigation() {
                                     Text(text = pageTitle ?: currentRoute, style = Typography.titleMedium)
                                 },
                                 navigationIcon = {
-                                    IconButton(onClick = { navController.popBackStack() }) {
+                                    IconButton(onClick = {
+                                       if(currentRoute == "Playlists") navController.navigate("Home") else navController.popBackStack()
+                                    }) {
                                         Image(
                                             painter = painterResource(id = R.drawable.ic_arrow_tail_back),
                                             contentDescription = "Back Button",
@@ -710,9 +680,16 @@ fun Navigation() {
                         HomeScreen(navController)
                     }
                     composable(
-                        "Playlist List",
+                        "Playlists",
                     ) {
-                        PlaylistListScreen(navController, isLoggedIn || isSignedUp)
+                        PlaylistListScreen(
+                            navController = navController,
+                            isUserLoggedIn = isLoggedIn || isSignedUp,
+                            userId = "1",
+                            showSnackbar = playlistViewModel.shouldShowSnackbar,
+                            snackbarMessage = playlistViewModel.snackbarMessage,
+                            resetSnackbar = playlistViewModel::resetSnackbarState
+                        )
                     }
                     composable(
                         "Build your mix",
@@ -739,7 +716,7 @@ fun Navigation() {
                     composable("Home AppBar") { backStackEntry ->
                         HomeAppBar(navController)
                     }
-                    composable("Playlist Confirm") { backStackEntry ->
+                    composable("Confirmation") { backStackEntry ->
                         PlaylistConfirmScreen(playlistViewModel, navController)
                     }
                     composable("ViewCategoryPlaylist/{title}/{isPublic}/{userId}",

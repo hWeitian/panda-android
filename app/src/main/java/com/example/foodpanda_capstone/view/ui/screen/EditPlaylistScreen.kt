@@ -136,7 +136,7 @@ fun EditPlaylistScreen(navController: NavController, viewModel: PlaylistViewMode
                     name = if (currentPlaylist.isPublic == true || currentPlaylist.status == "Cancelled") "Subscribe" else "Update",
                     width = null
                 ) {
-                    navController.navigate("Playlist Confirm")
+                    navController.navigate("Confirmation")
                 }
             }
         }

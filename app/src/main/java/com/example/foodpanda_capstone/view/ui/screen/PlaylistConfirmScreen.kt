@@ -82,10 +82,15 @@ import com.example.foodpanda_capstone.view.ui.theme.Typography
 import com.example.foodpanda_capstone.viewmodel.AddressViewModel
 import com.example.foodpanda_capstone.viewmodel.GeneralViewModelFactoryDoubleParam
 import com.example.foodpanda_capstone.viewmodel.PlaylistViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import sharedPreferences
 
 @Composable
-fun PlaylistConfirmScreen(viewModel: PlaylistViewModel, navController: NavController) {
+fun PlaylistConfirmScreen(
+    viewModel: PlaylistViewModel,
+    navController: NavController
+) {
     val context = LocalContext.current
     val currentPlaylist by viewModel.currentPlaylist.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
@@ -143,7 +148,7 @@ fun PlaylistConfirmScreen(viewModel: PlaylistViewModel, navController: NavContro
 
     LaunchedEffect(canNavigate) {
         if (canNavigate == true) {
-            navController.navigate("Playlist List")
+            navController.navigate("Playlists")
         }
     }
 

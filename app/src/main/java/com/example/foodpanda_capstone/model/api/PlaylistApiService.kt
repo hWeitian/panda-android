@@ -52,33 +52,3 @@ interface PlaylistApiService {
     @PUT("playlist/{userId}/{playlistId}")
     suspend fun cancelSubscription(@Path("userId") userId: String, @Path("playlistId") playlistId: Int)
 }
-
-
-//interface PlaylistApiService {
-//    @GET("playlists/latest/{userId}")
-//    suspend fun getAllPlaylist(@Path("userId") userId: String): AllPlaylist
-//
-//    @GET("playlists/current/{id}")
-//    suspend fun getOnePlaylist(@Path("id") id: Int): Playlist
-//
-//    @GET("playlists/user/{userId}")
-//    suspend fun getAllUserPlaylist(@Path("userId") userId: String): List<PlaylistOverview>
-//    @GET("playlists/public")
-//    suspend fun getAllPubliPlaylist(): List<PlaylistOverview>
-//
-//    @GET("playlists/random/{cuisine}/{numOfDishes}/{maxBudget}")
-//    suspend fun getRandomPlaylist(
-//        @Path("cuisine") cuisine: String,
-//        @Path("numOfDishes") numOfDishes: Int,
-//        @Path("maxBudget") maxBudget: Int
-//    ): Playlist
-//
-//    @GET("dishes/search/{keyword}")
-//    suspend fun getSearchResults(@Path("keyword") keyword: String): List<FoodItem>
-//
-//    @DELETE("search/{userId}/{keyword}")
-//    suspend fun deleteRecentSearch(@Path("userId") userId: Int, @Path("keyword") keyword: String)
-//
-//    @POST("playlists/add/{userId}")
-//    suspend fun postPlaylist(@Body body: FinalPlaylist, @Path("userId") userId: String)
-//}

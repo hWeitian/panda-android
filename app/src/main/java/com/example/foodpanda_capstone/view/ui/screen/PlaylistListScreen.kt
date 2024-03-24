@@ -5,13 +5,21 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -28,13 +36,24 @@ import com.example.foodpanda_capstone.view.ui.composable.LoadingScreen
 import com.example.foodpanda_capstone.view.ui.composable.PrimaryButton
 import com.example.foodpanda_capstone.view.ui.composable.ScreenBottomSpacer
 import com.example.foodpanda_capstone.view.ui.composable.SectionTitleAndBtn
+import com.example.foodpanda_capstone.view.ui.theme.BrandDark
 import com.example.foodpanda_capstone.view.ui.theme.BrandSecondary
 import com.example.foodpanda_capstone.view.ui.theme.Typography
 import com.example.foodpanda_capstone.viewmodel.AllPlaylistViewModel
 import com.example.foodpanda_capstone.viewmodel.GeneralViewModelFactory
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 @Composable
-fun PlaylistListScreen(navController: NavController, isUserLoggedIn: Boolean, userId: String = "1") {
+fun PlaylistListScreen(
+    navController: NavController,
+    isUserLoggedIn: Boolean,
+    userId: String = "1",
+    showSnackbar: StateFlow<Boolean>,
+    snackbarMessage: String,
+    resetSnackbar: () -> Unit
+) {
 
     val apiService: PlaylistApiService = PlaylistApiClient.apiService
     val repository = PlaylistRepository(apiService)
@@ -48,50 +67,78 @@ fun PlaylistListScreen(navController: NavController, isUserLoggedIn: Boolean, us
     val publicPlaylists by viewModel.publicPlaylists.collectAsState()
     val userPlaylists by viewModel.userPlaylists.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
+    val shouldShowSnackbar by showSnackbar.collectAsState()
+
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    println("shouldShowSnackbar: $shouldShowSnackbar")
 
     LaunchedEffect(userId) {
         viewModel.getAllPlaylist(userId)
     }
 
+    LaunchedEffect(shouldShowSnackbar) {
+        println("here at LaunchedEffect shouldShowSnackbar")
+        if (shouldShowSnackbar) {
+            println("shouldShowSnackbar is true")
+            scope.launch {
+                snackbarHostState.showSnackbar(snackbarMessage)
+            }
+            resetSnackbar()
+        }
+    }
+
     if (isLoading) {
         LoadingScreen()
     } else {
-        Column(
-            modifier = Modifier
-                .verticalScroll(rememberScrollState())
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.SpaceBetween,
-        ) {
+        Scaffold(
+            snackbarHost = {
+                SnackbarHost(hostState = snackbarHostState) {
+                    Snackbar(
+                        snackbarData = it,
+                        containerColor = BrandDark,
+                        contentColor = Color.White
+                    )
+                }
+            }
+        ) { contentPadding ->
+            Column(
+                modifier = Modifier
+                    .padding(contentPadding)
+                    .fillMaxHeight(),
+                verticalArrangement = Arrangement.SpaceBetween,
+            ) {
 
-            /*
+                /*
             Start to disable user Login
             */
 
-            Column {
-                PlaylistSection(
-                    dataList = userPlaylists,
-                    title = "Your Subscription",
-                    navController = navController,
-                    isPublic = false,
-                    userId = userId
+                Column {
+                    PlaylistSection(
+                        dataList = userPlaylists,
+                        title = "Your Subscriptions",
+                        navController = navController,
+                        isPublic = false,
+                        userId = userId
                     )
-                PlaylistSection(
-                    dataList = publicPlaylists,
-                    title = "Discover More",
-                    navController = navController,
-                    isPublic = true,
-                    userId = userId
+                    PlaylistSection(
+                        dataList = publicPlaylists,
+                        title = "Discover More",
+                        navController = navController,
+                        isPublic = true,
+                        userId = userId
+                    )
+                }
+                PlaylistListScreenButtons(
+                    descriptionText = "Want a tailored experience?",
+                    buttonText = "Build your mix!",
+                    navigateDestination = "Build your mix",
+                    navController,
+                    Modifier.weight(1f)
                 )
-            }
-            PlaylistListScreenButtons(
-                descriptionText = "Want a tailored experience?",
-                buttonText = "Build your mix!",
-                navigateDestination = "Build your mix",
-                navController,
-                Modifier.weight(1f)
-            )
 
-            /*
+                /*
             Start to enable user Login
             */
 
@@ -155,8 +202,8 @@ fun PlaylistListScreen(navController: NavController, isUserLoggedIn: Boolean, us
 //                )
 //            }
 
-
-            ScreenBottomSpacer()
+                ScreenBottomSpacer()
+            }
         }
     }
 }
@@ -205,8 +252,10 @@ fun PlaylistSection(
             .padding(vertical = 10.dp)
     ) {
 
-        SectionTitleAndBtn(title = title, btnTitle = "See all", icon = null,
-            modifier = Modifier) {
+        SectionTitleAndBtn(
+            title = title, btnTitle = "See all", icon = null,
+            modifier = Modifier
+        ) {
             navController.navigate("ViewCategoryPlaylist/$title/$isPublic/$userId")
         }
 
@@ -264,7 +313,11 @@ fun PlaylistCard(playlist: PlaylistOverview, cardClicked: () -> Unit) {
                 .padding(top = 4.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = playlist.name.truncateString(), style = Typography.headlineLarge, modifier = Modifier.weight(0.8f))
+            Text(
+                text = playlist.name.truncateString(),
+                style = Typography.headlineLarge,
+                modifier = Modifier.weight(0.8f)
+            )
             Text(
                 text = "S$ ${"%.2f".format(playlist.cost)}",
                 style = Typography.headlineLarge,
