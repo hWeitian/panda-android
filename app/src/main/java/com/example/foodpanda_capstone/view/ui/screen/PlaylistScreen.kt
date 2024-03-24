@@ -167,8 +167,7 @@ fun PlaylistScreen(navController: NavController, id: Int?, viewModel: PlaylistVi
 
                         currentPlaylist.isPublic == true || currentPlaylist.status == "Cancelled" -> PublicPlaylistButtons(
                             navController = navController,
-                            playlistName = currentPlaylist.name,
-                            viewModel = viewModel
+                            playlistName = currentPlaylist.name
                         )
 
                         else -> PrivatePlayListButtons(
@@ -210,11 +209,6 @@ fun PlaylistScreen(navController: NavController, id: Int?, viewModel: PlaylistVi
 }
 
 @Composable
-fun FoodItemContainer(foodItem: FoodItem) {
-    FoodItemContainerCard { FoodItemContent(foodItem) }
-}
-
-@Composable
 fun RandomPlaylistButtons(navController: NavController, playlistName: String, viewModel: PlaylistViewModel) {
     CustomTextBtn(
         name = "Edit Playlist",
@@ -236,7 +230,7 @@ fun RandomPlaylistButtons(navController: NavController, playlistName: String, vi
 }
 
 @Composable
-fun PublicPlaylistButtons(navController: NavController, playlistName: String, viewModel: PlaylistViewModel) {
+fun PublicPlaylistButtons(navController: NavController, playlistName: String) {
     CustomTextBtn(
         name = "Edit Playlist",
         iconVector = null,
@@ -262,52 +256,5 @@ fun PrivatePlayListButtons(openModal: MutableState<Boolean>, navController: NavC
 
     PrimaryButton(name = "Edit", width = null) {
         navController.navigate("EditPlaylist/Editing $playlistName")
-    }
-}
-
-@Composable
-fun FoodItemContent(foodItem: FoodItem) {
-    Row(
-        Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Column(
-            Modifier
-                .weight(0.7f)
-                .height(80.dp),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column {
-                FoodItemNameText(foodItem.name)
-                FoodItemDescriptionText(foodItem.description)
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            )
-            {
-                Text(
-                    text = "Qty: ${foodItem.quantity}",
-                    style = Typography.bodyMedium,
-                    color = BrandDark
-                )
-                Text(
-                    text = "S$ ${"%.2f".format(foodItem.price)}",
-                    style = Typography.bodyMedium
-                )
-            }
-        }
-        Row(
-            modifier = Modifier
-                .weight(0.3f)
-                .fillMaxWidth()
-        ) {
-            Spacer(Modifier.weight(0.2f))
-            Box(modifier = Modifier.weight(0.8f)) {
-                ImageHolder(imageUrl = foodItem.imageUrl, height = 90, description = foodItem.name)
-            }
-        }
     }
 }

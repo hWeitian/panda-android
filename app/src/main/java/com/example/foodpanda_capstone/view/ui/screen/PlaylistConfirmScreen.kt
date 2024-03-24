@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Loyalty
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.RamenDining
 import androidx.compose.material.icons.filled.Storefront
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -49,6 +50,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -60,12 +62,15 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.foodpanda_capstone.R
 import com.example.foodpanda_capstone.model.AddressRepository
 import com.example.foodpanda_capstone.model.Days
 import com.example.foodpanda_capstone.model.FoodItem
 import com.example.foodpanda_capstone.model.PlaylistRepository
 import com.example.foodpanda_capstone.model.api.PlaylistApiService
 import com.example.foodpanda_capstone.model.timeOfDelivery
+import com.example.foodpanda_capstone.view.ui.composable.FoodItemContainer
+import com.example.foodpanda_capstone.view.ui.composable.FoodItemContainerWithoutImage
 import com.example.foodpanda_capstone.view.ui.composable.FoodItemDescriptionText
 import com.example.foodpanda_capstone.view.ui.composable.FoodItemNameText
 import com.example.foodpanda_capstone.view.ui.composable.ImageHolder
@@ -182,9 +187,9 @@ fun PlaylistConfirmScreen(
         ) {
             item {
                 SectionTitleAndBtn(
-                    title = "Subscription Details",
+                    title = "Playlist Dishes",
                     btnTitle = "Edit",
-                    icon = Icons.Default.Loyalty,
+                    icon = Icons.Default.RamenDining,
                     modifier = Modifier
                 ) {
                     navController.navigate("EditPlaylist/${currentPlaylist.name}")
@@ -193,11 +198,18 @@ fun PlaylistConfirmScreen(
 
             items(currentPlaylist.foodItems.orEmpty()) { restaurantFoodItems ->
                 if (restaurantFoodItems != null) {
-                    Spacer(modifier = Modifier.height(20.dp))
-                    RestaurantNameText(restaurantFoodItems.restaurantName)
-                    restaurantFoodItems.foodItems.map { item ->
-                        FoodItemContainer(item)
+                    Spacer(modifier = Modifier.size(5.dp))
+                    restaurantFoodItems.foodItems.mapIndexed { index, item ->
+                        FoodItemContainerWithoutImage(item, restaurantFoodItems.restaurantName)
+                        if (index != restaurantFoodItems.foodItems.size - 1) {
+                            Spacer(
+                                modifier = Modifier.size(
+                                    dimensionResource(R.dimen.food_item_container_space)
+                                )
+                            )
+                        }
                     }
+                    Spacer(modifier = Modifier.height(10.dp))
                 }
             }
 
@@ -263,8 +275,6 @@ fun PlaylistConfirmScreen(
 
             item {
                 Column(modifier = Modifier.padding(top = 8.dp)) {
-//                    DropdownOptionsBox()
-
                     LargeDropdownMenu(
                         label = "Select Time",
                         items = timeOfDelivery,
