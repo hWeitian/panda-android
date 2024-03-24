@@ -72,16 +72,12 @@ fun PlaylistListScreen(
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    println("shouldShowSnackbar: $shouldShowSnackbar")
-
     LaunchedEffect(userId) {
         viewModel.getAllPlaylist(userId)
     }
 
     LaunchedEffect(shouldShowSnackbar) {
-        println("here at LaunchedEffect shouldShowSnackbar")
         if (shouldShowSnackbar) {
-            println("shouldShowSnackbar is true")
             scope.launch {
                 snackbarHostState.showSnackbar(snackbarMessage)
             }
