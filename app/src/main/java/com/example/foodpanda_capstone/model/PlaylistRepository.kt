@@ -60,6 +60,7 @@ class PlaylistRepository(private val apiService: PlaylistApiService) {
         val result = apiService.getSearchResults(userId, keyword)
         emit(result)
     }.catch { e ->
+        throw e
         Log.e("PdError", "Error at fetchSearchResults - ${e.message}")
     }
 

@@ -150,6 +150,10 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
         snackbarMessage = ""
     }
 
+    fun restLoadingState() {
+        _isLoading.value = false
+    }
+
     fun onConfirmSubscriptionClick() {
         viewModelScope.launch(Dispatchers.IO) {
             withContext(Dispatchers.Main) {
@@ -334,21 +338,25 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
 
     fun getSearchResult() {
         viewModelScope.launch(Dispatchers.IO) {
-
-            withContext(Dispatchers.Main) {
-                _isLoading.value = true
-                delay(1000)
-            }
+            _isError.value = false
             try {
+                withContext(Dispatchers.Main) {
+                    _isLoading.value = true
+                    delay(1000)
+                }
                 repository.fetchSearchResults(userId, searchText.value.toString()).collect { searchResult ->
                     _searchResults.value = updateSearchedDishQuantity(searchResult)
                 }
+                withContext(Dispatchers.Main) {
+                    _isLoading.value = false
+                }
             } catch (e: Exception) {
+                println("getSearchResult Error")
+                _isError.value = true
+                withContext(Dispatchers.Main) {
+                    _isLoading.value = false
+                }
                 logErrorMsg("getSearchResult", e)
-            }
-
-            withContext(Dispatchers.Main) {
-                _isLoading.value = false
             }
         }
     }
@@ -359,7 +367,7 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
         val currentPlaylistDishIds = getDishesIdInCurrentPlaylist(restaurantsInPlaylist)
 
         val newResults = searchResults.map { dish ->
-            if (currentPlaylistDishIds?.containsKey(dish.id) == true) {
+            if (currentPlaylistDishIds.containsKey(dish.id)) {
                 val quantity = currentPlaylistDishIds[dish.id]
                 dish.copy(quantity = quantity!!)
             } else {
@@ -369,22 +377,6 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
         }
 
         return newResults
-    }
-
-    private fun getDishesIdInCurrentPlaylist(restaurantsInPlaylist: List<RestaurantFoodItems?>?)
-        : MutableMap<Int, Int> {
-        var currentPlaylistDishIds = mutableMapOf<Int, Int>()
-        if (restaurantsInPlaylist != null) {
-            for (i in 0..restaurantsInPlaylist.size - 1) {
-                val restaurantDishes = restaurantsInPlaylist[i]?.foodItems
-                if (restaurantDishes != null) {
-                    val restaurantDishesId = getCurrentPlaylistDishIds(restaurantDishes)
-                    currentPlaylistDishIds = addMapToMap(currentPlaylistDishIds, restaurantDishesId)
-                }
-            }
-        }
-
-        return currentPlaylistDishIds
     }
 
     fun clearSearchResult() {
@@ -437,6 +429,22 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
                 logErrorMsg("onSearchResultDishAddBtnClicked", e)
             }
         }
+    }
+
+    private fun getDishesIdInCurrentPlaylist(restaurantsInPlaylist: List<RestaurantFoodItems?>?)
+        : MutableMap<Int, Int> {
+        var currentPlaylistDishIds = mutableMapOf<Int, Int>()
+        if (restaurantsInPlaylist != null) {
+            for (i in 0..restaurantsInPlaylist.size - 1) {
+                val restaurantDishes = restaurantsInPlaylist[i]?.foodItems
+                if (restaurantDishes != null) {
+                    val restaurantDishesId = getCurrentPlaylistDishIds(restaurantDishes)
+                    currentPlaylistDishIds = addMapToMap(currentPlaylistDishIds, restaurantDishesId)
+                }
+            }
+        }
+
+        return currentPlaylistDishIds
     }
 
     private suspend fun addDishToCurrentPlaylist(dishToAdd: FoodItem) {

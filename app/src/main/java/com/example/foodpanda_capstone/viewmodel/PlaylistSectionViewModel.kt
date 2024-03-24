@@ -59,7 +59,7 @@ class PlaylistSectionViewModel(private val repository: PlaylistRepository) : Vie
                 try {
                     repository.fetchAllUserPlaylist(userId).collect { playlists ->
                         _cancelledPlaylist.value = playlists.filter { it.status == "Cancelled" }
-                        this@PlaylistSectionViewModel._subscribedPlaylist.value = playlists.filter { it.status != "Cancelled" }
+                        _subscribedPlaylist.value = playlists.filter { it.status != "Cancelled" }
                         _categoryPlaylist.value = playlists
                     }
                 } catch (e: Exception) {
@@ -72,22 +72,6 @@ class PlaylistSectionViewModel(private val repository: PlaylistRepository) : Vie
                 }
             }
         }
-    }
-
-    private fun filterPlaylist(
-        status: String,
-        secondStatus: String = "",
-        completeList: List<PlaylistOverview>
-    ): List<PlaylistOverview> {
-        println(completeList)
-        var result = mutableListOf<PlaylistOverview>()
-        for (playlistOverview in completeList) {
-            if (playlistOverview.status == status || playlistOverview.status == secondStatus) {
-                result.add(playlistOverview)
-            }
-        }
-        println(result)
-        return result
     }
 }
 

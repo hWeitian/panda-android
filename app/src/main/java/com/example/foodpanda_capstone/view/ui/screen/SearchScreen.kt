@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -52,11 +53,14 @@ import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.foodpanda_capstone.R
 import com.example.foodpanda_capstone.model.FoodItem
 import com.example.foodpanda_capstone.model.RecentSearch
+import com.example.foodpanda_capstone.view.ui.composable.ErrorScreen
+import com.example.foodpanda_capstone.view.ui.composable.LoadingScreen
 import com.example.foodpanda_capstone.view.ui.composable.SectionTitleAndBtn
 import com.example.foodpanda_capstone.view.ui.theme.LightGrey
 import com.example.foodpanda_capstone.view.ui.theme.Typography
@@ -70,9 +74,18 @@ fun SearchScreen(navController: NavController, viewModel: PlaylistViewModel) {
     val recentSearch by viewModel.recentSearch.collectAsState()
     val searchResults by viewModel.searchResults.collectAsState()
     val isInputOnFocus by viewModel.isInputOnFocus.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+    val isError by viewModel.isError.collectAsState()
 
     LaunchedEffect(searchResults) {
         viewModel.getRecentSearch()
+    }
+
+    LaunchedEffect(isInputOnFocus) {
+        if (isInputOnFocus) {
+            viewModel.resetErrorState()
+            viewModel.restLoadingState()
+        }
     }
 
     DisposableEffect(Unit) {
@@ -87,6 +100,7 @@ fun SearchScreen(navController: NavController, viewModel: PlaylistViewModel) {
             .fillMaxSize()
             .background(Color.White)
     ) {
+
         Column {
             Spacer(modifier = Modifier.size(10.dp))
             SearchInput(
@@ -101,7 +115,7 @@ fun SearchScreen(navController: NavController, viewModel: PlaylistViewModel) {
             ) {}
             Spacer(modifier = Modifier.size(20.dp))
 
-            if (searchResults.isEmpty() || isInputOnFocus) {
+            if ((searchResults.isEmpty() || isInputOnFocus) && !isError && !isLoading) {
                 RecentSearch(
                     recentSearches = recentSearch,
                     search = viewModel::searchRecentSearchKeyword,
@@ -109,7 +123,19 @@ fun SearchScreen(navController: NavController, viewModel: PlaylistViewModel) {
                     updateIsInputOnFocus = { isFocus -> viewModel.updateIsInputOnFocusState(isFocus) }
                 )
             } else {
-                SearchResults(searchResults = searchResults, viewModel = viewModel)
+                when {
+                    isError -> {
+                        ErrorScreen(
+                            errorTitle = "Oops..No results for $searchInput"
+                        )
+                    }
+                    isLoading -> {
+                        LoadingScreen()
+                    }
+                    searchResults.isNotEmpty() -> {
+                        SearchResults(searchResults = searchResults, viewModel = viewModel)
+                    }
+                }
             }
         }
     }
@@ -122,7 +148,6 @@ fun SearchResults(searchResults: List<FoodItem>, viewModel: PlaylistViewModel) {
             viewModel.clearSearchResult()
         }
     }
-
     LazyColumn {
         itemsIndexed(searchResults) { index, result ->
             EditableFoodItemContainer(
@@ -177,14 +202,28 @@ fun SearchKeyword(
     updateIsInputOnFocus: (isFocused: Boolean) -> Unit,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(40.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = keyword.keyword, modifier = Modifier.clickable {
-            search(keyword.keyword)
-            updateIsInputOnFocus(false)
-        })
+        Column(
+            modifier = Modifier
+                .weight(0.9f)
+                .fillMaxHeight()
+                .clickable {
+                    search(keyword.keyword)
+                    updateIsInputOnFocus(false)
+                },
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = keyword.keyword,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
         IconButton(onClick = { deleteKeyword(keyword.keyword) }) {
             Icon(
                 imageVector = Icons.Default.Clear,

@@ -80,7 +80,6 @@ fun PlaylistScreen(
             .background(Color.White)
     ) {
         if (!isLoading && !isError) {
-
             LazyColumn {
                 item {
                     Column(

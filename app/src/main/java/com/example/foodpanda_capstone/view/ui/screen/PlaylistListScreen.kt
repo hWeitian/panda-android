@@ -3,6 +3,7 @@ package com.example.foodpanda_capstone.view.ui.screen
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
@@ -90,8 +91,8 @@ fun PlaylistListScreen(
             snackbarHost = {
                 SnackbarHost(hostState = snackbarHostState) {
                     Snackbar(
+                        shape = RoundedCornerShape(8.dp),
                         snackbarData = it,
-                        containerColor = BrandDark,
                         contentColor = Color.White
                     )
                 }
@@ -103,39 +104,6 @@ fun PlaylistListScreen(
                     .fillMaxHeight(),
                 verticalArrangement = Arrangement.SpaceBetween,
             ) {
-
-                /*
-            Start to disable user Login
-            */
-
-//                Column {
-//                    PlaylistSection(
-//                        dataList = userPlaylists,
-//                        title = "Your Subscriptions",
-//                        navController = navController,
-//                        isPublic = false,
-//                        userId = userId
-//                    )
-//                    PlaylistSection(
-//                        dataList = publicPlaylists,
-//                        title = "Discover More",
-//                        navController = navController,
-//                        isPublic = true,
-//                        userId = userId
-//                    )
-//                }
-//                PlaylistListScreenButtons(
-//                    descriptionText = "Want a tailored experience?",
-//                    buttonText = "Build your mix!",
-//                    navigateDestination = "Build your mix",
-//                    navController,
-//                    Modifier.weight(1f)
-//                )
-
-                /*
-            Start to enable user Login
-            */
-
                 if (!isUserLoggedIn) {
                     PlaylistListScreenButtons(
                         descriptionText = "Log in / sign up to view your subscriptions",
