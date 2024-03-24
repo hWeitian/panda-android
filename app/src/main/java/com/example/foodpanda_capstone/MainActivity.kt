@@ -246,12 +246,12 @@ fun Navigation() {
         mutableStateOf(drawerItem[0])
     }
 
-//    val isLoggedIn by authViewModel.loginState.collectAsState()
-//    val isSignedUp by authViewModel.signupState.collectAsState()
+    val isLoggedIn by authViewModel.loginState.collectAsState()
+    val isSignedUp by authViewModel.signupState.collectAsState()
 
     // For testing purpose
-    val isLoggedIn = true
-    val isSignedUp = true
+//    val isLoggedIn = true
+//    val isSignedUp = true
 
     Log.d("Navigation", "isLoggedIn: $isLoggedIn")
     Log.d("Navigation", "isSignedUp: $isSignedUp")
@@ -623,7 +623,11 @@ fun Navigation() {
                                 },
                                 navigationIcon = {
                                     IconButton(onClick = {
-                                        if (currentRoute == "Playlists") navController.navigate("Home") else navController.popBackStack()
+                                        when {
+                                            currentRoute == "Playlists" -> navController.navigate("Home")
+                                            currentRoute == "Build your mix" -> navController.navigate("Playlists")
+                                            else -> navController.popBackStack()
+                                        }
                                     }) {
                                         Image(
                                             painter = painterResource(id = R.drawable.ic_arrow_tail_back),

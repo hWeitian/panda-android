@@ -29,6 +29,7 @@ import com.example.foodpanda_capstone.model.api.PlaylistApiClient
 import com.example.foodpanda_capstone.model.api.PlaylistApiService
 import com.example.foodpanda_capstone.utils.grayScale
 import com.example.foodpanda_capstone.utils.truncateString
+import com.example.foodpanda_capstone.view.ui.composable.CustomOutlinedBtn
 import com.example.foodpanda_capstone.view.ui.composable.CustomTextBtn
 import com.example.foodpanda_capstone.view.ui.composable.ImageHolder
 import com.example.foodpanda_capstone.view.ui.composable.LoadingScreen
@@ -140,10 +141,10 @@ fun PlaylistListScreen(
                     }
                 } else if (userPlaylists.isNullOrEmpty() && cancelledPlaylist.isNotEmpty()) {
                     PlaylistListScreenButtons(
-                        descriptionText = "You haven't subscribed to any playlists.",
+                        descriptionText = "You haven't subscribed to any playlists",
                         buttonText = "Build your mix!",
                         navigateDestination = "Build your mix",
-                        secondaryButtonText = "Click here to view your cancelled playlist",
+                        secondaryButtonText = "View your cancelled subscription",
                         secondaryDestination = "ViewCategoryPlaylist/Your Subscription/${false}/$userId",
                         navController = navController,
                         modifier = Modifier.weight(1f)
@@ -182,7 +183,6 @@ fun PlaylistListScreen(
                         modifier = Modifier.weight(1f)
                     )
                 }
-
                 ScreenBottomSpacer()
             }
         }
@@ -212,11 +212,10 @@ fun PlaylistListScreenButtons(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(text = descriptionText, style = Typography.titleSmall)
-            Spacer(modifier = Modifier.size(15.dp))
             if (secondaryButtonText != null && secondaryDestination != null) {
                 CustomTextBtn(secondaryButtonText, null, null) { navController.navigate(secondaryDestination) }
-                Spacer(modifier = Modifier.size(15.dp))
             }
+            Spacer(modifier = Modifier.size(15.dp))
             PrimaryButton(name = buttonText, null) {
                 navController.navigate(navigateDestination)
             }

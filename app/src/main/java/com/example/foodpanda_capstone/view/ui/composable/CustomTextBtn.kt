@@ -40,7 +40,7 @@ fun CustomTextBtn(name: String, iconVector: ImageVector?, iconImgId: Int?, onCli
         onClick = { onClick() },
         modifier = Modifier.wrapContentSize(),
         shape = RoundedCornerShape(8.dp),
-        contentPadding = PaddingValues(5.dp)
+        contentPadding = PaddingValues(10.dp)
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -57,6 +57,7 @@ fun CustomTextBtn(name: String, iconVector: ImageVector?, iconImgId: Int?, onCli
                         .padding(5.dp, 5.dp),
                     colorFilter = ColorFilter.tint(Color.White),
                 )
+                Spacer(modifier = Modifier.size(5.dp))
             }
             if (iconVector != null) {
                 Icon(
@@ -65,8 +66,8 @@ fun CustomTextBtn(name: String, iconVector: ImageVector?, iconImgId: Int?, onCli
                     tint = BrandDark,
                     modifier = Modifier.size(14.dp)
                 )
+                Spacer(modifier = Modifier.size(5.dp))
             }
-            Spacer(modifier = Modifier.size(5.dp))
             Text(
                 name, color = BrandDark,
                 style = if (iconVector != null || iconImgId != null) Typography.titleSmall
