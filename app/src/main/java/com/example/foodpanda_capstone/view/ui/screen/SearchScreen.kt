@@ -226,6 +226,7 @@ fun SearchInput(
 
     TextField(
         placeholder = { Text(text = placeholderText) },
+        singleLine = true,
         enabled = isEnabled,
         value = inputValue,
         leadingIcon = { Icon(imageVector = Icons.Default.Search, "Search Icon") },

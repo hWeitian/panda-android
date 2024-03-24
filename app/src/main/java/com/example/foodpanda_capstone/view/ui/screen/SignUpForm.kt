@@ -108,7 +108,8 @@ fun signUpForm(viewModel: AuthViewModel, navController: NavController) {
                     cursorColor = BrandSecondary,
                     focusedBorderColor = BrandSecondary,
                     focusedLabelColor = BrandSecondary,
-                )
+                ),
+                singleLine = true
             )
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -123,7 +124,8 @@ fun signUpForm(viewModel: AuthViewModel, navController: NavController) {
                     cursorColor = BrandSecondary,
                     focusedBorderColor = BrandSecondary,
                     focusedLabelColor = BrandSecondary,
-                )
+                ),
+                singleLine = true
             )
         }
 
@@ -138,11 +140,13 @@ fun signUpForm(viewModel: AuthViewModel, navController: NavController) {
                 cursorColor = BrandSecondary,
                 focusedBorderColor = BrandSecondary,
                 focusedLabelColor = BrandSecondary,
-            )
+            ),
+            singleLine = true
         )
 
         OutlinedTextField(
             value = password,
+            singleLine = true,
             onValueChange = { password = it },
             label = { Text("Password") },
             modifier = Modifier

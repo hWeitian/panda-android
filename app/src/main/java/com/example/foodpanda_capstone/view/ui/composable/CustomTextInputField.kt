@@ -46,6 +46,7 @@ fun CustomTextInputField(
             cursorColor = BrandSecondary,
             focusedLabelColor = BrandSecondary
         ),
+        singleLine = true,
         leadingIcon = {
             icon?.let {
                 Row(
@@ -98,6 +99,7 @@ fun CustomNumberInputField(
             cursorColor = BrandSecondary,
             focusedLabelColor = BrandSecondary
         ),
+        singleLine = true,
         leadingIcon = {
             icon?.let {
                 Row(

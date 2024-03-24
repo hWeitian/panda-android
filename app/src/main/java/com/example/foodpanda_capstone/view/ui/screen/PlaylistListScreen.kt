@@ -3,15 +3,12 @@ package com.example.foodpanda_capstone.view.ui.screen
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -31,6 +28,7 @@ import com.example.foodpanda_capstone.model.api.PlaylistApiClient
 import com.example.foodpanda_capstone.model.api.PlaylistApiService
 import com.example.foodpanda_capstone.utils.grayScale
 import com.example.foodpanda_capstone.utils.truncateString
+import com.example.foodpanda_capstone.view.ui.composable.CustomTextBtn
 import com.example.foodpanda_capstone.view.ui.composable.ImageHolder
 import com.example.foodpanda_capstone.view.ui.composable.LoadingScreen
 import com.example.foodpanda_capstone.view.ui.composable.PrimaryButton
@@ -41,7 +39,6 @@ import com.example.foodpanda_capstone.view.ui.theme.BrandSecondary
 import com.example.foodpanda_capstone.view.ui.theme.Typography
 import com.example.foodpanda_capstone.viewmodel.AllPlaylistViewModel
 import com.example.foodpanda_capstone.viewmodel.GeneralViewModelFactory
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
@@ -66,6 +63,7 @@ fun PlaylistListScreen(
 
     val publicPlaylists by viewModel.publicPlaylists.collectAsState()
     val userPlaylists by viewModel.userPlaylists.collectAsState()
+    val cancelledPlaylist by viewModel.cancelledPlaylist.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val shouldShowSnackbar by showSnackbar.collectAsState()
 
@@ -138,65 +136,84 @@ fun PlaylistListScreen(
             Start to enable user Login
             */
 
-            if (!isUserLoggedIn) {
-                PlaylistListScreenButtons(
-                    descriptionText = "Log in / sign up to view your subscriptions",
-                    buttonText = "Log in / Sign up",
-                    navigateDestination = "Welcome",
-                    navController,
-                    Modifier.weight(1f)
-                )
-                Column {
-                    PlaylistSection(
-                        dataList = publicPlaylists,
-                        title = "Discover More",
+                if (!isUserLoggedIn) {
+                    PlaylistListScreenButtons(
+                        descriptionText = "Log in / sign up to view your subscriptions",
+                        buttonText = "Log in / Sign up",
+                        navigateDestination = "Welcome",
                         navController = navController,
-                        isPublic = true,
-                        userId = userId
+                        modifier = Modifier.weight(1f)
+                    )
+                    Column {
+                        PlaylistSection(
+                            dataList = publicPlaylists,
+                            title = "Discover More",
+                            navController = navController,
+                            isPublic = true,
+                            userId = userId
+                        )
+                    }
+                } else if (userPlaylists.isNullOrEmpty() && cancelledPlaylist.isNullOrEmpty()) {
+                    PlaylistListScreenButtons(
+                        descriptionText = "You haven't subscribed to any playlists.",
+                        buttonText = "Build your mix!",
+                        navigateDestination = "Build your mix",
+                        navController = navController,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Column {
+                        PlaylistSection(
+                            dataList = publicPlaylists,
+                            title = "Discover More",
+                            navController = navController,
+                            isPublic = true,
+                            userId = userId
+                        )
+                    }
+                } else if (userPlaylists.isNullOrEmpty() && cancelledPlaylist.isNotEmpty()) {
+                    PlaylistListScreenButtons(
+                        descriptionText = "You haven't subscribed to any playlists.",
+                        buttonText = "Build your mix!",
+                        navigateDestination = "Build your mix",
+                        secondaryButtonText = "Click here to view your cancelled playlist",
+                        secondaryDestination = "ViewCategoryPlaylist/Your Subscription/${false}/$userId",
+                        navController = navController,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Column {
+                        PlaylistSection(
+                            dataList = publicPlaylists,
+                            title = "Discover More",
+                            navController = navController,
+                            isPublic = true,
+                            userId = userId
+                        )
+                    }
+                } else {
+                    Column {
+                        PlaylistSection(
+                            dataList = userPlaylists,
+                            title = "Your Subscription",
+                            navController = navController,
+                            isPublic = false,
+                            userId = userId
+                        )
+                        PlaylistSection(
+                            dataList = publicPlaylists,
+                            title = "Discover More",
+                            navController = navController,
+                            isPublic = true,
+                            userId = userId
+                        )
+                    }
+                    PlaylistListScreenButtons(
+                        descriptionText = "Want a tailored experience?",
+                        buttonText = "Build your mix!",
+                        navigateDestination = "Build your mix",
+                        navController = navController,
+                        modifier = Modifier.weight(1f)
                     )
                 }
-            } else if (userPlaylists.isNullOrEmpty()) {
-                PlaylistListScreenButtons(
-                    descriptionText = "You haven't subscribed to any playlists.",
-                    buttonText = "Build your mix!",
-                    navigateDestination = "Playlist Form",
-                    navController,
-                    Modifier.weight(1f)
-                )
-                Column {
-                    PlaylistSection(
-                        dataList = publicPlaylists,
-                        title = "Discover More",
-                        navController = navController,
-                        isPublic = true,
-                        userId = userId
-                    )
-                }
-            } else {
-                Column {
-                    PlaylistSection(
-                        dataList = userPlaylists,
-                        title = "Your Subscription",
-                        navController = navController,
-                        isPublic = false,
-                        userId = userId
-                    )
-                    PlaylistSection(
-                        dataList = publicPlaylists,
-                        title = "Discover More",
-                        navController = navController,
-                        isPublic = true,
-                        userId = userId
-                    )
-                }
-                PlaylistListScreenButtons(
-                    descriptionText = "Want a tailored experience?",
-                    buttonText = "Build your mix!",
-                    navigateDestination = "Playlist Form",
-                    navController,
-                    Modifier.weight(1f)
-                )
-            }
 
                 ScreenBottomSpacer()
             }
@@ -210,6 +227,8 @@ fun PlaylistListScreenButtons(
     buttonText: String,
     navigateDestination: String,
     navController: NavController,
+    secondaryButtonText: String? = null,
+    secondaryDestination: String? = null,
     modifier: Modifier
 ) {
     Column(
@@ -226,6 +245,10 @@ fun PlaylistListScreenButtons(
         ) {
             Text(text = descriptionText, style = Typography.titleSmall)
             Spacer(modifier = Modifier.size(15.dp))
+            if (secondaryButtonText != null && secondaryDestination != null) {
+                CustomTextBtn(secondaryButtonText, null, null) { navController.navigate(secondaryDestination) }
+                Spacer(modifier = Modifier.size(15.dp))
+            }
             PrimaryButton(name = buttonText, null) {
                 navController.navigate(navigateDestination)
             }

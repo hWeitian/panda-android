@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,12 +17,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.foodpanda_capstone.R
-import com.example.foodpanda_capstone.model.PlaylistOverview
 import com.example.foodpanda_capstone.model.PlaylistRepository
 import com.example.foodpanda_capstone.model.api.PlaylistApiClient
 import com.example.foodpanda_capstone.model.api.PlaylistApiService
 import com.example.foodpanda_capstone.view.ui.composable.LoadingScreen
-import com.example.foodpanda_capstone.view.ui.composable.SectionTitleAndBtn
 import com.example.foodpanda_capstone.view.ui.theme.Typography
 import com.example.foodpanda_capstone.viewmodel.GeneralViewModelFactory
 import com.example.foodpanda_capstone.viewmodel.PlaylistSectionViewModel
@@ -43,7 +39,7 @@ fun PlaylistSectionScreen(navController: NavController, isPublic: Boolean, userI
 
     val categoryPlaylist by viewModel.categoryPlaylist.collectAsState()
     val cancelledPlaylist by viewModel.cancelledPlaylist.collectAsState()
-    val otherPlaylist by viewModel.otherPlaylist.collectAsState()
+    val subscribedPlaylist by viewModel.subscribedPlaylist.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
 
     LaunchedEffect(isPublic) {
@@ -77,21 +73,23 @@ fun PlaylistSectionScreen(navController: NavController, isPublic: Boolean, userI
                         PlaylistCard(categoryPlaylist[index]) { navController.navigate("Playlist/${categoryPlaylist[index].id}/${categoryPlaylist[index].name}") }
                     }
                 } else {
-                    item(
-                        span = { GridItemSpan(2) }
-                    ) {
-                        Text(text = "Subscribed", style = Typography.titleMedium)
-                    }
-                    items(otherPlaylist.size) { index ->
-                        PlaylistCard(otherPlaylist[index]) { navController.navigate("Playlist/${otherPlaylist[index].id}/${otherPlaylist[index].name}") }
+                    if (subscribedPlaylist.isNotEmpty()) {
+                        item(
+                            span = { GridItemSpan(2) }
+                        ) {
+                            Text(text = "Subscribed", style = Typography.titleMedium)
+                        }
+                        items(subscribedPlaylist.size) { index ->
+                            PlaylistCard(subscribedPlaylist[index]) { navController.navigate("Playlist/${subscribedPlaylist[index].id}/${subscribedPlaylist[index].name}") }
+                        }
+                        item { Spacer(modifier = Modifier.size(20.dp)) }
                     }
                     if (cancelledPlaylist.isNotEmpty()) {
                         item(
                             span = { GridItemSpan(2) }
                         ) {
                             Column {
-                                Spacer(modifier = Modifier.size(20.dp))
-                                Text(text = "Cancelled", style = Typography.titleMedium)
+                                Text(text = "Cancelled Subscription", style = Typography.titleMedium)
                             }
                         }
                         items(cancelledPlaylist.size) { index ->

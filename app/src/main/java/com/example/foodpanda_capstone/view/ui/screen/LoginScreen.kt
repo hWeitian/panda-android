@@ -73,7 +73,8 @@ fun LoginScreen(viewModel: AuthViewModel, navController: NavController) {
                 cursorColor = BrandSecondary,
                 focusedBorderColor = BrandSecondary,
                 focusedLabelColor = BrandSecondary,
-            )
+            ),
+            singleLine = true
         )
 
         OutlinedTextField(
@@ -102,8 +103,8 @@ fun LoginScreen(viewModel: AuthViewModel, navController: NavController) {
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done
-            )
-
+            ),
+            singleLine = true
         )
 
         Spacer(modifier = Modifier.padding(4.dp))

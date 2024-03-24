@@ -20,8 +20,8 @@ class PlaylistSectionViewModel(private val repository: PlaylistRepository) : Vie
     private val _cancelledPlaylist = MutableStateFlow<List<PlaylistOverview>>(emptyList())
     val cancelledPlaylist: StateFlow<List<PlaylistOverview>> = _cancelledPlaylist
 
-    private val _otherPlaylist = MutableStateFlow<List<PlaylistOverview>>(emptyList())
-    val otherPlaylist: StateFlow<List<PlaylistOverview>> = _otherPlaylist
+    private val _subscribedPlaylist = MutableStateFlow<List<PlaylistOverview>>(emptyList())
+    val subscribedPlaylist: StateFlow<List<PlaylistOverview>> = this._subscribedPlaylist
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
@@ -59,9 +59,8 @@ class PlaylistSectionViewModel(private val repository: PlaylistRepository) : Vie
                 try {
                     repository.fetchAllUserPlaylist(userId).collect { playlists ->
                         _cancelledPlaylist.value = playlists.filter { it.status == "Cancelled" }
-                        _otherPlaylist.value = playlists.filter { it.status != "Cancelled" }
+                        this@PlaylistSectionViewModel._subscribedPlaylist.value = playlists.filter { it.status != "Cancelled" }
                         _categoryPlaylist.value = playlists
-//                        println(_cancelledPlaylist.value)
                     }
                 } catch (e: Exception) {
                     logErrorMsg("getUserPlaylist", e)

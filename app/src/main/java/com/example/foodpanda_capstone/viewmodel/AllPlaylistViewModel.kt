@@ -20,6 +20,9 @@ class AllPlaylistViewModel(private val repository: PlaylistRepository) : ViewMod
     private val _userPlaylists = MutableStateFlow<List<PlaylistOverview>>(emptyList())
     val userPlaylists: StateFlow<List<PlaylistOverview>> = _userPlaylists
 
+    private val _cancelledPlaylist = MutableStateFlow<List<PlaylistOverview>>(emptyList())
+    val cancelledPlaylist: StateFlow<List<PlaylistOverview>> = _cancelledPlaylist
+
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
@@ -34,6 +37,7 @@ class AllPlaylistViewModel(private val repository: PlaylistRepository) : ViewMod
                     repository.fetchAllPlaylist(userId).collect { playlists ->
                         _publicPlaylists.value = playlists.publicPlaylist.filter { it.status != "Cancelled" }
                         _userPlaylists.value = playlists.userPlaylist.filter { it.status != "Cancelled" }
+                        _cancelledPlaylist.value = playlists.userPlaylist.filter { it.status == "Cancelled" }
                     }
                 } catch (e: Exception) {
                     logErrorMsg("getAllPlaylist", e)
