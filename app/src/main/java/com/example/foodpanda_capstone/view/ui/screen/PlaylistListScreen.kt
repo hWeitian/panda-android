@@ -110,73 +110,10 @@ fun PlaylistListScreen(
             Start to disable user Login
             */
 
-                Column {
-                    PlaylistSection(
-                        dataList = userPlaylists,
-                        title = "Your Subscriptions",
-                        navController = navController,
-                        isPublic = false,
-                        userId = userId
-                    )
-                    PlaylistSection(
-                        dataList = publicPlaylists,
-                        title = "Discover More",
-                        navController = navController,
-                        isPublic = true,
-                        userId = userId
-                    )
-                }
-                PlaylistListScreenButtons(
-                    descriptionText = "Want a tailored experience?",
-                    buttonText = "Build your mix!",
-                    navigateDestination = "Build your mix",
-                    navController,
-                    Modifier.weight(1f)
-                )
-
-                /*
-            Start to enable user Login
-            */
-
-//            if (!isUserLoggedIn) {
-//                PlaylistListScreenButtons(
-//                    descriptionText = "Log in / sign up to view your subscriptions",
-//                    buttonText = "Log in / Sign up",
-//                    navigateDestination = "Welcome",
-//                    navController,
-//                    Modifier.weight(1f)
-//                )
-//                Column {
-//                    PlaylistSection(
-//                        dataList = publicPlaylists,
-//                        title = "Discover More",
-//                        navController = navController,
-//                        isPublic = true,
-//                        userId = userId
-//                    )
-//                }
-//            } else if (userPlaylists.isNullOrEmpty()) {
-//                PlaylistListScreenButtons(
-//                    descriptionText = "You haven't subscribed to any playlists.",
-//                    buttonText = "Build your mix!",
-//                    navigateDestination = "Playlist Form",
-//                    navController,
-//                    Modifier.weight(1f)
-//                )
-//                Column {
-//                    PlaylistSection(
-//                        dataList = publicPlaylists,
-//                        title = "Discover More",
-//                        navController = navController,
-//                        isPublic = true,
-//                        userId = userId
-//                    )
-//                }
-//            } else {
 //                Column {
 //                    PlaylistSection(
 //                        dataList = userPlaylists,
-//                        title = "Your Subscription",
+//                        title = "Your Subscriptions",
 //                        navController = navController,
 //                        isPublic = false,
 //                        userId = userId
@@ -192,11 +129,74 @@ fun PlaylistListScreen(
 //                PlaylistListScreenButtons(
 //                    descriptionText = "Want a tailored experience?",
 //                    buttonText = "Build your mix!",
-//                    navigateDestination = "Playlist Form",
+//                    navigateDestination = "Build your mix",
 //                    navController,
 //                    Modifier.weight(1f)
 //                )
-//            }
+
+                /*
+            Start to enable user Login
+            */
+
+            if (!isUserLoggedIn) {
+                PlaylistListScreenButtons(
+                    descriptionText = "Log in / sign up to view your subscriptions",
+                    buttonText = "Log in / Sign up",
+                    navigateDestination = "Welcome",
+                    navController,
+                    Modifier.weight(1f)
+                )
+                Column {
+                    PlaylistSection(
+                        dataList = publicPlaylists,
+                        title = "Discover More",
+                        navController = navController,
+                        isPublic = true,
+                        userId = userId
+                    )
+                }
+            } else if (userPlaylists.isNullOrEmpty()) {
+                PlaylistListScreenButtons(
+                    descriptionText = "You haven't subscribed to any playlists.",
+                    buttonText = "Build your mix!",
+                    navigateDestination = "Playlist Form",
+                    navController,
+                    Modifier.weight(1f)
+                )
+                Column {
+                    PlaylistSection(
+                        dataList = publicPlaylists,
+                        title = "Discover More",
+                        navController = navController,
+                        isPublic = true,
+                        userId = userId
+                    )
+                }
+            } else {
+                Column {
+                    PlaylistSection(
+                        dataList = userPlaylists,
+                        title = "Your Subscription",
+                        navController = navController,
+                        isPublic = false,
+                        userId = userId
+                    )
+                    PlaylistSection(
+                        dataList = publicPlaylists,
+                        title = "Discover More",
+                        navController = navController,
+                        isPublic = true,
+                        userId = userId
+                    )
+                }
+                PlaylistListScreenButtons(
+                    descriptionText = "Want a tailored experience?",
+                    buttonText = "Build your mix!",
+                    navigateDestination = "Playlist Form",
+                    navController,
+                    Modifier.weight(1f)
+                )
+            }
 
                 ScreenBottomSpacer()
             }

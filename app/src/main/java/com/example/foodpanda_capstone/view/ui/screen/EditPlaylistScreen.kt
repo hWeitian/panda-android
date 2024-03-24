@@ -38,7 +38,10 @@ import com.example.foodpanda_capstone.view.ui.theme.Typography
 import com.example.foodpanda_capstone.viewmodel.PlaylistViewModel
 
 @Composable
-fun EditPlaylistScreen(navController: NavController, viewModel: PlaylistViewModel) {
+fun EditPlaylistScreen(
+    navController: NavController,
+    viewModel: PlaylistViewModel,
+) {
 
     val currentPlaylist by viewModel.currentPlaylist.collectAsState()
     val totalAmountCardHeight: Int = 130
@@ -81,9 +84,11 @@ fun EditPlaylistScreen(navController: NavController, viewModel: PlaylistViewMode
                                         { viewModel.onMinusButtonClicked(item.id) }
                                     )
                                     if (index != restaurantFoodItems.foodItems.size - 1) {
-                                        Spacer(modifier = Modifier.size(
-                                            dimensionResource(R.dimen.food_item_container_space)
-                                        ))
+                                        Spacer(
+                                            modifier = Modifier.size(
+                                                dimensionResource(R.dimen.food_item_container_space)
+                                            )
+                                        )
                                     }
                                 }
                                 Spacer(modifier = Modifier.height(15.dp))
@@ -142,7 +147,6 @@ fun EditPlaylistScreen(navController: NavController, viewModel: PlaylistViewMode
             }
         }
     }
-
 }
 
 
@@ -245,7 +249,7 @@ fun EditQuantityButtons(
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_remove_24_pink),
                     contentDescription = "Remove Button",
-                    tint = if(quantity > 0) InteractionPrimary else InteractionSecondary,
+                    tint = if (quantity > 0) InteractionPrimary else InteractionSecondary,
                 )
             }, { reduceQuantity() })
     }

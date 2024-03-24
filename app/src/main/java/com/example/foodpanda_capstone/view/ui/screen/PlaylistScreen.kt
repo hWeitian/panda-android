@@ -42,7 +42,12 @@ import com.example.foodpanda_capstone.view.ui.theme.Typography
 import com.example.foodpanda_capstone.viewmodel.PlaylistViewModel
 
 @Composable
-fun PlaylistScreen(navController: NavController, id: Int?, viewModel: PlaylistViewModel) {
+fun PlaylistScreen(
+    navController: NavController,
+    id: Int?,
+    viewModel: PlaylistViewModel,
+    isUserLoggedIn: Boolean,
+) {
 
     val openModal = remember { mutableStateOf(false) }
     val currentPlaylist by viewModel.currentPlaylist.collectAsState()
@@ -167,7 +172,8 @@ fun PlaylistScreen(navController: NavController, id: Int?, viewModel: PlaylistVi
 
                         currentPlaylist.isPublic == true || currentPlaylist.status == "Cancelled" -> PublicPlaylistButtons(
                             navController = navController,
-                            playlistName = currentPlaylist.name
+                            playlistName = currentPlaylist.name,
+                            isUserLoggedIn = isUserLoggedIn
                         )
 
                         else -> PrivatePlayListButtons(
@@ -230,17 +236,17 @@ fun RandomPlaylistButtons(navController: NavController, playlistName: String, vi
 }
 
 @Composable
-fun PublicPlaylistButtons(navController: NavController, playlistName: String) {
+fun PublicPlaylistButtons(navController: NavController, playlistName: String, isUserLoggedIn: Boolean) {
     CustomTextBtn(
         name = "Edit Playlist",
         iconVector = null,
         iconImgId = R.drawable.baseline_edit_24_white
-    ) { navController.navigate("EditPlaylist/Editing $playlistName") }
+    ) { navController.navigate(if (isUserLoggedIn) "EditPlaylist/Editing $playlistName" else "Welcome") }
 
     Spacer(modifier = Modifier.size(40.dp))
 
     PrimaryButton(name = "Subscribe", width = null) {
-        navController.navigate("Confirmation")
+        navController.navigate(if (isUserLoggedIn) "Confirmation" else "Welcome")
     }
 }
 

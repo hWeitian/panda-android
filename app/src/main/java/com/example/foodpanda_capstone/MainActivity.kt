@@ -68,8 +68,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.foodpanda_capstone.view.ui.screen.DrawerItems
-import com.example.foodpanda_capstone.view.ui.screen.HomeScreen
 import androidx.navigation.navArgument
 import com.example.foodpanda_capstone.model.AddressRepository
 import com.example.foodpanda_capstone.model.AuthRepository
@@ -78,18 +76,8 @@ import com.example.foodpanda_capstone.model.NetworkServiceImpl
 import com.example.foodpanda_capstone.model.PlaylistRepository
 import com.example.foodpanda_capstone.model.api.PlaylistApiClient
 import com.example.foodpanda_capstone.model.api.PlaylistApiService
-import com.example.foodpanda_capstone.view.ui.screen.AddressFormScreen
-import com.example.foodpanda_capstone.view.ui.screen.SearchScreen
-import com.example.foodpanda_capstone.view.ui.screen.EditPlaylistScreen
-import com.example.foodpanda_capstone.view.ui.screen.HomeAppBar
-import com.example.foodpanda_capstone.view.ui.screen.LoginScreen
-import com.example.foodpanda_capstone.view.ui.screen.PlaylistConfirmScreen
-import com.example.foodpanda_capstone.view.ui.screen.PlaylistFormScreen
-import com.example.foodpanda_capstone.view.ui.screen.PlaylistListScreen
+import com.example.foodpanda_capstone.view.ui.screen.*
 import com.example.foodpanda_capstone.view.ui.screen.PlaylistScreen
-import com.example.foodpanda_capstone.view.ui.screen.PlaylistSectionScreen
-import com.example.foodpanda_capstone.view.ui.screen.onBoardingScreen
-import com.example.foodpanda_capstone.view.ui.screen.signUpForm
 import com.example.foodpanda_capstone.view.ui.theme.BrandDark
 import com.example.foodpanda_capstone.view.ui.theme.BrandHighlight
 import com.example.foodpanda_capstone.view.ui.theme.BrandPrimary
@@ -130,7 +118,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
 
 
 }
@@ -632,7 +619,7 @@ fun Navigation() {
                                 },
                                 navigationIcon = {
                                     IconButton(onClick = {
-                                       if(currentRoute == "Playlists") navController.navigate("Home") else navController.popBackStack()
+                                        if (currentRoute == "Playlists") navController.navigate("Home") else navController.popBackStack()
                                     }) {
                                         Image(
                                             painter = painterResource(id = R.drawable.ic_arrow_tail_back),
@@ -704,14 +691,22 @@ fun Navigation() {
                         ),
                     ) { backStackEntry ->
                         val playlistId = backStackEntry.arguments?.getInt("playlistId")
-                        PlaylistScreen(navController, playlistId, playlistViewModel)
+                        PlaylistScreen(
+                            navController = navController,
+                            id = playlistId,
+                            viewModel = playlistViewModel,
+                            isUserLoggedIn = isLoggedIn || isSignedUp,
+                        )
                     }
                     composable("EditPlaylist/{title}",
                         arguments = listOf(
                             navArgument("title") { type = NavType.StringType }
                         )
                     ) { backStackEntry ->
-                        EditPlaylistScreen(navController, playlistViewModel)
+                        EditPlaylistScreen(
+                            navController = navController,
+                            viewModel = playlistViewModel,
+                        )
                     }
                     composable("Home AppBar") { backStackEntry ->
                         HomeAppBar(navController)
@@ -736,9 +731,13 @@ fun Navigation() {
                         SearchScreen(navController, playlistViewModel)
                     }
                     composable("Playlist Random") { backStackEntry ->
-                        PlaylistScreen(navController, null, playlistViewModel)
+                        PlaylistScreen(
+                            navController = navController,
+                            id = null,
+                            viewModel = playlistViewModel,
+                            isUserLoggedIn = isLoggedIn || isSignedUp,
+                        )
                     }
-
                 }
             }
         }
