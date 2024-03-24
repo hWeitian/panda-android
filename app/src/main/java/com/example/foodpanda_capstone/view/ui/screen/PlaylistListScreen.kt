@@ -22,6 +22,7 @@ import com.example.foodpanda_capstone.model.PlaylistRepository
 import com.example.foodpanda_capstone.model.api.PlaylistApiClient
 import com.example.foodpanda_capstone.model.api.PlaylistApiService
 import com.example.foodpanda_capstone.utils.grayScale
+import com.example.foodpanda_capstone.utils.truncateString
 import com.example.foodpanda_capstone.view.ui.composable.ImageHolder
 import com.example.foodpanda_capstone.view.ui.composable.LoadingScreen
 import com.example.foodpanda_capstone.view.ui.composable.PrimaryButton
@@ -263,7 +264,7 @@ fun PlaylistCard(playlist: PlaylistOverview, cardClicked: () -> Unit) {
                 .padding(top = 4.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = playlist.name, style = Typography.headlineLarge, modifier = Modifier.width(85.dp))
+            Text(text = playlist.name.truncateString(), style = Typography.headlineLarge, modifier = Modifier.weight(0.8f))
             Text(
                 text = "S$ ${"%.2f".format(playlist.cost)}",
                 style = Typography.headlineLarge,

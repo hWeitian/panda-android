@@ -80,8 +80,14 @@ fun PlaylistFormScreen(navController: NavController, viewModel: PlaylistViewMode
                 Spacer(modifier = Modifier.size(10.dp))
                 OrderedListItem(
                     num = "4 - ",
-                    title = "Generate",
-                    description = "Click generate to build your random food playlist"
+                    title = "Generate & subscribe",
+                    description = "Click generate to build and subscribe to your random food playlist"
+                )
+                Spacer(modifier = Modifier.size(10.dp))
+                OrderedListItem(
+                    num = "5 - ",
+                    title = "Bon Appétit!",
+                    description = "We will deliver all dishes in the playlist according to the delivery schedule set at the confirmation page"
                 )
                 Spacer(modifier = Modifier.size(5.dp))
                 Column {

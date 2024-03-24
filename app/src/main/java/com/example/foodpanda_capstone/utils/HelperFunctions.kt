@@ -94,3 +94,15 @@ fun Modifier.grayScale(): Modifier {
         }
     }
 }
+
+fun String.truncateString(): String {
+    var finalString = ""
+    if (this.length > 9) {
+        finalString = this.trim().slice(0..9)
+        finalString += "... "
+    } else {
+        finalString = this
+    }
+    return finalString
+}
+

@@ -133,7 +133,7 @@ fun EditPlaylistScreen(navController: NavController, viewModel: PlaylistViewMode
                 Spacer(modifier = Modifier.size(20.dp))
 
                 PrimaryButton(
-                    name = if (currentPlaylist.isPublic == true) "Subscribe" else "Update",
+                    name = if (currentPlaylist.isPublic == true || currentPlaylist.status == "Cancelled") "Subscribe" else "Update",
                     width = null
                 ) {
                     navController.navigate("Playlist Confirm")

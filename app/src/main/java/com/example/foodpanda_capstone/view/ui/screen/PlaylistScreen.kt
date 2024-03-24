@@ -86,6 +86,7 @@ fun PlaylistScreen(navController: NavController, id: Int?, viewModel: PlaylistVi
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
+                                modifier = Modifier.weight(0.8f),
                                 text = currentPlaylist.name,
                                 style = Typography.titleMedium
                             )
