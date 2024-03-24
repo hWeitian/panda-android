@@ -9,6 +9,8 @@ import android.app.Activity
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.activity.compose.setContent
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -38,6 +40,7 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -282,6 +285,36 @@ fun Navigation() {
         // Here you can use address, city, and zipCode as needed
         // For example, you could concatenate them into one string:
         selectedAddress = "$address, $city, $zipCode"
+    }
+
+    fun customPopBackStack() {
+        when(currentRoute) {
+            "Playlists" -> navController.navigate("Home")
+            "Build your mix" -> navController.navigate("Playlists")
+            else -> navController.popBackStack()
+        }
+    }
+
+    // Handle phone's physical back button
+    val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current!!.onBackPressedDispatcher
+    val customBackClickAction: () -> Unit = {
+        customPopBackStack()
+//        when(currentRoute) {
+//            "Playlists" -> navController.navigate("Home")
+//            "Build your mix" -> navController.navigate("Playlists")
+//            else -> navController.popBackStack()
+//        }
+    }
+
+    val callback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            customBackClickAction()
+        }
+    }
+
+    onBackPressedDispatcher.addCallback(callback)
+    DisposableEffect(key1 = onBackPressedDispatcher) {
+        onDispose { callback.remove() }
     }
 
     //Side Nav bar
@@ -623,11 +656,7 @@ fun Navigation() {
                                 },
                                 navigationIcon = {
                                     IconButton(onClick = {
-                                        when {
-                                            currentRoute == "Playlists" -> navController.navigate("Home")
-                                            currentRoute == "Build your mix" -> navController.navigate("Playlists")
-                                            else -> navController.popBackStack()
-                                        }
+                                        customPopBackStack()
                                     }) {
                                         Image(
                                             painter = painterResource(id = R.drawable.ic_arrow_tail_back),
