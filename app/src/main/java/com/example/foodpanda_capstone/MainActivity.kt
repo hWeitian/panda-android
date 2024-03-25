@@ -573,31 +573,24 @@ fun Navigation() {
                             TopAppBar(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .heightIn(min = 100.dp),
+                                    .height(70.dp),
                                 colors = TopAppBarDefaults.smallTopAppBarColors(
                                     containerColor = BrandPrimary,
                                     titleContentColor = Color.White,
                                 ),
                                 title = {
                                     Column(
-                                        verticalArrangement = Arrangement.spacedBy(8.dp),
                                         modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(start = 16.dp, bottom = 8.dp, top = 16.dp)
+                                            .fillMaxSize()
                                             .clickable {
                                                 toggleAddressFormVisibility()
                                                 isAddressFormVisible = true
-//                                                navController.navigate("Address Form Screen")
-
-                                            }
+                                            },
+                                        verticalArrangement = Arrangement.Center
                                     ) {
                                         Text(text = currentRoute, style = Typography.titleMedium)
-                                        selectedAddress?.let {
-                                            Text(
-                                                text = it,
-                                                style = Typography.bodyLarge
-                                            )
-                                        }
+                                        Text(text = "Address here", style = Typography.bodyLarge)
+//                                        Text(text = selectedAddress, style = Typography.bodyLarge)
 
                                         if (isAddressFormVisible) {
                                             AddressFormScreen(
@@ -610,22 +603,20 @@ fun Navigation() {
                                             )
                                         }
                                     }
-                                    Spacer(modifier = Modifier.height(8.dp))
                                 },
                                 navigationIcon = {
-                                    IconButton(modifier = Modifier
-                                        .padding(top = 24.dp)
-                                        .size(40.dp)
-                                        .background(BrandPrimary),
-                                        onClick = {
-//                                                        isDrawerOpen = true
-                                            scope.launch {
-                                                drawerState.open()
-                                            }
-                                        }) {
-
-
-                                        Icon(Icons.Default.Menu, contentDescription = null, tint = Color.White)
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxHeight(),
+                                        verticalArrangement = Arrangement.Center
+                                    ) {
+                                        IconButton(modifier = Modifier
+                                            .size(40.dp)
+                                            .background(BrandPrimary),
+                                            onClick = { scope.launch { drawerState.open() } }
+                                        ) {
+                                            Icon(Icons.Default.Menu, contentDescription = null, tint = Color.White)
+                                        }
                                     }
                                 },
                             )

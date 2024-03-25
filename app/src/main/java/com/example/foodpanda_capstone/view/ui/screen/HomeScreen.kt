@@ -1,11 +1,8 @@
 package com.example.foodpanda_capstone.view.ui.screen
 
-import android.view.MenuItem
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,16 +11,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,208 +27,239 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.foodpanda_capstone.R
-import com.example.foodpanda_capstone.view.ui.composable.ImageHolder
-import com.example.foodpanda_capstone.view.ui.composable.ScreenBottomSpacer
-import com.example.foodpanda_capstone.view.ui.theme.NeutralDivider
 import com.example.foodpanda_capstone.view.ui.theme.Typography
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(navController: NavController) {
-    Column(
+    Box(
         modifier = Modifier
+            .padding(top = 20.dp)
             .fillMaxSize()
-            .padding(4.dp, top = 16.dp)
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .background(Color.White)
     ) {
-        Row(
-            modifier = Modifier,
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            CustomCardHorizontal(
-                width = 480.dp,
-                height = 150.dp,
-                text = "Food Playlist",
-                content = "Build your mix!",
-                imgResource = R.drawable.food_playlist_2,
-                imgHeight = 350.dp,
-                navController = navController
-            )
-        }
+            Row(
+                modifier = Modifier,
+            ) {
+                Card(
+                    modifier = Modifier
+                        .width(480.dp)
+                        .height(150.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    shape = RoundedCornerShape(16.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
+                    onClick = { navController.navigate("Playlists") }
+                ) {
+                    HorizontalCardContent(
+                        text = "Food Playlist",
+                        content = "Build your mix!",
+                        imgResource = R.drawable.food_playlist_2,
+                        imgHeight = 350.dp,
+                        modifier = Modifier,
+                    )
+                }
+            }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            CustomCard(
-                width = 180.dp,
-                height = 180.dp,
-                text = "Food Delivery",
-                content = "Big savings on delivery!",
-                R.drawable.food_delivery,
-                imgHeight = 100.dp,
-                modifier = Modifier,
-                navController = navController
-            )
-            CustomCard(
-                width = 180.dp,
-                height = 180.dp,
-                text = "Dine-in",
-                content = "Up to 50% off entire bill",
-                imgResource = R.drawable.dine_in,
-                imgHeight = 250.dp,
-                modifier = Modifier.aspectRatio(1f),
-                navController = navController
-            )
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            CustomCard(
-                width = 180.dp,
-                height = 180.dp,
-                text = "pandamart",
-                content = "Fresh groceries & more",
-                imgResource = R.drawable.panda_mart,
-                imgHeight = 100.dp,
-                modifier = Modifier,
-                navController = navController
-            )
-            CustomCard(
-                width = 180.dp,
-                height = 180.dp,
-                text = "Shops",
-                content = "Giant, CS Fresh & More",
-                imgResource = R.drawable.shops,
-                imgHeight = 100.dp,
-                modifier = Modifier,
-                navController = navController
-            )
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            CustomCardHorizontal(
-                width = 180.dp,
-                height = 100.dp,
-                text = "Pick-up",
-                content = "Up to 50% off",
-                imgResource = R.drawable.pick_up,
-                imgHeight = 100.dp,
-                navController = navController
-            )
-            CustomCardHorizontal(
-                width = 180.dp,
-                height = 100.dp,
-                text = "pandago",
-                content = "Send parcels",
-                imgResource = R.drawable.panda_go,
-                imgHeight = 100.dp,
-                navController = navController
-            )
-        }
+        CardRow(
+            leftCardContent = {
+                CardContent(
+                    text = "Food Delivery",
+                    content = "Big savings on delivery!",
+                    imgResource = R.drawable.food_delivery,
+                    imgHeight = 100.dp,
+                    modifier = Modifier
+                )
+            },
+            rightCardContent = {
+                CardContent(
+                    text = "Dine-in",
+                    content = "Up to 50% off entire bill",
+                    imgResource = R.drawable.dine_in,
+                    imgHeight = 250.dp,
+                    modifier = Modifier.aspectRatio(1f)
+                )
+            },
+            navController = navController,
+            leftCardHeight = 180.dp,
+            rightCardHeight = 180.dp
+        )
+
+        CardRow(
+            leftCardContent = {
+                CardContent(
+                    text = "pandamart",
+                    content = "Fresh groceries & more",
+                    imgResource = R.drawable.panda_mart,
+                    imgHeight = 100.dp,
+                    modifier = Modifier,
+                )
+            },
+            rightCardContent = {
+                CardContent(
+                    text = "Shops",
+                    content = "Giant, CS Fresh & More",
+                    imgResource = R.drawable.shops,
+                    imgHeight = 100.dp,
+                    modifier = Modifier,
+                )
+            },
+            navController = navController,
+            leftCardHeight = 180.dp,
+            rightCardHeight = 180.dp
+        )
+
+        CardRow(
+            leftCardContent = {
+                HorizontalCardContent(
+                    text = "Pick-up",
+                    content = "Up to 50% off",
+                    imgResource = R.drawable.pick_up,
+                    imgHeight = 100.dp,
+                    modifier = Modifier,
+                )
+            },
+            rightCardContent = {
+                HorizontalCardContent(
+                    text = "pandago",
+                    content = "Send parcels",
+                    imgResource = R.drawable.panda_go,
+                    imgHeight = 100.dp,
+                    modifier = Modifier,
+                )
+            },
+            navController = navController,
+            leftCardHeight = 100.dp,
+            rightCardHeight = 100.dp
+        )
         Spacer(modifier = Modifier.size(20.dp))
     }
+}
+}
 
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CardRow(
+    leftCardContent: @Composable () -> Unit,
+    rightCardContent: @Composable () -> Unit,
+    navController: NavController,
+    leftCardHeight: Dp,
+    rightCardHeight: Dp,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Card(
+            modifier = Modifier
+                .height(leftCardHeight)
+                .weight(1f)
+                .fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            shape = RoundedCornerShape(16.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
+            onClick = { navController.navigate("Playlists") }
+        ) {
+            leftCardContent()
+        }
+        CardSpacer()
+        Card(
+            modifier = Modifier
+                .height(rightCardHeight)
+                .weight(1f)
+                .fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            shape = RoundedCornerShape(16.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
+            onClick = { navController.navigate("Playlists") }
+        ) {
+            rightCardContent()
+        }
+    }
 }
 
 
 @Composable
-fun CustomCard(
-    width: Dp,
-    height: Dp,
+fun CardContent(
     text: String,
     content: String,
     imgResource: Int,
     imgHeight: Dp,
     modifier: Modifier,
-    navController: NavController
 ) {
-    Card(
+    Column(
         modifier = Modifier
-            .width(width)
-            .height(height)
-            .border(16.dp, Color.White, shape = RoundedCornerShape(16.dp))
-            .clickable { navController.navigate("Playlists") },
-        elevation = CardDefaults.cardElevation(defaultElevation = 16.dp)
+            .fillMaxSize()
+            .padding(16.dp)
+            .background(Color.White),
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-                .background(Color.White),
-            verticalArrangement = Arrangement.SpaceBetween
+        Column {
+            Text(text = text, style = Typography.titleSmall)
+            Text(text = content, style = Typography.bodyMedium)
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
         ) {
-            Column {
-                Text(text = text, style = Typography.titleSmall)
-                Text(text = content, style = Typography.bodyMedium)
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            ) {
-                Image(
-                    painter = painterResource(id = imgResource),
-                    contentDescription = null,
-                    modifier = modifier
-                        .height(imgHeight)
-                )
-            }
+            Image(
+                painter = painterResource(id = imgResource),
+                contentDescription = null,
+                modifier = modifier
+                    .height(imgHeight)
+            )
         }
     }
 }
 
 @Composable
-fun CustomCardHorizontal(
-    width: Dp,
-    height: Dp,
+fun HorizontalCardContent(
     text: String,
     content: String,
     imgResource: Int,
     imgHeight: Dp,
-    navController: NavController
+    modifier: Modifier,
 ) {
-    Card(
+    Row(
         modifier = Modifier
-            .width(width)
-            .height(height)
-            .border(16.dp, Color.White, shape = RoundedCornerShape(16.dp))
-            .clickable { navController.navigate("Playlists") },
-        elevation = CardDefaults.cardElevation(defaultElevation = 16.dp)
+            .fillMaxSize()
+            .padding(16.dp)
+            .background(Color.White),
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-                .background(Color.White),
-            horizontalArrangement = Arrangement.SpaceBetween
+        Column {
+            Text(text = text, style = Typography.titleSmall)
+            Text(text = content, style = Typography.bodyMedium)
+        }
+        Column(
+            modifier = Modifier.fillMaxHeight(),
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.End
         ) {
-            Column {
-                Text(text = text, style = Typography.titleSmall)
-                Text(text = content, style = Typography.bodyMedium)
-            }
-            Column(
-                modifier = Modifier.fillMaxHeight(),
-                verticalArrangement = Arrangement.Bottom,
-                horizontalAlignment = Alignment.End
-            ) {
-                Image(
-                    painter = painterResource(id = imgResource),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(0.dp)
-                        .height(imgHeight)
-                )
-            }
-
+            Image(
+                painter = painterResource(id = imgResource),
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(0.dp)
+                    .height(imgHeight)
+            )
         }
     }
 }
 
+
+@Composable
+fun CardSpacer() {
+    Spacer(modifier = Modifier.width(10.dp))
+}
 
 @Composable
 fun ContentInsideColumn(color: Color, text: String) {
