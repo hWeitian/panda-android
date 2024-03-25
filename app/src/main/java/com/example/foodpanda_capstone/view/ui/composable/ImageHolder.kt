@@ -21,7 +21,8 @@ fun ImageHolder(imageUrl: String, height: Int?, description: String?) {
     val firstCharOfImgUrl = imageUrl.first()
     val finalImageUrl = if (firstCharOfImgUrl != 'h') BaseUrl.BASE_URL + imageUrl else imageUrl
 
-    var modifier = if (height != null) Modifier.fillMaxWidth().height(height.dp).aspectRatio(1f, true) else Modifier.fillMaxWidth().aspectRatio(1f, true)
+    var modifier = if (height != null) Modifier.fillMaxWidth().height(height.dp).aspectRatio(1f, true)
+    else Modifier.fillMaxWidth().aspectRatio(1f, true)
 
     Card(
         modifier = modifier,

@@ -249,12 +249,12 @@ fun Navigation() {
         mutableStateOf(drawerItem[0])
     }
 
-//    val isLoggedIn by authViewModel.loginState.collectAsState()
-//    val isSignedUp by authViewModel.signupState.collectAsState()
+    val isLoggedIn by authViewModel.loginState.collectAsState()
+    val isSignedUp by authViewModel.signupState.collectAsState()
 
     // For testing purpose
-    val isLoggedIn = true
-    val isSignedUp = true
+//    val isLoggedIn = true
+//    val isSignedUp = true
 
     Log.d("Navigation", "isLoggedIn: $isLoggedIn")
     Log.d("Navigation", "isSignedUp: $isSignedUp")
@@ -299,11 +299,6 @@ fun Navigation() {
     val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current!!.onBackPressedDispatcher
     val customBackClickAction: () -> Unit = {
         customPopBackStack()
-//        when(currentRoute) {
-//            "Playlists" -> navController.navigate("Home")
-//            "Build your mix" -> navController.navigate("Playlists")
-//            else -> navController.popBackStack()
-//        }
     }
 
     val callback = object : OnBackPressedCallback(true) {
