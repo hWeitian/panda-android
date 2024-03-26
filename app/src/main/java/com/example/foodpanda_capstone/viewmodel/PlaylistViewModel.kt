@@ -103,6 +103,17 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
     val canNavigate: LiveData<Boolean> = _canNavigate
 
 
+    fun isAtLeastOneDaySelected(days: List<Days>): Boolean {
+        var atLeastOneDaySelected = false;
+        for(i in 0..days.size - 1) {
+            val day = days[i]
+            if(day.isSelected) {
+                return true
+            }
+        }
+        return false
+    }
+
     fun updateCuisines(inputText: String) {
         _cuisines.value = inputText
     }

@@ -332,7 +332,11 @@ fun PlaylistConfirmScreen(
 
             item {
                 Spacer(modifier = Modifier.size(15.dp))
-                PrimaryButton(name = "Confirm", null) {
+                PrimaryButton(
+                    name = "Confirm",
+                    width = null,
+                    isEnabled = selectedTimeOfDelivery.isNotBlank() && viewModel.isAtLeastOneDaySelected(daysOfWeek)
+                ) {
                     viewModel.onConfirmSubscriptionClick()
                 }
                 ScreenBottomSpacer()

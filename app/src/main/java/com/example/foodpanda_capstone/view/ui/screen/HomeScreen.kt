@@ -73,7 +73,7 @@ fun HomeScreen(navController: NavController) {
                     text = "Food Delivery",
                     content = "Big savings on delivery!",
                     imgResource = R.drawable.food_delivery,
-                    imgHeight = 100.dp,
+                    imgHeight = 95.dp,
                     modifier = Modifier
                 )
             },
@@ -97,7 +97,7 @@ fun HomeScreen(navController: NavController) {
                     text = "pandamart",
                     content = "Fresh groceries & more",
                     imgResource = R.drawable.panda_mart,
-                    imgHeight = 100.dp,
+                    imgHeight = 85.dp,
                     modifier = Modifier,
                 )
             },
@@ -106,7 +106,7 @@ fun HomeScreen(navController: NavController) {
                     text = "Shops",
                     content = "Giant, CS Fresh & More",
                     imgResource = R.drawable.shops,
-                    imgHeight = 100.dp,
+                    imgHeight = 90.dp,
                     modifier = Modifier,
                 )
             },
@@ -121,7 +121,7 @@ fun HomeScreen(navController: NavController) {
                     text = "Pick-up",
                     content = "Up to 50% off",
                     imgResource = R.drawable.pick_up,
-                    imgHeight = 100.dp,
+                    imgHeight = 120.dp,
                     modifier = Modifier,
                 )
             },

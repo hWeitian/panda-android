@@ -55,6 +55,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.dimensionResource
@@ -87,6 +88,7 @@ import com.example.foodpanda_capstone.view.ui.theme.BrandPrimary
 import com.example.foodpanda_capstone.view.ui.theme.BrandSecondary
 import com.example.foodpanda_capstone.view.ui.theme.FoodpandaCapstoneTheme
 import com.example.foodpanda_capstone.view.ui.theme.NeutralBorder
+import com.example.foodpanda_capstone.view.ui.theme.NeutralDivider
 import com.example.foodpanda_capstone.view.ui.theme.Typography
 import com.example.foodpanda_capstone.viewmodel.AddressViewModel
 import com.example.foodpanda_capstone.viewmodel.AuthViewModel
@@ -274,10 +276,10 @@ fun Navigation() {
     val savedCity = context.getStringSharedPreference(PREF_KEY_CURRENT_CITY)
 
 
-    var selectedAddress = if (savedAddress != null && savedZipCode != null && savedCity != null) {
+    var selectedAddress = if (savedAddress != "" && savedZipCode != "" && savedCity != "") {
         "$savedAddress $savedZipCode $savedCity"
     } else {
-        "Type your address here"
+        "Add your address here"
     }
 
     // Define the setAddressOnUI function
@@ -288,7 +290,7 @@ fun Navigation() {
     }
 
     fun customPopBackStack() {
-        when(currentRoute) {
+        when (currentRoute) {
             "Playlists" -> navController.navigate("Home")
             "Build your mix" -> navController.navigate("Playlists")
             else -> navController.popBackStack()
@@ -313,251 +315,276 @@ fun Navigation() {
     }
 
     //Side Nav bar
-    ModalNavigationDrawer(drawerContent = {
-        ModalDrawerSheet {
-            Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .background(BrandPrimary),
-                    contentAlignment = Alignment.Center
+    ModalNavigationDrawer(
+        drawerContent = {
+            ModalDrawerSheet(
+                modifier = Modifier
+                    .width(300.dp)
+                    .fillMaxHeight()
+            ) {
+                Column(
+                    Modifier
+                        .fillMaxSize()
+                        .background(Color.White),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Column(
-                        Modifier.wrapContentSize(),
-                        verticalArrangement = Arrangement.SpaceAround,
-                        horizontalAlignment = Alignment.CenterHorizontally
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .background(BrandPrimary),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.food_delivery),
-                            contentDescription = "profile pic",
-                            modifier = Modifier
-                                .size(130.dp)
-                                .clip(CircleShape)
-                        )
-                        val auth = FirebaseAuth.getInstance()
-                        val currentUser = auth.currentUser
-
-                        if (isLoggedIn || isSignedUp) {
-                            val userName = currentUser?.displayName ?: "Hi user!"
-                            Text(
-                                text = "Hello, $userName",
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 16.dp),
-                                fontSize = 22.sp,
-                                textAlign = TextAlign.Center,
-                                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black)
-
+                        Column(
+                            Modifier.wrapContentSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.food_delivery),
+                                contentDescription = "profile pic",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .size(90.dp)
+                                    .clip(CircleShape)
                             )
-                        } else {
-                            ClickableText(
-                                text = AnnotatedString("Login / Create Account"),
+                            val auth = FirebaseAuth.getInstance()
+                            val currentUser = auth.currentUser
+
+                            if (isLoggedIn || isSignedUp) {
+                                val userName = currentUser?.displayName ?: "user"
+                                Text(
+                                    text = "Hello, $userName!",
+                                    color = Color.White,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 16.dp),
+                                    style = Typography.bodyLarge
+                                )
+                            } else {
+                                ClickableText(
+                                    text = AnnotatedString("Login / Create Account"),
+                                    onClick = {
+                                        // Navigate to the login screen when the link is clicked
+                                        navController.navigate("Welcome")
+                                        // Close the navigation drawer
+                                        scope.launch {
+                                            drawerState.close()
+                                        }
+                                    },
+                                    modifier = Modifier.padding(8.dp),
+                                    style = Typography.bodyLarge.copy(
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold
+                                    ),
+                                )
+
+                            }
+                        }
+                        Divider(
+                            Modifier.align(Alignment.BottomCenter),
+                            thickness = 1.dp,
+                            color = NeutralDivider
+                        )
+                    }
+                    if (isLoggedIn || isSignedUp) {
+                        drawerItem.forEach {
+                            NavigationDrawerItem(
+                                label = { Text(text = it.text) },
+                                selected = it == selectedItem,
                                 onClick = {
-                                    // Navigate to the login screen when the link is clicked
-                                    navController.navigate("Welcome")
-                                    // Close the navigation drawer
+                                    selectedItem = it
                                     scope.launch {
                                         drawerState.close()
                                     }
                                 },
-                                modifier = Modifier.padding(8.dp),
-                                style = MaterialTheme.typography.bodyMedium.copy(
-                                    color = Color.White,
-                                    fontWeight = FontWeight.Bold
+                                modifier = Modifier.padding(horizontal = 16.dp),
+                                icon = {
+                                    Icon(
+                                        modifier = Modifier,
+                                        imageVector = it.icon,
+                                        contentDescription = it.text,
+                                        tint = BrandPrimary
+                                    )
+                                },
+                                colors = NavigationDrawerItemDefaults.colors(
+                                    selectedContainerColor = Color.White,
+                                    unselectedContainerColor = Color.White
+                                ),
+//                                badge = {
+//                                    if (it.hasBadge) {
+//                                        BadgedBox(badge = {
+//                                            Badge {
+//                                                Text(text = it.badgeCount.toString(), fontSize = 17.sp)
+//                                            }
+//                                        }) {
+//                                        }
+//                                    }
+//                                }
+                            )
+                        }
+//                Log.d("Drawer", "Building Logout item")
+                        Divider(
+                            thickness = 1.dp,
+                            color = NeutralDivider
+                        )
+                        var showDialog by remember { mutableStateOf(false) }
+
+                        drawerItem2.forEach {
+                            NavigationDrawerItem(
+                                label = { Text(text = it.text) },
+                                selected = it == selectedItem,
+                                onClick = {
+                                    selectedItem = it
+                                    scope.launch {
+                                        drawerState.close()
+                                        if (selectedItem.text == "Logout") {
+                                            // Show Dialog when the user clicks on "Logout"
+                                            showDialog =
+                                                true // Assuming you have a boolean state variable to control the dialog visibility
+                                        }
+                                    }
+                                },
+                                modifier = Modifier.padding(horizontal = 16.dp),
+                                icon = {
+                                    Icon(imageVector = it.icon, contentDescription = it.text, tint = BrandPrimary)
+                                },
+                                colors = NavigationDrawerItemDefaults.colors(
+                                    selectedContainerColor = Color.White,
+                                    unselectedContainerColor = Color.White
                                 ),
                             )
-
                         }
-                    }
-                    Divider(
-                        Modifier.align(Alignment.BottomCenter), thickness = 1.dp,
-                        NeutralBorder
-                    )
-
-
-                }
-                if (isLoggedIn || isSignedUp) {
-                    drawerItem.forEach {
-                        NavigationDrawerItem(label = { Text(text = it.text) },
-                            selected = it == selectedItem,
-                            onClick = {
-                                selectedItem = it
-
-                                scope.launch {
-                                    drawerState.close()
-                                }
-
-                            },
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            icon = {
-                                Icon(
-                                    modifier = Modifier,
-                                    imageVector = it.icon,
-                                    contentDescription = it.text,
-                                    tint = BrandPrimary
-                                )
-                            },
-                            badge = {
-                                if (it.hasBadge) {
-                                    BadgedBox(badge = {
-                                        Badge {
-                                            Text(text = it.badgeCount.toString(), fontSize = 17.sp)
-                                        }
-                                    }) {
-
-                                    }
-                                }
-                            }
-                        )
-                    }
-//                Log.d("Drawer", "Building Logout item")
-                    Divider(
-                        thickness = 1.dp,
-                        color = Color.DarkGray
-                    )
-                    var showDialog by remember { mutableStateOf(false) }
-
-                    drawerItem2.forEach {
-                        NavigationDrawerItem(label = { Text(text = it.text) },
-                            selected = it == selectedItem,
-                            onClick = {
-                                selectedItem = it
-
-                                scope.launch {
-                                    drawerState.close()
-                                    if (selectedItem.text == "Logout") {
-                                        // Show Dialog when the user clicks on "Logout"
-                                        showDialog =
-                                            true // Assuming you have a boolean state variable to control the dialog visibility
-                                    }
-                                }
-                            },
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            icon = {
-                                Icon(imageVector = it.icon, contentDescription = it.text, tint = BrandPrimary)
-                            }
-                        )
-                    }
 
 // Outside of your composable function, preferably in your main activity or composable
-                    if (showDialog) {
-                        AlertDialog(modifier = Modifier
-                            .padding(8.dp)
-                            .clip(RoundedCornerShape(16.dp)),
-                            onDismissRequest = {
-                                // Handle dialog dismissal if needed
-                                showDialog = false
-                            }
-                        ) {
-                            Card(
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .clip(RoundedCornerShape(16.dp)) // Adjust the corner radius as needed
+                        if (showDialog) {
+                            AlertDialog(modifier = Modifier
+                                .padding(8.dp)
+                                .clip(RoundedCornerShape(16.dp)),
+                                onDismissRequest = {
+                                    // Handle dialog dismissal if needed
+                                    showDialog = false
+                                }
                             ) {
-                                Column(
+                                Card(
                                     modifier = Modifier
                                         .padding(16.dp)
-                                        .fillMaxWidth()
-                                        .clip(RoundedCornerShape(16.dp))
+                                        .clip(RoundedCornerShape(16.dp)) // Adjust the corner radius as needed
                                 ) {
-                                    Text("Logout", fontWeight = FontWeight.Bold, fontSize = 20.sp)
-                                    Spacer(modifier = Modifier.height(16.dp))
-                                    Text("Are you sure you want to logout?")
-                                    Spacer(modifier = Modifier.height(16.dp))
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.End
+                                    Column(
+                                        modifier = Modifier
+                                            .padding(16.dp)
+                                            .fillMaxWidth()
+                                            .clip(RoundedCornerShape(16.dp))
                                     ) {
-                                        Button(
-                                            onClick = {
-                                                authViewModel.signOut()
-                                                navController.navigate("Home") {
-                                                    popUpTo(navController.graph.startDestinationId) {
-                                                        saveState = true
+                                        Text("Logout", fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                                        Spacer(modifier = Modifier.height(16.dp))
+                                        Text("Are you sure you want to logout?")
+                                        Spacer(modifier = Modifier.height(16.dp))
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.End
+                                        ) {
+                                            Button(
+                                                onClick = {
+                                                    authViewModel.signOut()
+                                                    navController.navigate("Home") {
+                                                        popUpTo(navController.graph.startDestinationId) {
+                                                            saveState = true
+                                                        }
+                                                        launchSingleTop = true
                                                     }
-                                                    launchSingleTop = true
+                                                    showDialog = false
                                                 }
-                                                showDialog = false
+                                            ) {
+                                                Text("Logout")
                                             }
-                                        ) {
-                                            Text("Logout")
-                                        }
-                                        Spacer(modifier = Modifier.width(16.dp))
-                                        Button(
-                                            onClick = {
-                                                showDialog = false
+                                            Spacer(modifier = Modifier.width(16.dp))
+                                            Button(
+                                                onClick = {
+                                                    showDialog = false
+                                                }
+                                            ) {
+                                                Text("Cancel")
                                             }
-                                        ) {
-                                            Text("Cancel")
                                         }
                                     }
                                 }
                             }
                         }
-                    }
-                } else {
-                    drawerItem3.forEach {
-                        NavigationDrawerItem(label = { Text(text = it.text) },
-                            selected = it == selectedItem,
-                            onClick = {
-                                selectedItem = it
+                    } else {
+                        drawerItem3.forEach {
+                            NavigationDrawerItem(
+                                label = { Text(text = it.text) },
+                                selected = it == selectedItem,
+                                onClick = {
+                                    selectedItem = it
 
-                                scope.launch {
-                                    drawerState.close()
-                                }
-
-                            },
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            icon = {
-                                Icon(
-                                    modifier = Modifier,
-                                    imageVector = it.icon,
-                                    contentDescription = it.text,
-                                    tint = BrandPrimary
-                                )
-                            },
-                            badge = {
-                                if (it.hasBadge) {
-                                    BadgedBox(badge = {
-                                        Badge {
-                                            Text(text = it.badgeCount.toString(), fontSize = 17.sp)
-                                        }
-                                    }) {
-
+                                    scope.launch {
+                                        drawerState.close()
                                     }
-                                }
-                            }
-                        )
-                    }
-//                Log.d("Drawer", "Building Logout item")
-                    Divider(
-                        thickness = 1.dp,
-                        color = Color.DarkGray
-                    )
-                    drawerItem4.forEach {
-                        NavigationDrawerItem(label = { Text(text = it.text) },
-                            selected = it == selectedItem,
-                            onClick = {
-                                selectedItem = it
+
+                                },
+                                modifier = Modifier.padding(horizontal = 16.dp),
+                                icon = {
+                                    Icon(
+                                        modifier = Modifier,
+                                        imageVector = it.icon,
+                                        contentDescription = it.text,
+                                        tint = BrandPrimary
+                                    )
+                                },
+                                colors = NavigationDrawerItemDefaults.colors(
+                                    selectedContainerColor = Color.White,
+                                    unselectedContainerColor = Color.White
+                                ),
+//                                badge = {
+//                                    if (it.hasBadge) {
+//                                        BadgedBox(badge = {
+//                                            Badge {
+//                                                Text(text = it.badgeCount.toString(), fontSize = 17.sp)
+//                                            }
+//                                        }) {
 //
-                                scope.launch {
-                                    drawerState.close()
-                                }
-
-                            },
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            icon = {
-                                Icon(imageVector = it.icon, contentDescription = it.text, tint = BrandPrimary)
-                            }
+//                                        }
+//                                    }
+//                                }
+                            )
+                        }
+                        Divider(
+                            thickness = 1.dp,
+                            color = NeutralDivider
                         )
+                        drawerItem4.forEach {
+                            NavigationDrawerItem(
+                                label = { Text(text = it.text) },
+                                selected = it == selectedItem,
+                                onClick = {
+                                    selectedItem = it
+//
+                                    scope.launch {
+                                        drawerState.close()
+                                    }
+
+                                },
+                                modifier = Modifier.padding(horizontal = 16.dp),
+                                icon = {
+                                    Icon(imageVector = it.icon, contentDescription = it.text, tint = BrandPrimary)
+                                },
+                                colors = NavigationDrawerItemDefaults.colors(
+                                    selectedContainerColor = Color.White,
+                                    unselectedContainerColor = Color.White
+                                ),
+                            )
+                        }
                     }
+
                 }
-
             }
-        }
 
-    }, drawerState = drawerState) {
+        }, drawerState = drawerState
+    ) {
         Scaffold(
             topBar = {
                 when (currentRoute) {
@@ -588,8 +615,13 @@ fun Navigation() {
                                             },
                                         verticalArrangement = Arrangement.Center
                                     ) {
-                                        Text(text = currentRoute, style = Typography.titleMedium)
-                                        Text(text = "Address here", style = Typography.bodyLarge)
+                                        Text(text = currentRoute, style = Typography.titleSmall)
+                                        if (selectedAddress != null) {
+                                            Text(text = selectedAddress, style = Typography.bodyLarge)
+                                        } else {
+                                            Text(text = "Add your address here", style = Typography.bodyLarge)
+                                        }
+//                                        Text(text = currentRoute, style = Typography.titleMedium)
 //                                        Text(text = selectedAddress, style = Typography.bodyLarge)
 
                                         if (isAddressFormVisible) {
