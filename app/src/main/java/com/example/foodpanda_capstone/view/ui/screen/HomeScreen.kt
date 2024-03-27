@@ -51,7 +51,7 @@ fun HomeScreen(navController: NavController) {
                 Row(modifier = Modifier.padding(top=8.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)){
                     CustomCard(width = 180.dp, height = 250.dp, text = "Food Delivery", content = "Big savings on delivery!", R.drawable.food_delivery, navController = navController)
-                    CustomCard(width = 180.dp, height = 250.dp, text = "Playlist", content = "Preview/List of playlist", R.drawable.burger, navController = navController)
+                    CustomCard(width = 180.dp, height = 250.dp, text = "Food Playlist", content = "Create your food playlist!", R.drawable.burger, navController = navController)
                 }
             }
 
@@ -59,7 +59,7 @@ fun HomeScreen(navController: NavController) {
                 Row(modifier = Modifier,
                     horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                     // Add cards with different sizes
-                    CustomCard(width = 180.dp, height = 200.dp, text = "Pandamart", content = "1 for 1 managoes this week", R.drawable.panda_mart, navController = navController)
+                    CustomCard(width = 180.dp, height = 200.dp, text = "Panda Mart", content = "1 for 1 mangoes this week", R.drawable.panda_mart, navController = navController)
                     CustomCard(width = 180.dp, height = 200.dp, text = "Shops", content = "Giant, CS Fresh & More", R.drawable.shops, navController = navController)
                 }
             }
@@ -68,7 +68,7 @@ fun HomeScreen(navController: NavController) {
                 Row(modifier = Modifier,
                     horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                     CustomCard(width = 180.dp, height = 200.dp, text = "Pick-up", content = "Up to 50% off", R.drawable.pick_up, navController = navController)
-                    CustomCard(width = 180.dp, height = 200.dp, text = "Pandago", content = "Send Parcel", R.drawable.panda_go, navController = navController)
+                    CustomCard(width = 180.dp, height = 200.dp, text = "Panda-Go", content = "Send Parcel", R.drawable.panda_go, navController = navController)
                 }
 
             }

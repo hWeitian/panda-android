@@ -1,6 +1,7 @@
 package com.example.foodpanda_capstone.view.ui.screen
 
 import android.util.Log
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -49,7 +50,9 @@ fun LoginScreen(viewModel: AuthViewModel, navController: NavController) {
 
 
 //    Log.d("LoginScreen", "Composable recomposed. navigateToHome: $navigateToHome, loginState: $loginState")
+Box(modifier = Modifier.fillMaxWidth()) {
 
+}
     Column(
         modifier = Modifier
             .fillMaxSize()
