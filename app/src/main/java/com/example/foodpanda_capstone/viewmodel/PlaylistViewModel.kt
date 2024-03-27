@@ -304,6 +304,7 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
     }
 
     fun assignDaysOfWeek(selectedDays: String) {
+        println(selectedDays)
         var newDaysOfWeek = _daysOfWeek.value.toMutableList()
 
         if (isCharFoundInText(",", selectedDays)) {
@@ -312,6 +313,7 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
         } else {
             newDaysOfWeek = updateSelectedDays(newDaysOfWeek, selectedDays)
         }
+        println(newDaysOfWeek)
         _daysOfWeek.value = newDaysOfWeek.toList()
     }
 

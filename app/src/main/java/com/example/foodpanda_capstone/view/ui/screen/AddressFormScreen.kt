@@ -61,6 +61,7 @@ fun AddressFormScreen(
 ) {
     if (isVisible) {
         val addresses by addressViewModel.addresses.collectAsState()
+//        val selectedAddress by addressViewModel.selectedAddress.collectAsState()
         var selectedAddress by remember { mutableStateOf<String?>(null) }
         var isAddressInputFormVisible by remember { mutableStateOf(false) }
         var editedAddress by remember { mutableStateOf<AddressData?>(null) } // Track edited address
@@ -69,87 +70,68 @@ fun AddressFormScreen(
         val sheetState = rememberModalBottomSheetState()
 
         ModalBottomSheet(
-            onDismissRequest = {toggleBottomSheet()},
-            sheetState = sheetState) {
-                Column(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth()
-                ) {
-                    LazyColumn {
-                        items(addresses) { address ->
-                            RoundCheckBoxWithText(
-                                index = addresses.indexOf(address),
-                                address = address.address,
-                                city = address.city,
-                                zipCode = address.zipCode,
-                                selectedAddress = selectedAddress,
-                                editedAddress = editedAddress,
-                                viewModel = addressViewModel,
-                                toggleBottomSheet = toggleBottomSheet,
-                                setAddressOnAppbar = setAddressOnAppbar,
-                            ) {
-                                selectedAddress = it
-                            }
+            onDismissRequest = { toggleBottomSheet() },
+            sheetState = sheetState
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth()
+            ) {
+                LazyColumn {
+                    items(addresses) { address ->
+                        RoundCheckBoxWithText(
+                            index = addresses.indexOf(address),
+                            address = address.address,
+                            city = address.city,
+                            zipCode = address.zipCode,
+                            selectedAddress = selectedAddress,
+                            editedAddress = editedAddress,
+                            viewModel = addressViewModel,
+                            toggleBottomSheet = toggleBottomSheet,
+                            setAddressOnAppbar = setAddressOnAppbar,
+                        ) {
+                            selectedAddress = it
                         }
                     }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Clickable text with an icon
-                    Row(
-                        verticalAlignment = CenterVertically,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.CenterHorizontally)
-                            .clickable {
-                                isAddressInputFormVisible = true
-                            }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = "Add address",
-                            modifier = Modifier.size(24.dp),
-                            tint = BrandPrimary
-                        )
-                        Spacer(modifier = Modifier.width(24.dp))
-                        Text(text = "Add your address here",
-                            color = BrandPrimary,
-                            fontSize = 20.sp
-                        )
-                    }
-                }
-                if (isAddressInputFormVisible) {
-                    AddressInputForm(
-                        viewModel = addressViewModel,
-                        onDismissRequest = { isAddressInputFormVisible = false },
-                        editedAddress = editedAddress,
-                        setAddressOnAppbar = setAddressOnAppbar,
-                        toggleBottomSheet = toggleBottomSheet,)
                 }
 
-                // Animated visibility for the address form
-//                AnimatedVisibility(
-//                    visible = isAddressInputFormVisible,
-//                    enter = slideInVertically(initialOffsetY = { it }),
-//                    exit = slideOutVertically(targetOffsetY = { it })
-//                ) {
-//                    AddressInputForm(
-//                        viewModel = addressViewModel,
-//                        onDismissRequest = { isAddressInputFormVisible = false },
-//                        editedAddress = editedAddress
-//                    )
-//                }
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Clickable text with an icon
+                Row(
+                    verticalAlignment = CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.CenterHorizontally)
+                        .clickable {
+                            isAddressInputFormVisible = true
+                        }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add address",
+                        modifier = Modifier.size(24.dp),
+                        tint = BrandPrimary
+                    )
+                    Spacer(modifier = Modifier.width(24.dp))
+                    Text(
+                        text = "Add your address here",
+                        color = BrandPrimary,
+                        fontSize = 20.sp
+                    )
+                }
             }
-//            sheetPeekHeight = 300.dp,
-//            containerColor = Color.White
-//
-//        {
-//            // Your main content here
-//            // For example, display the saved address
-////        val savedAddress = addressViewModel.addresses
-////        Text("Saved Address: $savedAddress")
-//        }
+            if (isAddressInputFormVisible) {
+                AddressInputForm(
+                    viewModel = addressViewModel,
+                    onDismissRequest = { isAddressInputFormVisible = false },
+                    editedAddress = editedAddress,
+                    setAddressOnAppbar = setAddressOnAppbar,
+                    toggleBottomSheet = toggleBottomSheet,
+                )
+            }
+        }
     }
 }
 
@@ -159,7 +141,7 @@ fun AddressInputForm(
     onDismissRequest: () -> Unit,
     editedAddress: AddressData?,
     toggleBottomSheet: () -> Unit,
-    setAddressOnAppbar: (String,String,String) -> Unit,
+    setAddressOnAppbar: (String, String, String) -> Unit,
 ) {
     var address by remember { mutableStateOf(editedAddress?.address ?: "") }
     var city by remember { mutableStateOf(editedAddress?.city ?: "") }
@@ -189,8 +171,12 @@ fun AddressInputForm(
                         val currentAddress = AddressData(address, city, zipCode)
                         if (editedAddress != null) {
                             // address from current database
-                            val addressIndex = viewModel.getAddressIndex(editedAddress.address, editedAddress.city, editedAddress.zipCode)
-                            viewModel.updateAddress( addressIndex,currentAddress!!)
+                            val addressIndex = viewModel.getAddressIndex(
+                                editedAddress.address,
+                                editedAddress.city,
+                                editedAddress.zipCode
+                            )
+                            viewModel.updateAddress(addressIndex, currentAddress!!)
                         } else {
                             viewModel.saveAddress(currentAddress)
                         }
@@ -199,9 +185,9 @@ fun AddressInputForm(
                     }
                 ) {
                     if (editedAddress != null) {
-                        Text("Edit",  modifier = Modifier.padding(start = 16.dp, end = 16.dp),)
+                        Text("Edit", modifier = Modifier.padding(start = 16.dp, end = 16.dp))
                     } else {
-                        Text("Add",  modifier = Modifier.padding(start = 16.dp, end = 16.dp),)
+                        Text("Add", modifier = Modifier.padding(start = 16.dp, end = 16.dp))
                     }
                 }
 
@@ -215,8 +201,8 @@ fun AddressInputForm(
 //                            viewModel.addresses.collect { addresses ->
 //                                println(addresses)
 //                            }
-                            onDismissRequest()
-                        }
+                        onDismissRequest()
+                    }
 //                    }
                 ) {
                     Text("Remove")
@@ -273,7 +259,7 @@ fun RoundCheckBoxWithText(
                 )
                 toggleBottomSheet()
                 setAddressOnAppbar(address, city, zipCode)
-                context.setSharedPreferenceAddressData(address, city,zipCode)
+                context.setSharedPreferenceAddressData(address, city, zipCode)
 
 
             }
@@ -315,7 +301,7 @@ fun RoundCheckBoxWithText(
                 viewModel = viewModel,
                 onDismissRequest = { isAddressInputFormVisible = false },
                 editedAddress = editAddress,
-                toggleBottomSheet= toggleBottomSheet,
+                toggleBottomSheet = toggleBottomSheet,
                 setAddressOnAppbar = setAddressOnAppbar,
             )
         }

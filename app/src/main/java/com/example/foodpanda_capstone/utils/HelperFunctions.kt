@@ -52,7 +52,8 @@ fun logErrorMsg(functionName: String, error: Exception){
 fun splitDaysToMap(days: String): Map<String, String> {
     val daysMap = emptyMap<String, String>().toMutableMap()
     days.split(",").forEach { day ->
-        daysMap[day] = day
+        val finalDay = day.trim()
+        daysMap[finalDay] = finalDay
     }
     return daysMap
 }

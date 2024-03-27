@@ -96,7 +96,6 @@ fun EditPlaylistScreen(
                         }
                     }
                     Spacer(modifier = Modifier.size(endOfPageSpace.dp))
-
                 }
             }
         }
@@ -139,7 +138,7 @@ fun EditPlaylistScreen(
                 Spacer(modifier = Modifier.size(20.dp))
 
                 PrimaryButton(
-                    name = if (currentPlaylist.isPublic == true || currentPlaylist.status == "Cancelled") "Subscribe" else "Update",
+                    name = if (currentPlaylist.isPublic == true || currentPlaylist.status == "Cancelled" || currentPlaylist.id == 0) "Subscribe" else "Update",
                     width = null
                 ) {
                     navController.navigate("Confirmation")

@@ -20,10 +20,18 @@ class AddressViewModel(private val addressRepository: AddressRepository, private
     } else {
         _addresses.asStateFlow()
     }
+//
+//    private val _addresses = MutableStateFlow<List<AddressData>>(emptyList())
+//    val addresses: StateFlow<List<AddressData>> = _addresses
+//
+//
+//    private val _selectedAddress = MutableStateFlow("")
+//    val selectedAddress: StateFlow<String> = _selectedAddress
 
 
     init {
         _addresses.value = addressRepository.getAddresses()
+//        _addresses.value = context.getAddressList()
     }
 
     fun saveAddress(address: AddressData) {
