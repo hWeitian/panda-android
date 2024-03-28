@@ -4,33 +4,19 @@ import PREF_KEY_CURRENT_ADDRESS
 import PREF_KEY_CURRENT_CITY
 import PREF_KEY_CURRENT_ZIPCODE
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.ClickableText
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Loyalty
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.RamenDining
-import androidx.compose.material.icons.filled.Storefront
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -41,35 +27,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.lifecycle.Observer
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.foodpanda_capstone.R
 import com.example.foodpanda_capstone.model.AddressRepository
 import com.example.foodpanda_capstone.model.Days
 import com.example.foodpanda_capstone.model.FoodItem
-import com.example.foodpanda_capstone.model.PlaylistRepository
-import com.example.foodpanda_capstone.model.api.PlaylistApiService
 import com.example.foodpanda_capstone.model.timeOfDelivery
-import com.example.foodpanda_capstone.view.ui.composable.FoodItemContainer
 import com.example.foodpanda_capstone.view.ui.composable.FoodItemContainerWithoutImage
 import com.example.foodpanda_capstone.view.ui.composable.FoodItemDescriptionText
 import com.example.foodpanda_capstone.view.ui.composable.FoodItemNameText
@@ -77,7 +47,6 @@ import com.example.foodpanda_capstone.view.ui.composable.ImageHolder
 import com.example.foodpanda_capstone.view.ui.composable.LargeDropdownMenu
 import com.example.foodpanda_capstone.view.ui.composable.LoadingScreen
 import com.example.foodpanda_capstone.view.ui.composable.PrimaryButton
-import com.example.foodpanda_capstone.view.ui.composable.RestaurantNameText
 import com.example.foodpanda_capstone.view.ui.composable.ScreenBottomSpacer
 import com.example.foodpanda_capstone.view.ui.composable.SectionTitleAndBtn
 import com.example.foodpanda_capstone.view.ui.theme.BrandDark
@@ -87,14 +56,16 @@ import com.example.foodpanda_capstone.view.ui.theme.Typography
 import com.example.foodpanda_capstone.viewmodel.AddressViewModel
 import com.example.foodpanda_capstone.viewmodel.GeneralViewModelFactoryDoubleParam
 import com.example.foodpanda_capstone.viewmodel.PlaylistViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import getCurrentAddress
 import sharedPreferences
 
 @Composable
 fun PlaylistConfirmScreen(
     viewModel: PlaylistViewModel,
-    navController: NavController
+    navController: NavController,
+    selectedAddress: String,
+    setAddressOnAppbar: (address: String?, city: String?, zipcode: String?) -> Unit,
+
 ) {
     val context = LocalContext.current
     val currentPlaylist by viewModel.currentPlaylist.collectAsState()
@@ -134,22 +105,23 @@ fun PlaylistConfirmScreen(
 
     val addressFormViewModel: AddressViewModel = viewModel(factory = addressViewModelFactory)
 
-    val savedAddress = context.getStringSharedPreference(PREF_KEY_CURRENT_ADDRESS)
-    val savedZipCode = context.getStringSharedPreference(PREF_KEY_CURRENT_ZIPCODE)
-    val savedCity = context.getStringSharedPreference(PREF_KEY_CURRENT_CITY)
+    val currentAddress = context.getCurrentAddress()
+//    val savedAddress = context.getStringSharedPreference(PREF_KEY_CURRENT_ADDRESS)
+//    val savedZipCode = context.getStringSharedPreference(PREF_KEY_CURRENT_ZIPCODE)
+//    val savedCity = context.getStringSharedPreference(PREF_KEY_CURRENT_CITY)
 
-    var selectedAddress = if (savedAddress != null && savedZipCode != null && savedCity != null) {
-        "$savedAddress $savedZipCode $savedCity"
-    } else {
-        "Type your address here"
-    }
+//    var selectedAddress = if (savedAddress != null && savedZipCode != null && savedCity != null) {
+//        "$savedAddress $savedZipCode $savedCity"
+//    } else {
+//        "Type your address here"
+//    }
 
     // Define the setAddressOnUI function
-    val setAddressOnScreen: (String, String, String) -> Unit = { address, city, zipCode ->
-        selectedAddress = "$address, $city, $zipCode"
-        context.saveAddressToSharedPreferences(address, city, zipCode)
-
-    }
+//    val setAddressOnScreen: (String, String, String) -> Unit = { address, city, zipCode ->
+//        selectedAddress = "$address, $city, $zipCode"
+//        context.saveAddressToSharedPreferences(address, city, zipCode)
+//
+//    }
 
     LaunchedEffect(canNavigate) {
         if (canNavigate == true) {
@@ -249,8 +221,8 @@ fun PlaylistConfirmScreen(
                             isVisible = isAddressFormVisible,
                             showBottomSheet = isAddressFormVisible,
                             toggleBottomSheet = { toggleAddressFormVisibility() },
-                            setAddressOnAppbar = setAddressOnScreen,
-                            onAddressSelected = selectedAddress
+                            setAddressOnAppbar = setAddressOnAppbar,
+                            currentAddress = currentAddress
                         )
 
                     }

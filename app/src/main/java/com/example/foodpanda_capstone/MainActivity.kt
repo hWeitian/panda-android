@@ -27,12 +27,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Image
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Settings
@@ -82,12 +79,9 @@ import com.example.foodpanda_capstone.model.api.PlaylistApiClient
 import com.example.foodpanda_capstone.model.api.PlaylistApiService
 import com.example.foodpanda_capstone.view.ui.screen.*
 import com.example.foodpanda_capstone.view.ui.screen.PlaylistScreen
-import com.example.foodpanda_capstone.view.ui.theme.BrandDark
-import com.example.foodpanda_capstone.view.ui.theme.BrandHighlight
 import com.example.foodpanda_capstone.view.ui.theme.BrandPrimary
 import com.example.foodpanda_capstone.view.ui.theme.BrandSecondary
 import com.example.foodpanda_capstone.view.ui.theme.FoodpandaCapstoneTheme
-import com.example.foodpanda_capstone.view.ui.theme.NeutralBorder
 import com.example.foodpanda_capstone.view.ui.theme.NeutralDivider
 import com.example.foodpanda_capstone.view.ui.theme.Typography
 import com.example.foodpanda_capstone.viewmodel.AddressViewModel
@@ -99,6 +93,7 @@ import com.example.foodpanda_capstone.viewmodel.LoginFormViewModel
 import com.example.foodpanda_capstone.viewmodel.PlaylistViewModel
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
+import getCurrentAddress
 import getStringSharedPreference
 
 class MainActivity : ComponentActivity() {
@@ -209,6 +204,8 @@ fun Navigation() {
         context = context,
     )
 
+    val addressViewModel: AddressViewModel = viewModel(factory = addressViewModelFactory)
+
     val loginViewModel: LoginFormViewModel = viewModel(factory = loginViewModelFactory)
 
     val playlistViewModel: PlaylistViewModel = viewModel(factory = playlistViewModelFactory)
@@ -251,12 +248,12 @@ fun Navigation() {
         mutableStateOf(drawerItem[0])
     }
 
-//    val isLoggedIn by authViewModel.loginState.collectAsState()
-//    val isSignedUp by authViewModel.signupState.collectAsState()
+    val isLoggedIn by authViewModel.loginState.collectAsState()
+    val isSignedUp by authViewModel.signupState.collectAsState()
 
     // For testing purpose
-    val isLoggedIn = true
-    val isSignedUp = true
+//    val isLoggedIn = true
+//    val isSignedUp = true
 
     Log.d("Navigation", "isLoggedIn: $isLoggedIn")
     Log.d("Navigation", "isSignedUp: $isSignedUp")
@@ -271,23 +268,44 @@ fun Navigation() {
     val toggleAddressFormVisibility = { isAddressFormVisible = !isAddressFormVisible }
 
 
-    val savedAddress = context.getStringSharedPreference(PREF_KEY_CURRENT_ADDRESS)
-    val savedZipCode = context.getStringSharedPreference(PREF_KEY_CURRENT_ZIPCODE)
-    val savedCity = context.getStringSharedPreference(PREF_KEY_CURRENT_CITY)
+    val currentAddress = context.getCurrentAddress()
 
+    val selectedAddress by addressViewModel.selectedAddress.collectAsState()
 
-    var selectedAddress = if (savedAddress != "" && savedZipCode != "" && savedCity != "") {
-        "$savedAddress $savedZipCode $savedCity"
-    } else {
-        "Add your address here"
-    }
+//    val savedAddress = context.getStringSharedPreference(PREF_KEY_CURRENT_ADDRESS)
+//    val savedZipCode = context.getStringSharedPreference(PREF_KEY_CURRENT_ZIPCODE)
+//    val savedCity = context.getStringSharedPreference(PREF_KEY_CURRENT_CITY)
+//
+//
+//    var selectedAddress = if (savedAddress != "" && savedZipCode != "" && savedCity != "") {
+//        "$savedAddress $savedZipCode $savedCity"
+//    } else {
+//        "Add your address here"
+//    }
 
     // Define the setAddressOnUI function
-    val setAddressOnAppbar: (String, String, String) -> Unit = { address, city, zipCode ->
-        // Here you can use address, city, and zipCode as needed
-        // For example, you could concatenate them into one string:
-        selectedAddress = "$address, $city, $zipCode"
-    }
+//    val setAddressOnAppbar: (String, String, String) -> Unit = { address, city, zipCode ->
+//        // Here you can use address, city, and zipCode as needed
+//        // For example, you could concatenate them into one string:
+//        if (address == "" && city == "" && zipCode = "") {
+//            selectedAddress = "Add your address here"
+//        } else {
+//            selectedAddress = "$address, $city, $zipCode"
+//        }
+//    }
+
+//    fun setAddressOnAppbar (
+//        address: String? = null,
+//        city: String? = null,
+//        zipCode: String? = null
+//    ) {
+//        if (address == null && city == null && zipCode == null) {
+//            selectedAddress = "Add your address here"
+//        } else {
+//            selectedAddress = "$address, $city, $zipCode"
+//        }
+//    }
+
 
     fun customPopBackStack() {
         when (currentRoute) {
@@ -610,6 +628,7 @@ fun Navigation() {
                                         modifier = Modifier
                                             .fillMaxSize()
                                             .clickable {
+//                                                addressFormViewModel.getInitialAddress()
                                                 toggleAddressFormVisibility()
                                                 isAddressFormVisible = true
                                             },
@@ -630,8 +649,8 @@ fun Navigation() {
                                                 isVisible = isAddressFormVisible,
                                                 showBottomSheet = isAddressFormVisible,
                                                 toggleBottomSheet = { toggleAddressFormVisibility() },
-                                                setAddressOnAppbar = setAddressOnAppbar,
-                                                onAddressSelected = selectedAddress
+                                                setAddressOnAppbar = addressViewModel::setAddressOnAppbar,
+                                                currentAddress = currentAddress
                                             )
                                         }
                                     }
@@ -767,7 +786,7 @@ fun Navigation() {
                         HomeAppBar(navController)
                     }
                     composable("Confirmation") { backStackEntry ->
-                        PlaylistConfirmScreen(playlistViewModel, navController)
+                        PlaylistConfirmScreen(playlistViewModel, navController, selectedAddress, setAddressOnAppbar = addressViewModel::setAddressOnAppbar)
                     }
                     composable("ViewCategoryPlaylist/{title}/{isPublic}/{userId}",
                         arguments = listOf(

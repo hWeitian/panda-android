@@ -20,6 +20,14 @@ fun Context.getStringSharedPreference(preferenceKey: String): String {
     return sharedPreferences.getString(preferenceKey, null) ?: ""
 }
 
+fun Context.getCurrentAddress(): AddressData {
+    val address = getStringSharedPreference(PREF_KEY_CURRENT_ADDRESS)
+    val zipCode = getStringSharedPreference(PREF_KEY_CURRENT_ZIPCODE)
+    val city = getStringSharedPreference(PREF_KEY_CURRENT_CITY)
+
+    return AddressData(address, city, zipCode, true)
+}
+
 fun Context.setStringSharedPreference(preferenceKey: String, addressDetails: String) {
     val sharedPreferences = this.sharedPreferences
     val editor = sharedPreferences.edit()
@@ -36,17 +44,43 @@ fun Context.setSharedPreferenceAddressData(address: String, zipCode: String, cit
 }
 
 
-fun Context.getAddressList(): List<AddressData> {
+//fun Context.getAddressList(): List<AddressData> {
+//    val sharedPreferences = this.sharedPreferences
+//    val gson = Gson()
+//    val json = sharedPreferences.getString(PREF_KEY_ADDRESS_LIST, null)
+//    val type = object : TypeToken<List<AddressData>>() {}.type
+//    return gson.fromJson(json, type) ?: emptyList()
+//}
+
+fun Context.getAddressList(selectedAddress: AddressData): List<AddressData> {
     val sharedPreferences = this.sharedPreferences
     val gson = Gson()
     val json = sharedPreferences.getString(PREF_KEY_ADDRESS_LIST, null)
     val type = object : TypeToken<List<AddressData>>() {}.type
-    return gson.fromJson(json, type) ?: emptyList()
+    val addressList: List<AddressData> = gson.fromJson(json, type) ?: emptyList()
+    val currentAddress = getCurrentAddress()
+
+    // Reset the 'isSelected' property for the entire list
+//    addressList.forEach { it.isSelected = false }
+
+    // Find the selected address in the list and mark it as selected
+    addressList.map { address ->
+        if (address.address == currentAddress.address && address.city == currentAddress.city && address.zipCode == currentAddress.zipCode){
+//            println("true")
+            address.isSelected = true
+//            address.copy(isSelected = true)
+        } else {
+//            println("false")
+            address.isSelected = false
+//            address.copy(isSelected = false)
+        }
+    }
+    return addressList
 }
 
 fun Context.addAddressList(newAddress: AddressData) {
     // Retrieve the current list of addresses from SharedPreferences
-    val currentAddresses = getAddressList().toMutableList()
+    val currentAddresses = getAddressList(getCurrentAddress()).toMutableList()
 
     // Add the new address to the list
     currentAddresses.add(newAddress)
@@ -63,7 +97,7 @@ fun Context.addAddressList(newAddress: AddressData) {
 
 fun Context.removeAddressFromList(addressToRemove: AddressData) {
     // Retrieve the current list of addresses from SharedPreferences
-    val currentAddresses: MutableList<AddressData> = getAddressList().toMutableList()
+    val currentAddresses: MutableList<AddressData> = getAddressList(getCurrentAddress()).toMutableList()
 
     // Remove the desired address from the list
     var removeSucceeded: Boolean =  currentAddresses.remove(addressToRemove)
@@ -81,7 +115,56 @@ fun Context.removeAddressFromList(addressToRemove: AddressData) {
 
 
 
+fun Context.updateAddress(addressToUpdate: AddressData, newAddressData: AddressData) {
+    // Retrieve the current list of addresses from SharedPreferences
+    val currentAddresses = getAddressList(getCurrentAddress()).toMutableList()
 
+    // Get the current index of the address to update
+    val updateIndex = currentAddresses.indexOf(addressToUpdate)
 
+    // Check if address exists
+    if (updateIndex != -1) {
+        // Replace the old address with the new one
+        currentAddresses[updateIndex] = newAddressData
 
+        // Serialize the updated list to JSON
+        val gson = Gson()
+        val json = gson.toJson(currentAddresses)
+
+        // Save the JSON string to SharedPreferences
+        val editor = this.sharedPreferences.edit()
+        editor.putString(PREF_KEY_ADDRESS_LIST, json)
+        editor.apply()
+    } else {
+        print("Address not found in the list.")
+    }
+}
+
+fun Context.updateAddressSelection(selectedAddress: AddressData) {
+    println("here")
+    // Retrieve the current list of addresses from SharedPreferences
+//    val currentAddresses: MutableList<AddressData> = getAddressList(getCurrentAddress()).toMutableList()
+
+    // Loop through each address
+//    for (addressData in currentAddresses) {
+//        // If the current address matches the selected one, set isSelected to true, otherwise set to false
+//        if(addressData == selectedAddress) {
+//            addressData.isSelected = true
+//        } else {
+//            addressData.isSelected = false
+//        }
+//    }
+
+    // Set the currentAddress in SharedPreferences
+    setSharedPreferenceAddressData(selectedAddress.address, selectedAddress.zipCode, selectedAddress.city)
+
+    // Serialize the updated list to JSON
+//    val gson = Gson()
+//    val json = gson.toJson(currentAddresses)
+//
+//    // Save the JSON string to SharedPreferences
+//    val editor = this.sharedPreferences.edit()
+//    editor.putString(PREF_KEY_ADDRESS_LIST, json)
+//    editor.apply()
+}
 
