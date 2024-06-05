@@ -456,13 +456,3 @@ fun DropdownOptionsBox() {
         }
     }
 }
-
-//@Preview
-//@Composable
-//fun PlaylistConfirmScreenPreview() {
-//    val apiService =  PlaylistApiService
-//    val repository = PlaylistRepository(apiService)
-//    val viewModel = PlaylistViewModel(repository) // Initialize your ViewModel as needed
-//    val navController = rememberNavController() // Initialize NavController as needed
-//    PlaylistConfirmScreen(viewModel = viewModel, navController = navController)
-//}
