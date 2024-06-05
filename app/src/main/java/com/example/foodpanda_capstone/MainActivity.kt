@@ -9,6 +9,8 @@ import android.app.Activity
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.activity.compose.setContent
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -25,39 +27,17 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.ThumbUp
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.Divider
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberDrawerState
-import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.material3.rememberTopAppBarState
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -72,6 +52,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.dimensionResource
@@ -88,8 +69,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.foodpanda_capstone.view.ui.screen.DrawerItems
-import com.example.foodpanda_capstone.view.ui.screen.HomeScreen
 import androidx.navigation.navArgument
 import com.example.foodpanda_capstone.model.AddressRepository
 import com.example.foodpanda_capstone.model.AuthRepository
@@ -98,23 +77,12 @@ import com.example.foodpanda_capstone.model.NetworkServiceImpl
 import com.example.foodpanda_capstone.model.PlaylistRepository
 import com.example.foodpanda_capstone.model.api.PlaylistApiClient
 import com.example.foodpanda_capstone.model.api.PlaylistApiService
-import com.example.foodpanda_capstone.view.ui.screen.AddressFormScreen
-import com.example.foodpanda_capstone.view.ui.screen.SearchScreen
-import com.example.foodpanda_capstone.view.ui.screen.EditPlaylistScreen
-import com.example.foodpanda_capstone.view.ui.screen.HomeAppBar
-import com.example.foodpanda_capstone.view.ui.screen.LoginScreen
-import com.example.foodpanda_capstone.view.ui.screen.PlaylistConfirmScreen
-import com.example.foodpanda_capstone.view.ui.screen.PlaylistFormScreen
-import com.example.foodpanda_capstone.view.ui.screen.PlaylistListScreen
+import com.example.foodpanda_capstone.view.ui.screen.*
 import com.example.foodpanda_capstone.view.ui.screen.PlaylistScreen
-import com.example.foodpanda_capstone.view.ui.screen.PlaylistSectionScreen
-import com.example.foodpanda_capstone.view.ui.screen.onBoardingScreen
-import com.example.foodpanda_capstone.view.ui.screen.signUpForm
-import com.example.foodpanda_capstone.view.ui.theme.BrandHighlight
 import com.example.foodpanda_capstone.view.ui.theme.BrandPrimary
 import com.example.foodpanda_capstone.view.ui.theme.BrandSecondary
 import com.example.foodpanda_capstone.view.ui.theme.FoodpandaCapstoneTheme
-import com.example.foodpanda_capstone.view.ui.theme.NeutralBorder
+import com.example.foodpanda_capstone.view.ui.theme.NeutralDivider
 import com.example.foodpanda_capstone.view.ui.theme.Typography
 import com.example.foodpanda_capstone.viewmodel.AddressViewModel
 import com.example.foodpanda_capstone.viewmodel.AuthViewModel
@@ -125,6 +93,7 @@ import com.example.foodpanda_capstone.viewmodel.LoginFormViewModel
 import com.example.foodpanda_capstone.viewmodel.PlaylistViewModel
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
+import getCurrentAddress
 import getStringSharedPreference
 
 class MainActivity : ComponentActivity() {
@@ -149,7 +118,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
 
 
 }
@@ -236,6 +204,8 @@ fun Navigation() {
         context = context,
     )
 
+    val addressViewModel: AddressViewModel = viewModel(factory = addressViewModelFactory)
+
     val loginViewModel: LoginFormViewModel = viewModel(factory = loginViewModelFactory)
 
     val playlistViewModel: PlaylistViewModel = viewModel(factory = playlistViewModelFactory)
@@ -250,8 +220,6 @@ fun Navigation() {
     val scaffoldState = rememberTopAppBarState()
     val scope = rememberCoroutineScope()
 
-    //sidenav bar list.
-//              var selectedNavItem by remember { mutableStateOf(items[0]) }
     var isDrawerOpen by remember { mutableStateOf(false) }
 
 
@@ -262,7 +230,6 @@ fun Navigation() {
     )
 
     val drawerItem2 = listOf(
-//        DrawerItems(Icons.Default.Share, "Share", 0, false),
         DrawerItems(Icons.Filled.Star, "Rate", 0, false),
         DrawerItems(Icons.Filled.Settings, "Setting", 0, false),
         DrawerItems(Icons.Filled.ExitToApp, "Logout", 0, false),
@@ -284,6 +251,10 @@ fun Navigation() {
     val isLoggedIn by authViewModel.loginState.collectAsState()
     val isSignedUp by authViewModel.signupState.collectAsState()
 
+    // For testing purpose
+//    val isLoggedIn = true
+//    val isSignedUp = true
+
     Log.d("Navigation", "isLoggedIn: $isLoggedIn")
     Log.d("Navigation", "isSignedUp: $isSignedUp")
 
@@ -297,273 +268,341 @@ fun Navigation() {
     val toggleAddressFormVisibility = { isAddressFormVisible = !isAddressFormVisible }
 
 
-    val savedAddress = context.getStringSharedPreference(PREF_KEY_CURRENT_ADDRESS)
-    val savedZipCode = context.getStringSharedPreference(PREF_KEY_CURRENT_ZIPCODE)
-    val savedCity = context.getStringSharedPreference(PREF_KEY_CURRENT_CITY)
+    val currentAddress = context.getCurrentAddress()
 
+    val selectedAddress by addressViewModel.selectedAddress.collectAsState()
 
-    var selectedAddress = if (savedAddress != null && savedZipCode != null && savedCity != null) {
-        "$savedAddress $savedZipCode $savedCity"
-    } else {
-        "Type your address here"
-    }
+//    val savedAddress = context.getStringSharedPreference(PREF_KEY_CURRENT_ADDRESS)
+//    val savedZipCode = context.getStringSharedPreference(PREF_KEY_CURRENT_ZIPCODE)
+//    val savedCity = context.getStringSharedPreference(PREF_KEY_CURRENT_CITY)
+//
+//
+//    var selectedAddress = if (savedAddress != "" && savedZipCode != "" && savedCity != "") {
+//        "$savedAddress $savedZipCode $savedCity"
+//    } else {
+//        "Add your address here"
+//    }
 
     // Define the setAddressOnUI function
-    val setAddressOnAppbar: (String, String, String) -> Unit = { address, city, zipCode ->
-        // Here you can use address, city, and zipCode as needed
-        // For example, you could concatenate them into one string:
-        selectedAddress = "$address, $city, $zipCode"
+//    val setAddressOnAppbar: (String, String, String) -> Unit = { address, city, zipCode ->
+//        // Here you can use address, city, and zipCode as needed
+//        // For example, you could concatenate them into one string:
+//        if (address == "" && city == "" && zipCode = "") {
+//            selectedAddress = "Add your address here"
+//        } else {
+//            selectedAddress = "$address, $city, $zipCode"
+//        }
+//    }
+
+//    fun setAddressOnAppbar (
+//        address: String? = null,
+//        city: String? = null,
+//        zipCode: String? = null
+//    ) {
+//        if (address == null && city == null && zipCode == null) {
+//            selectedAddress = "Add your address here"
+//        } else {
+//            selectedAddress = "$address, $city, $zipCode"
+//        }
+//    }
+
+
+    fun customPopBackStack() {
+        when (currentRoute) {
+            "Playlists" -> navController.navigate("Home")
+            "Build your mix" -> navController.navigate("Playlists")
+            else -> navController.popBackStack()
+        }
+    }
+
+    // Handle phone's physical back button
+    val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current!!.onBackPressedDispatcher
+    val customBackClickAction: () -> Unit = {
+        customPopBackStack()
+    }
+
+    val callback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            customBackClickAction()
+        }
+    }
+
+    onBackPressedDispatcher.addCallback(callback)
+    DisposableEffect(key1 = onBackPressedDispatcher) {
+        onDispose { callback.remove() }
     }
 
     //Side Nav bar
-    ModalNavigationDrawer(drawerContent = {
-        ModalDrawerSheet {
-
-//            Column(Modifier.fillMaxSize().background(Color.White), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .background(BrandPrimary),
-                    contentAlignment = Alignment.Center
+    ModalNavigationDrawer(
+        drawerContent = {
+            ModalDrawerSheet(
+                modifier = Modifier
+                    .width(300.dp)
+                    .fillMaxHeight()
+            ) {
+                Column(
+                    Modifier
+                        .fillMaxSize()
+                        .background(Color.White),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-
-                    Column(
-                        Modifier.wrapContentSize(),
-                        verticalArrangement = Arrangement.SpaceAround,
-                        horizontalAlignment = Alignment.CenterHorizontally
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .background(BrandPrimary),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.food_delivery),
-                            contentDescription = "profile pic",
-                            modifier = Modifier
-                                .size(130.dp)
-                                .clip(CircleShape)
-                        )
-                        val auth = FirebaseAuth.getInstance()
-                        val currentUser = auth.currentUser
-
-                        if (isLoggedIn || isSignedUp) {
-                            val userName = currentUser?.displayName ?: "Hi user!"
-                            Text(
-                                text = "Hello, $userName",
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 16.dp),
-                                fontSize = 22.sp,
-                                textAlign = TextAlign.Center,
-                                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black)
-
+                        Column(
+                            Modifier.wrapContentSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.food_delivery),
+                                contentDescription = "profile pic",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .size(90.dp)
+                                    .clip(CircleShape)
                             )
-                        } else {
-                            ClickableText(
-                                text = AnnotatedString("Login / Create Account"),
+                            val auth = FirebaseAuth.getInstance()
+                            val currentUser = auth.currentUser
+
+                            if (isLoggedIn || isSignedUp) {
+                                val userName = currentUser?.displayName ?: "user"
+                                Text(
+                                    text = "Hello, $userName!",
+                                    color = Color.White,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 16.dp),
+                                    style = Typography.bodyLarge
+                                )
+                            } else {
+                                ClickableText(
+                                    text = AnnotatedString("Login / Create Account"),
+                                    onClick = {
+                                        // Navigate to the login screen when the link is clicked
+                                        navController.navigate("Welcome")
+                                        // Close the navigation drawer
+                                        scope.launch {
+                                            drawerState.close()
+                                        }
+                                    },
+                                    modifier = Modifier.padding(8.dp),
+                                    style = Typography.bodyLarge.copy(
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold
+                                    ),
+                                )
+
+                            }
+                        }
+                        Divider(
+                            Modifier.align(Alignment.BottomCenter),
+                            thickness = 1.dp,
+                            color = NeutralDivider
+                        )
+                    }
+                    if (isLoggedIn || isSignedUp) {
+                        drawerItem.forEach {
+                            NavigationDrawerItem(
+                                label = { Text(text = it.text) },
+                                selected = it == selectedItem,
                                 onClick = {
-                                    // Navigate to the login screen when the link is clicked
-                                    navController.navigate("Welcome")
-                                    // Close the navigation drawer
+                                    selectedItem = it
                                     scope.launch {
                                         drawerState.close()
                                     }
                                 },
-                                modifier = Modifier.padding(8.dp),
-                                style = MaterialTheme.typography.bodyMedium.copy(
-                                    color = Color.White,
-                                    fontWeight = FontWeight.Bold
+                                modifier = Modifier.padding(horizontal = 16.dp),
+                                icon = {
+                                    Icon(
+                                        modifier = Modifier,
+                                        imageVector = it.icon,
+                                        contentDescription = it.text,
+                                        tint = BrandPrimary
+                                    )
+                                },
+                                colors = NavigationDrawerItemDefaults.colors(
+                                    selectedContainerColor = Color.White,
+                                    unselectedContainerColor = Color.White
+                                ),
+//                                badge = {
+//                                    if (it.hasBadge) {
+//                                        BadgedBox(badge = {
+//                                            Badge {
+//                                                Text(text = it.badgeCount.toString(), fontSize = 17.sp)
+//                                            }
+//                                        }) {
+//                                        }
+//                                    }
+//                                }
+                            )
+                        }
+//                Log.d("Drawer", "Building Logout item")
+                        Divider(
+                            thickness = 1.dp,
+                            color = NeutralDivider
+                        )
+                        var showDialog by remember { mutableStateOf(false) }
+
+                        drawerItem2.forEach {
+                            NavigationDrawerItem(
+                                label = { Text(text = it.text) },
+                                selected = it == selectedItem,
+                                onClick = {
+                                    selectedItem = it
+                                    scope.launch {
+                                        drawerState.close()
+                                        if (selectedItem.text == "Logout") {
+                                            // Show Dialog when the user clicks on "Logout"
+                                            showDialog =
+                                                true // Assuming you have a boolean state variable to control the dialog visibility
+                                        }
+                                    }
+                                },
+                                modifier = Modifier.padding(horizontal = 16.dp),
+                                icon = {
+                                    Icon(imageVector = it.icon, contentDescription = it.text, tint = BrandPrimary)
+                                },
+                                colors = NavigationDrawerItemDefaults.colors(
+                                    selectedContainerColor = Color.White,
+                                    unselectedContainerColor = Color.White
                                 ),
                             )
-
                         }
-                    }
-                    Divider(
-                        Modifier.align(Alignment.BottomCenter), thickness = 1.dp,
-                        NeutralBorder
-                    )
-
-
-                }
-                if (isLoggedIn || isSignedUp) {
-                    drawerItem.forEach {
-                        NavigationDrawerItem(label = { Text(text = it.text) },
-                            selected = it == selectedItem,
-                            onClick = {
-                                selectedItem = it
-
-                                scope.launch {
-                                    drawerState.close()
-                                }
-
-                            },
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            icon = {
-                                Icon(
-                                    modifier = Modifier,
-                                    imageVector = it.icon,
-                                    contentDescription = it.text,
-                                    tint = BrandPrimary
-                                )
-                            },
-                            badge = {
-                                if (it.hasBadge) {
-                                    BadgedBox(badge = {
-                                        Badge {
-                                            Text(text = it.badgeCount.toString(), fontSize = 17.sp)
-                                        }
-                                    }) {
-
-                                    }
-                                }
-                            }
-                        )
-                    }
-//                Log.d("Drawer", "Building Logout item")
-                    Divider(
-                        thickness = 1.dp,
-                        color = Color.DarkGray
-                    )
-                    var showDialog by remember { mutableStateOf(false) }
-
-                    drawerItem2.forEach {
-                        NavigationDrawerItem(label = { Text(text = it.text) },
-                            selected = it == selectedItem,
-                            onClick = {
-                                selectedItem = it
-
-                                scope.launch {
-                                    drawerState.close()
-                                    if (selectedItem.text == "Logout") {
-                                        // Show Dialog when the user clicks on "Logout"
-                                        showDialog =
-                                            true // Assuming you have a boolean state variable to control the dialog visibility
-                                    }
-                                }
-                            },
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            icon = {
-                                Icon(imageVector = it.icon, contentDescription = it.text, tint = BrandPrimary)
-                            }
-                        )
-                    }
 
 // Outside of your composable function, preferably in your main activity or composable
-                    if (showDialog) {
-                        AlertDialog(modifier = Modifier
-                            .padding(8.dp)
-                            .clip(RoundedCornerShape(16.dp)),
-                            onDismissRequest = {
-                                // Handle dialog dismissal if needed
-                                showDialog = false
-                            }
-                        ) {
-                            Card(
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .clip(RoundedCornerShape(16.dp)) // Adjust the corner radius as needed
+                        if (showDialog) {
+                            AlertDialog(modifier = Modifier
+                                .padding(8.dp)
+                                .clip(RoundedCornerShape(16.dp)),
+                                onDismissRequest = {
+                                    // Handle dialog dismissal if needed
+                                    showDialog = false
+                                }
                             ) {
-                                Column(
+                                Card(
                                     modifier = Modifier
                                         .padding(16.dp)
-                                        .fillMaxWidth()
-                                        .clip(RoundedCornerShape(16.dp))
+                                        .clip(RoundedCornerShape(16.dp)) // Adjust the corner radius as needed
                                 ) {
-                                    Text("Logout", fontWeight = FontWeight.Bold, fontSize = 20.sp)
-                                    Spacer(modifier = Modifier.height(16.dp))
-                                    Text("Are you sure you want to logout?")
-                                    Spacer(modifier = Modifier.height(16.dp))
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.End
+                                    Column(
+                                        modifier = Modifier
+                                            .padding(16.dp)
+                                            .fillMaxWidth()
+                                            .clip(RoundedCornerShape(16.dp))
                                     ) {
-                                        Button(
-                                            onClick = {
-                                                authViewModel.signOut()
-                                                navController.navigate("Home") {
-                                                    popUpTo(navController.graph.startDestinationId) {
-                                                        saveState = true
+                                        Text("Logout", fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                                        Spacer(modifier = Modifier.height(16.dp))
+                                        Text("Are you sure you want to logout?")
+                                        Spacer(modifier = Modifier.height(16.dp))
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.End
+                                        ) {
+                                            Button(
+                                                onClick = {
+                                                    authViewModel.signOut()
+                                                    navController.navigate("Home") {
+                                                        popUpTo(navController.graph.startDestinationId) {
+                                                            saveState = true
+                                                        }
+                                                        launchSingleTop = true
                                                     }
-                                                    launchSingleTop = true
+                                                    showDialog = false
                                                 }
-                                                showDialog = false
+                                            ) {
+                                                Text("Logout")
                                             }
-                                        ) {
-                                            Text("Logout")
-                                        }
-                                        Spacer(modifier = Modifier.width(16.dp))
-                                        Button(
-                                            onClick = {
-                                                showDialog = false
+                                            Spacer(modifier = Modifier.width(16.dp))
+                                            Button(
+                                                onClick = {
+                                                    showDialog = false
+                                                }
+                                            ) {
+                                                Text("Cancel")
                                             }
-                                        ) {
-                                            Text("Cancel")
                                         }
                                     }
                                 }
                             }
                         }
-                    }
-                } else {
-                    drawerItem3.forEach {
-                        NavigationDrawerItem(label = { Text(text = it.text) },
-                            selected = it == selectedItem,
-                            onClick = {
-                                selectedItem = it
+                    } else {
+                        drawerItem3.forEach {
+                            NavigationDrawerItem(
+                                label = { Text(text = it.text) },
+                                selected = it == selectedItem,
+                                onClick = {
+                                    selectedItem = it
 
-                                scope.launch {
-                                    drawerState.close()
-                                }
-
-                            },
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            icon = {
-                                Icon(
-                                    modifier = Modifier,
-                                    imageVector = it.icon,
-                                    contentDescription = it.text,
-                                    tint = BrandPrimary
-                                )
-                            },
-                            badge = {
-                                if (it.hasBadge) {
-                                    BadgedBox(badge = {
-                                        Badge {
-                                            Text(text = it.badgeCount.toString(), fontSize = 17.sp)
-                                        }
-                                    }) {
-
+                                    scope.launch {
+                                        drawerState.close()
                                     }
-                                }
-                            }
-                        )
-                    }
-//                Log.d("Drawer", "Building Logout item")
-                    Divider(
-                        thickness = 1.dp,
-                        color = Color.DarkGray
-                    )
-                    drawerItem4.forEach {
-                        NavigationDrawerItem(label = { Text(text = it.text) },
-                            selected = it == selectedItem,
-                            onClick = {
-                                selectedItem = it
+
+                                },
+                                modifier = Modifier.padding(horizontal = 16.dp),
+                                icon = {
+                                    Icon(
+                                        modifier = Modifier,
+                                        imageVector = it.icon,
+                                        contentDescription = it.text,
+                                        tint = BrandPrimary
+                                    )
+                                },
+                                colors = NavigationDrawerItemDefaults.colors(
+                                    selectedContainerColor = Color.White,
+                                    unselectedContainerColor = Color.White
+                                ),
+//                                badge = {
+//                                    if (it.hasBadge) {
+//                                        BadgedBox(badge = {
+//                                            Badge {
+//                                                Text(text = it.badgeCount.toString(), fontSize = 17.sp)
+//                                            }
+//                                        }) {
 //
-                                scope.launch {
-                                    drawerState.close()
-                                }
-
-                            },
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            icon = {
-                                Icon(imageVector = it.icon, contentDescription = it.text, tint = BrandPrimary)
-                            }
+//                                        }
+//                                    }
+//                                }
+                            )
+                        }
+                        Divider(
+                            thickness = 1.dp,
+                            color = NeutralDivider
                         )
+                        drawerItem4.forEach {
+                            NavigationDrawerItem(
+                                label = { Text(text = it.text) },
+                                selected = it == selectedItem,
+                                onClick = {
+                                    selectedItem = it
+//
+                                    scope.launch {
+                                        drawerState.close()
+                                    }
+
+                                },
+                                modifier = Modifier.padding(horizontal = 16.dp),
+                                icon = {
+                                    Icon(imageVector = it.icon, contentDescription = it.text, tint = BrandPrimary)
+                                },
+                                colors = NavigationDrawerItemDefaults.colors(
+                                    selectedContainerColor = Color.White,
+                                    unselectedContainerColor = Color.White
+                                ),
+                            )
+                        }
                     }
+
                 }
-
             }
-        }
 
-    }, drawerState = drawerState) {
+        }, drawerState = drawerState
+    ) {
         Scaffold(
             topBar = {
                 when (currentRoute) {
@@ -579,31 +618,30 @@ fun Navigation() {
                             TopAppBar(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .heightIn(min = 100.dp),
+                                    .height(70.dp),
                                 colors = TopAppBarDefaults.smallTopAppBarColors(
                                     containerColor = BrandPrimary,
                                     titleContentColor = Color.White,
                                 ),
                                 title = {
                                     Column(
-                                        verticalArrangement = Arrangement.spacedBy(8.dp),
                                         modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(start = 16.dp, bottom = 8.dp, top = 16.dp)
+                                            .fillMaxSize()
                                             .clickable {
+//                                                addressFormViewModel.getInitialAddress()
                                                 toggleAddressFormVisibility()
                                                 isAddressFormVisible = true
-//                                                navController.navigate("Address Form Screen")
-
-                                            }
+                                            },
+                                        verticalArrangement = Arrangement.Center
                                     ) {
-                                        Text(text = currentRoute, style = Typography.titleMedium)
-                                        selectedAddress?.let {
-                                            Text(
-                                                text = it,
-                                                style = Typography.bodyLarge
-                                            )
+                                        Text(text = currentRoute, style = Typography.titleSmall)
+                                        if (selectedAddress != null) {
+                                            Text(text = selectedAddress, style = Typography.bodyLarge)
+                                        } else {
+                                            Text(text = "Add your address here", style = Typography.bodyLarge)
                                         }
+//                                        Text(text = currentRoute, style = Typography.titleMedium)
+//                                        Text(text = selectedAddress, style = Typography.bodyLarge)
 
                                         if (isAddressFormVisible) {
                                             AddressFormScreen(
@@ -611,34 +649,25 @@ fun Navigation() {
                                                 isVisible = isAddressFormVisible,
                                                 showBottomSheet = isAddressFormVisible,
                                                 toggleBottomSheet = { toggleAddressFormVisibility() },
-                                                setAddressOnAppbar = setAddressOnAppbar,
-                                                onAddressSelected = selectedAddress
+                                                setAddressOnAppbar = addressViewModel::setAddressOnAppbar,
+                                                currentAddress = currentAddress
                                             )
-
                                         }
-                                        //Sample search bar to filter database
-//                                        SearchBar() { searchText -> searchResult = "Searching for: $searchText" }
                                     }
-
-                                    Spacer(modifier = Modifier.height(8.dp))
-//                                    Text(text = searchResult, style = MaterialTheme.typography.bodyMedium)
-
                                 },
-
                                 navigationIcon = {
-                                    IconButton(modifier = Modifier
-                                        .padding(top = 24.dp)
-                                        .size(40.dp)
-                                        .background(BrandPrimary),
-                                        onClick = {
-//                                                        isDrawerOpen = true
-                                            scope.launch {
-                                                drawerState.open()
-                                            }
-                                        }) {
-
-
-                                        Icon(Icons.Default.Menu, contentDescription = null, tint = Color.White)
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxHeight(),
+                                        verticalArrangement = Arrangement.Center
+                                    ) {
+                                        IconButton(modifier = Modifier
+                                            .size(40.dp)
+                                            .background(BrandPrimary),
+                                            onClick = { scope.launch { drawerState.open() } }
+                                        ) {
+                                            Icon(Icons.Default.Menu, contentDescription = null, tint = Color.White)
+                                        }
                                     }
                                 },
                             )
@@ -663,7 +692,9 @@ fun Navigation() {
                                     Text(text = pageTitle ?: currentRoute, style = Typography.titleMedium)
                                 },
                                 navigationIcon = {
-                                    IconButton(onClick = { navController.popBackStack() }) {
+                                    IconButton(onClick = {
+                                        customPopBackStack()
+                                    }) {
                                         Image(
                                             painter = painterResource(id = R.drawable.ic_arrow_tail_back),
                                             contentDescription = "Back Button",
@@ -710,12 +741,19 @@ fun Navigation() {
                         HomeScreen(navController)
                     }
                     composable(
-                        "Playlist List",
+                        "Playlists",
                     ) {
-                        PlaylistListScreen(navController, isLoggedIn || isSignedUp)
+                        PlaylistListScreen(
+                            navController = navController,
+                            isUserLoggedIn = isLoggedIn || isSignedUp,
+                            userId = "1",
+                            showSnackbar = playlistViewModel.shouldShowSnackbar,
+                            snackbarMessage = playlistViewModel.snackbarMessage,
+                            resetSnackbar = playlistViewModel::resetSnackbarState
+                        )
                     }
                     composable(
-                        "Playlist Form",
+                        "Build your mix",
                     ) {
                         PlaylistFormScreen(navController, playlistViewModel)
                     }
@@ -727,20 +765,28 @@ fun Navigation() {
                         ),
                     ) { backStackEntry ->
                         val playlistId = backStackEntry.arguments?.getInt("playlistId")
-                        PlaylistScreen(navController, playlistId, playlistViewModel)
+                        PlaylistScreen(
+                            navController = navController,
+                            id = playlistId,
+                            viewModel = playlistViewModel,
+                            isUserLoggedIn = isLoggedIn || isSignedUp,
+                        )
                     }
                     composable("EditPlaylist/{title}",
                         arguments = listOf(
                             navArgument("title") { type = NavType.StringType }
                         )
                     ) { backStackEntry ->
-                        EditPlaylistScreen(navController, playlistViewModel)
+                        EditPlaylistScreen(
+                            navController = navController,
+                            viewModel = playlistViewModel,
+                        )
                     }
                     composable("Home AppBar") { backStackEntry ->
                         HomeAppBar(navController)
                     }
-                    composable("Playlist Confirm") { backStackEntry ->
-                        PlaylistConfirmScreen(playlistViewModel, navController)
+                    composable("Confirmation") { backStackEntry ->
+                        PlaylistConfirmScreen(playlistViewModel, navController, selectedAddress, setAddressOnAppbar = addressViewModel::setAddressOnAppbar)
                     }
                     composable("ViewCategoryPlaylist/{title}/{isPublic}/{userId}",
                         arguments = listOf(
@@ -759,9 +805,13 @@ fun Navigation() {
                         SearchScreen(navController, playlistViewModel)
                     }
                     composable("Playlist Random") { backStackEntry ->
-                        PlaylistScreen(navController, null, playlistViewModel)
+                        PlaylistScreen(
+                            navController = navController,
+                            id = null,
+                            viewModel = playlistViewModel,
+                            isUserLoggedIn = isLoggedIn || isSignedUp,
+                        )
                     }
-
                 }
             }
         }

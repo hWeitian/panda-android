@@ -14,11 +14,15 @@ import com.example.foodpanda_capstone.model.Playlist
 import com.example.foodpanda_capstone.model.PlaylistRepository
 import com.example.foodpanda_capstone.model.RecentSearch
 import com.example.foodpanda_capstone.model.RestaurantFoodItems
+import com.example.foodpanda_capstone.utils.DaysMap
 import com.example.foodpanda_capstone.utils.UserUtils
 import com.example.foodpanda_capstone.utils.addMapToMap
 import com.example.foodpanda_capstone.utils.getCurrentPlaylistDishIds
 import com.example.foodpanda_capstone.utils.getCurrentPlaylistRestaurantNames
 import com.example.foodpanda_capstone.utils.isCharFoundInText
+import com.example.foodpanda_capstone.utils.logErrorMsg
+import com.example.foodpanda_capstone.utils.splitDaysToList
+import com.example.foodpanda_capstone.utils.splitDaysToMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,13 +45,22 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
             deliveryDay = "",
             foodItems = emptyList(),
             isPublic = false,
-            deliveryTime = ""
+            deliveryTime = "",
+            status = null
         )
     )
     val currentPlaylist: StateFlow<Playlist> = _currentPlaylist.asStateFlow()
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
+
+    private val _isError = MutableStateFlow(false)
+    val isError: StateFlow<Boolean> = _isError
+
+    private val _shouldShowSnackbar = MutableStateFlow(false)
+    val shouldShowSnackbar: StateFlow<Boolean> = _shouldShowSnackbar
+
+    var snackbarMessage: String = ""
 
     private val _searchText = MutableLiveData("")
     val searchText: LiveData<String> = _searchText
@@ -61,9 +74,14 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
     private val _isInputOnFocus = MutableStateFlow(false)
     val isInputOnFocus: StateFlow<Boolean> = _isInputOnFocus
 
-    val cuisines: MutableState<String> = mutableStateOf("")
-    val numOfDish: MutableState<String> = mutableStateOf("")
-    val maxBudget: MutableState<String> = mutableStateOf("")
+    private val _cuisines = MutableLiveData("")
+    val cuisines: LiveData<String> = _cuisines
+
+    private val _numOfDish = MutableLiveData("")
+    val numOfDish: LiveData<String> = _numOfDish
+
+    private val _maxBudget = MutableLiveData("")
+    val maxBudget: LiveData<String> = _maxBudget
 
     private val _daysOfWeek = MutableStateFlow(
         listOf(
@@ -85,6 +103,68 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
     val canNavigate: LiveData<Boolean> = _canNavigate
 
 
+    fun isAtLeastOneDaySelected(days: List<Days>): Boolean {
+        var atLeastOneDaySelected = false;
+        for(i in 0..days.size - 1) {
+            val day = days[i]
+            if(day.isSelected) {
+                return true
+            }
+        }
+        return false
+    }
+
+    fun updateCuisines(inputText: String) {
+        _cuisines.value = inputText
+    }
+
+    fun clearCuisines() {
+        _cuisines.value = ""
+    }
+
+    fun updateNumOfDish(inputText: String) {
+        _numOfDish.value = inputText
+    }
+
+    fun clearNumOfDish() {
+        _numOfDish.value = ""
+    }
+
+    fun updateMaxBudget(inputText: String) {
+        _maxBudget.value = inputText
+    }
+
+    fun clearMaxBudget() {
+        _maxBudget.value = ""
+    }
+
+    private fun resetDaysOfWeek() {
+        _daysOfWeek.value = createNewListOfDays()
+    }
+
+    private fun resetCanNavigate() {
+        _canNavigate.value = false
+    }
+
+    fun resetData() {
+        resetDaysOfWeek()
+        resetCanNavigate()
+        resetErrorState()
+    }
+
+    fun resetErrorState() {
+        _isError.value = false
+    }
+
+    fun resetSnackbarState() {
+        _shouldShowSnackbar.value = false
+        snackbarMessage = ""
+    }
+
+    fun restLoadingState() {
+        _isLoading.value = false
+    }
+
     fun onConfirmSubscriptionClick() {
         viewModelScope.launch(Dispatchers.IO) {
             withContext(Dispatchers.Main) {
@@ -104,7 +184,10 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
                 logErrorMsg("onConfirmSubscriptionClick", e)
             }
             withContext(Dispatchers.Main) {
+                snackbarMessage =
+                    if (currentPlaylist.value.isPublic == true) "${currentPlaylist.value.name} subscribed!" else "${currentPlaylist.value.name} updated!"
                 _canNavigate.value = true
+                _shouldShowSnackbar.value = true
                 delay(3000)
                 _isLoading.value = false
             }
@@ -124,7 +207,9 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
                 logErrorMsg("onConfirmCancelSubscriptionClick", e)
             }
             withContext(Dispatchers.Main) {
+                snackbarMessage = "Subscription to ${currentPlaylist.value.name} cancelled!"
                 _canNavigate.value = true
+                _shouldShowSnackbar.value = true
                 delay(3000)
                 _isLoading.value = false
             }
@@ -154,10 +239,10 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
         var selectedDaysString: String = ""
         _daysOfWeek.value.forEach { day ->
             if (day.isSelected) {
-                selectedDaysString += "${day.name},"
+                selectedDaysString += "${day.name}, "
             }
         }
-        return selectedDaysString.trim { it == ',' }
+        return selectedDaysString.trim().trim { it == ',' }
     }
 
 
@@ -170,19 +255,6 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
         val newDay = Days(newListOfDays[index].name, !newListOfDays[index].isSelected)
         newListOfDays[index] = newDay
         _daysOfWeek.value = newListOfDays
-    }
-
-    private fun resetDaysOfWeek() {
-        _daysOfWeek.value = createNewListOfDays()
-    }
-
-    private fun resetCanNavigate() {
-        _canNavigate.value = false
-    }
-
-    fun resetData() {
-        resetDaysOfWeek()
-        resetCanNavigate()
     }
 
     private fun createNewListOfDays(): List<Days> {
@@ -232,24 +304,24 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
     }
 
     fun assignDaysOfWeek(selectedDays: String) {
+        println(selectedDays)
         var newDaysOfWeek = _daysOfWeek.value.toMutableList()
 
         if (isCharFoundInText(",", selectedDays)) {
-            val selectedDaysMap = emptyMap<String, String>().toMutableMap()
-            selectedDays.split(",").forEach { day ->
-                selectedDaysMap[day] = day
-            }
+            val selectedDaysMap = splitDaysToMap(selectedDays)
             newDaysOfWeek = updateSelectedDays(newDaysOfWeek, selectedDaysMap)
         } else {
             newDaysOfWeek = updateSelectedDays(newDaysOfWeek, selectedDays)
         }
+        println(newDaysOfWeek)
         _daysOfWeek.value = newDaysOfWeek.toList()
     }
 
     fun clearFormText() {
-        cuisines.value = ""
-        numOfDish.value = ""
-        maxBudget.value = ""
+        clearCuisines()
+        clearNumOfDish()
+        clearMaxBudget()
+        resetErrorState()
     }
 
 
@@ -279,21 +351,25 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
 
     fun getSearchResult() {
         viewModelScope.launch(Dispatchers.IO) {
-
-            withContext(Dispatchers.Main) {
-                _isLoading.value = true
-                delay(1000)
-            }
+            _isError.value = false
             try {
+                withContext(Dispatchers.Main) {
+                    _isLoading.value = true
+                    delay(1000)
+                }
                 repository.fetchSearchResults(userId, searchText.value.toString()).collect { searchResult ->
                     _searchResults.value = updateSearchedDishQuantity(searchResult)
                 }
+                withContext(Dispatchers.Main) {
+                    _isLoading.value = false
+                }
             } catch (e: Exception) {
+                println("getSearchResult Error")
+                _isError.value = true
+                withContext(Dispatchers.Main) {
+                    _isLoading.value = false
+                }
                 logErrorMsg("getSearchResult", e)
-            }
-
-            withContext(Dispatchers.Main) {
-                _isLoading.value = false
             }
         }
     }
@@ -304,7 +380,7 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
         val currentPlaylistDishIds = getDishesIdInCurrentPlaylist(restaurantsInPlaylist)
 
         val newResults = searchResults.map { dish ->
-            if (currentPlaylistDishIds?.containsKey(dish.id) == true) {
+            if (currentPlaylistDishIds.containsKey(dish.id)) {
                 val quantity = currentPlaylistDishIds[dish.id]
                 dish.copy(quantity = quantity!!)
             } else {
@@ -314,22 +390,6 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
         }
 
         return newResults
-    }
-
-    private fun getDishesIdInCurrentPlaylist(restaurantsInPlaylist: List<RestaurantFoodItems?>?)
-        : MutableMap<Int, Int> {
-        var currentPlaylistDishIds = mutableMapOf<Int, Int>()
-        if (restaurantsInPlaylist != null) {
-            for (i in 0..restaurantsInPlaylist.size - 1) {
-                val restaurantDishes = restaurantsInPlaylist[i]?.foodItems
-                if (restaurantDishes != null) {
-                    val restaurantDishesId = getCurrentPlaylistDishIds(restaurantDishes)
-                    currentPlaylistDishIds = addMapToMap(currentPlaylistDishIds, restaurantDishesId)
-                }
-            }
-        }
-
-        return currentPlaylistDishIds
     }
 
     fun clearSearchResult() {
@@ -382,6 +442,22 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
                 logErrorMsg("onSearchResultDishAddBtnClicked", e)
             }
         }
+    }
+
+    private fun getDishesIdInCurrentPlaylist(restaurantsInPlaylist: List<RestaurantFoodItems?>?)
+        : MutableMap<Int, Int> {
+        var currentPlaylistDishIds = mutableMapOf<Int, Int>()
+        if (restaurantsInPlaylist != null) {
+            for (i in 0..restaurantsInPlaylist.size - 1) {
+                val restaurantDishes = restaurantsInPlaylist[i]?.foodItems
+                if (restaurantDishes != null) {
+                    val restaurantDishesId = getCurrentPlaylistDishIds(restaurantDishes)
+                    currentPlaylistDishIds = addMapToMap(currentPlaylistDishIds, restaurantDishesId)
+                }
+            }
+        }
+
+        return currentPlaylistDishIds
     }
 
     private suspend fun addDishToCurrentPlaylist(dishToAdd: FoodItem) {
@@ -498,15 +574,16 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
 
     fun getRandomPlaylist() {
         viewModelScope.launch(Dispatchers.IO) {
+            resetErrorState()
             try {
                 withContext(Dispatchers.Main) {
                     _isLoading.value = true
                     delay(1000)
                 }
-                val numOfDishInt = Integer.parseInt(numOfDish.value)
-                val maxBudgetInt = Integer.parseInt(maxBudget.value)
+                val numOfDishInt = Integer.parseInt(numOfDish.value.toString())
+                val maxBudgetInt = Integer.parseInt(maxBudget.value.toString())
                 repository
-                    .fetchRandomPlaylist(cuisines.value, numOfDishInt, maxBudgetInt)
+                    .fetchRandomPlaylist(cuisines.value.toString(), numOfDishInt, maxBudgetInt)
                     .collect { playlist ->
                         _currentPlaylist.value = playlist
                     }
@@ -514,6 +591,21 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
                     _isLoading.value = false
                 }
             } catch (e: Exception) {
+                _currentPlaylist.value = Playlist(
+                    id = 0,
+                    name = "",
+                    imageUrl = "",
+                    cost = BigDecimal(0),
+                    deliveryDay = "",
+                    foodItems = emptyList(),
+                    isPublic = false,
+                    deliveryTime = "",
+                    status = null
+                )
+                _isError.value = true
+                withContext(Dispatchers.Main) {
+                    _isLoading.value = false
+                }
                 logErrorMsg("getRandomPlaylist", e)
             }
         }
@@ -521,33 +613,29 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
 
     fun getOnePlaylist(playlistId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            while (currentPlaylist.value.name.isBlank() || currentPlaylist.value.id != playlistId) {
+            try {
                 withContext(Dispatchers.Main) {
                     _isLoading.value = true
                     delay(1000)
                 }
-                try {
-                    repository.fetchOnePlaylist(playlistId).collect { playlist ->
-                        if(playlist.isPublic == false) {
-                            _currentPlaylist.value = playlist
-                        } else {
-                            playlist.deliveryDay = ""
-                            playlist.deliveryTime = ""
-                            _currentPlaylist.value = playlist
-                        }
-                        assignDaysOfWeek(playlist.deliveryDay)
-                        playlist.deliveryTime?.let {
-                            updateSelectedTimeOfDelivery(it)
-                        }
+                repository.fetchOnePlaylist(playlistId).collect { playlist ->
+                    if (playlist.isPublic == false) {
+                        _currentPlaylist.value = playlist
+                    } else {
+                        playlist.deliveryDay = ""
+                        playlist.deliveryTime = ""
+                        _currentPlaylist.value = playlist
                     }
-                } catch (e: Exception) {
-                    logErrorMsg("getOnePlaylist", e)
-                }
-                if (currentPlaylist.value.name.isNotBlank() || currentPlaylist.value.id == playlistId) {
-                    withContext(Dispatchers.Main) {
-                        _isLoading.value = false
+                    assignDaysOfWeek(playlist.deliveryDay)
+                    playlist.deliveryTime?.let {
+                        updateSelectedTimeOfDelivery(it)
                     }
                 }
+                withContext(Dispatchers.Main) {
+                    _isLoading.value = false
+                }
+            } catch (e: Exception) {
+                logErrorMsg("getOnePlaylist", e)
             }
         }
     }
@@ -638,6 +726,24 @@ class PlaylistViewModel(private val repository: PlaylistRepository) : ViewModel(
             }
         }
         return totalCost
+    }
+
+    fun generateCompleteDeliveryDays(deliveryDays: String): String {
+        var daysString = ""
+        if (isCharFoundInText(",", deliveryDays)) {
+            val daysList = splitDaysToList(deliveryDays)
+            for (i in daysList.indices) {
+                val day = DaysMap.map[daysList[i].trim()]
+                if (i != daysList.size - 1) {
+                    daysString += "$day, "
+                } else {
+                    daysString += day
+                }
+            }
+        } else {
+            daysString = DaysMap.map[deliveryDays].toString()
+        }
+        return daysString
     }
 
 

@@ -38,7 +38,10 @@ import com.example.foodpanda_capstone.view.ui.theme.Typography
 import com.example.foodpanda_capstone.viewmodel.PlaylistViewModel
 
 @Composable
-fun EditPlaylistScreen(navController: NavController, viewModel: PlaylistViewModel) {
+fun EditPlaylistScreen(
+    navController: NavController,
+    viewModel: PlaylistViewModel,
+) {
 
     val currentPlaylist by viewModel.currentPlaylist.collectAsState()
     val totalAmountCardHeight: Int = 130
@@ -74,17 +77,25 @@ fun EditPlaylistScreen(navController: NavController, viewModel: PlaylistViewMode
                         Column {
                             if (restaurantFoodItems != null) {
                                 RestaurantNameText(restaurantFoodItems.restaurantName)
-                            }
-                            restaurantFoodItems?.foodItems?.map { item ->
-                                EditableFoodItemContainer(item,
-                                    { viewModel.onAddButtonClicked(item.id) },
-                                    { viewModel.onMinusButtonClicked(item.id) }
-                                )
+                                Spacer(modifier = Modifier.size(5.dp))
+                                restaurantFoodItems.foodItems.mapIndexed { index, item ->
+                                    EditableFoodItemContainer(item,
+                                        { viewModel.onAddButtonClicked(item.id) },
+                                        { viewModel.onMinusButtonClicked(item.id) }
+                                    )
+                                    if (index != restaurantFoodItems.foodItems.size - 1) {
+                                        Spacer(
+                                            modifier = Modifier.size(
+                                                dimensionResource(R.dimen.food_item_container_space)
+                                            )
+                                        )
+                                    }
+                                }
+                                Spacer(modifier = Modifier.height(15.dp))
                             }
                         }
                     }
                     Spacer(modifier = Modifier.size(endOfPageSpace.dp))
-
                 }
             }
         }
@@ -127,15 +138,14 @@ fun EditPlaylistScreen(navController: NavController, viewModel: PlaylistViewMode
                 Spacer(modifier = Modifier.size(20.dp))
 
                 PrimaryButton(
-                    name = if (currentPlaylist.isPublic == true) "Subscribe" else "Update",
+                    name = if (currentPlaylist.isPublic == true || currentPlaylist.status == "Cancelled" || currentPlaylist.id == 0) "Subscribe" else "Update",
                     width = null
                 ) {
-                    navController.navigate("Playlist Confirm")
+                    navController.navigate("Confirmation")
                 }
             }
         }
     }
-
 }
 
 
@@ -238,7 +248,7 @@ fun EditQuantityButtons(
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_remove_24_pink),
                     contentDescription = "Remove Button",
-                    tint = if(quantity > 0) InteractionPrimary else InteractionSecondary,
+                    tint = if (quantity > 0) InteractionPrimary else InteractionSecondary,
                 )
             }, { reduceQuantity() })
     }

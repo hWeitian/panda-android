@@ -16,13 +16,14 @@ import com.example.foodpanda_capstone.view.ui.theme.InteractionPrimary
 import com.example.foodpanda_capstone.view.ui.theme.Typography
 
 @Composable
-fun PrimaryButton(name: String, width: Int?, btnClick: () -> Unit) {
+fun PrimaryButton(name: String, width: Int?, isEnabled: Boolean = true, btnClick: () -> Unit) {
     Button(
         modifier = if (width == null) Modifier.fillMaxWidth() else Modifier.width(width.dp),
         shape = RoundedCornerShape(8.dp),
         contentPadding = PaddingValues(15.dp),
         colors = ButtonDefaults.buttonColors(contentColor = Color.White, containerColor = InteractionPrimary),
-        onClick = { btnClick() }
+        onClick = { btnClick() },
+        enabled = isEnabled
     ) {
         Text(text = name, style = Typography.titleSmall)
     }

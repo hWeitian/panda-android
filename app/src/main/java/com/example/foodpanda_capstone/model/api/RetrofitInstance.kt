@@ -10,7 +10,6 @@ import retrofit2.create
 object RetrofitClient {
     private const val BASE_URL = BaseUrl.BASE_URL
     private val okHttp3Client = OkHttpClient.Builder()
-
     init {
         val logging = HttpLoggingInterceptor()
         logging.level = HttpLoggingInterceptor.Level.BODY
@@ -30,11 +29,11 @@ object RetrofitClient {
 
 object BaseUrl {
 //    const val BASE_URL = "http://192.168.0.166:3000/" // Home
-    const val BASE_URL = "http://192.168.0.166:8080/" // Final Home
 //     const val BASE_URL = "http://10.224.32.210:3000/" // Home
 //     const val BASE_URL = "http://10.80.176.107:3000/" // Office
 //    const val BASE_URL = "https://panda-food-playlist-backend.onrender.com/" // Live Server
-//    const val BASE_URL = "https://playlist.1.sg-1.fl0.io/"
+//    const val BASE_URL = "http://192.168.0.166:8080/" // Final Home
+    const val BASE_URL = "https://playlist.1.sg-1.fl0.io/"
 }
 
 object PlaylistApiClient {

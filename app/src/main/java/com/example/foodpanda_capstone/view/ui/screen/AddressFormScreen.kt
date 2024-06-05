@@ -1,34 +1,25 @@
 package com.example.foodpanda_capstone.view.ui.screen
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.RadioButtonChecked
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,13 +28,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.example.foodpanda_capstone.model.AddressData
+import com.example.foodpanda_capstone.view.ui.composable.PrimaryButton
+import com.example.foodpanda_capstone.view.ui.theme.BrandDark
 import com.example.foodpanda_capstone.view.ui.theme.BrandPrimary
+import com.example.foodpanda_capstone.view.ui.theme.Typography
 import com.example.foodpanda_capstone.viewmodel.AddressViewModel
 import setSharedPreferenceAddressData
 
@@ -56,100 +51,88 @@ fun AddressFormScreen(
 //    onDismissRequest: () -> Unit
     showBottomSheet: Boolean,
     toggleBottomSheet: () -> Unit,
-    setAddressOnAppbar: (String, String, String) -> Unit,
-    onAddressSelected: String?
+    setAddressOnAppbar: (address: String?, city: String?, zipcode: String?) -> Unit,
+    currentAddress: AddressData
 ) {
-    if (isVisible) {
-        val addresses by addressViewModel.addresses.collectAsState()
-        var selectedAddress by remember { mutableStateOf<String?>(null) }
-        var isAddressInputFormVisible by remember { mutableStateOf(false) }
-        var editedAddress by remember { mutableStateOf<AddressData?>(null) } // Track edited address
+    val addresses by addressViewModel.addresses.collectAsState()
+    val isLoading by addressViewModel.isLoading.collectAsState()
+    var isAddressInputFormVisible by remember { mutableStateOf(false) }
+    var editedAddress by remember { mutableStateOf<AddressData?>(null) } // Track edited address
 
-        var showBottomSheet by remember { mutableStateOf(false) }
-        val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState()
 
+    LaunchedEffect(Unit) {
+        println("At address isVisible")
+        addressViewModel.getInitialAddress()
+    }
+
+    DisposableEffect(Unit) {
+        onDispose { addressViewModel.deleteAll() }
+    }
+
+    if (!isLoading) {
         ModalBottomSheet(
-            onDismissRequest = {toggleBottomSheet()},
-            sheetState = sheetState) {
-                Column(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth()
-                ) {
-                    LazyColumn {
-                        items(addresses) { address ->
-                            RoundCheckBoxWithText(
-                                index = addresses.indexOf(address),
-                                address = address.address,
-                                city = address.city,
-                                zipCode = address.zipCode,
-                                selectedAddress = selectedAddress,
-                                editedAddress = editedAddress,
-                                viewModel = addressViewModel,
-                                toggleBottomSheet = toggleBottomSheet,
-                                setAddressOnAppbar = setAddressOnAppbar,
-                            ) {
-                                selectedAddress = it
-                            }
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Clickable text with an icon
-                    Row(
-                        verticalAlignment = CenterVertically,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.CenterHorizontally)
-                            .clickable {
-                                isAddressInputFormVisible = true
-                            }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = "Add address",
-                            modifier = Modifier.size(24.dp),
-                            tint = BrandPrimary
-                        )
-                        Spacer(modifier = Modifier.width(24.dp))
-                        Text(text = "Add your address here",
-                            color = BrandPrimary,
-                            fontSize = 20.sp
-                        )
-                    }
-                }
-                if (isAddressInputFormVisible) {
-                    AddressInputForm(
-                        viewModel = addressViewModel,
-                        onDismissRequest = { isAddressInputFormVisible = false },
+            onDismissRequest = { toggleBottomSheet() },
+            sheetState = sheetState,
+            containerColor = Color.White,
+            contentColor = Color.Black
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(5.dp)
+                    .fillMaxWidth()
+            ) {
+                addresses.map { address ->
+                    println("address: $address")
+                    RoundCheckBoxWithText(
+                        index = addresses.indexOf(address),
+                        address = address,
+                        isAddressSelected = address.isSelected,
                         editedAddress = editedAddress,
+                        viewModel = addressViewModel,
+                        toggleBottomSheet = toggleBottomSheet,
                         setAddressOnAppbar = setAddressOnAppbar,
-                        toggleBottomSheet = toggleBottomSheet,)
+                    )
                 }
+//                Spacer(modifier = Modifier.height(16.dp))
 
-                // Animated visibility for the address form
-//                AnimatedVisibility(
-//                    visible = isAddressInputFormVisible,
-//                    enter = slideInVertically(initialOffsetY = { it }),
-//                    exit = slideOutVertically(targetOffsetY = { it })
-//                ) {
-//                    AddressInputForm(
-//                        viewModel = addressViewModel,
-//                        onDismissRequest = { isAddressInputFormVisible = false },
-//                        editedAddress = editedAddress
-//                    )
-//                }
+                // Clickable text with an icon
+                Row(
+                    verticalAlignment = CenterVertically,
+                    modifier = Modifier
+                        .padding(start = 15.dp, top = 0.dp, end = 0.dp, bottom = 30.dp)
+                        .fillMaxWidth()
+                        .align(Alignment.CenterHorizontally)
+                        .clickable {
+                            isAddressInputFormVisible = true
+                        }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add address",
+                        modifier = Modifier.size(24.dp),
+                        tint = BrandPrimary
+                    )
+                    Spacer(modifier = Modifier.width(24.dp))
+                    Text(
+                        text = "Add your address here",
+                        color = BrandPrimary,
+                        style = Typography.titleSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
-//            sheetPeekHeight = 300.dp,
-//            containerColor = Color.White
-//
-//        {
-//            // Your main content here
-//            // For example, display the saved address
-////        val savedAddress = addressViewModel.addresses
-////        Text("Saved Address: $savedAddress")
-//        }
+            if (isAddressInputFormVisible) {
+                AddressInputForm(
+                    viewModel = addressViewModel,
+                    onDismissRequest = { isAddressInputFormVisible = false },
+                    selectedAddress = editedAddress,
+                    setAddressOnAppbar = setAddressOnAppbar,
+                    toggleBottomSheet = toggleBottomSheet,
+                )
+            }
+        }
+
     }
 }
 
@@ -157,174 +140,247 @@ fun AddressFormScreen(
 fun AddressInputForm(
     viewModel: AddressViewModel,
     onDismissRequest: () -> Unit,
-    editedAddress: AddressData?,
+    selectedAddress: AddressData?,
     toggleBottomSheet: () -> Unit,
-    setAddressOnAppbar: (String,String,String) -> Unit,
+    setAddressOnAppbar: (String?, String?, String?) -> Unit,
 ) {
-    var address by remember { mutableStateOf(editedAddress?.address ?: "") }
-    var city by remember { mutableStateOf(editedAddress?.city ?: "") }
-    var zipCode by remember { mutableStateOf(editedAddress?.zipCode ?: "") }
+    var address by remember { mutableStateOf(selectedAddress?.address ?: "") }
+    var city by remember { mutableStateOf(selectedAddress?.city ?: "") }
+    var zipCode by remember { mutableStateOf(selectedAddress?.zipCode ?: "") }
 
-    AlertDialog(
-        onDismissRequest = { onDismissRequest() },
-        title = {
-            // Title of the AlertDialog
-            Text("Add / Edit your address here.", fontSize = 15.sp)
-        },
-        text = {
-            // Content of the AlertDialog
-            Column {
-                OutlinedTextField(value = address, onValueChange = { address = it }, label = { Text("Street") })
-                OutlinedTextField(value = city, onValueChange = { city = it }, label = { Text("City") })
-                OutlinedTextField(value = zipCode, onValueChange = { zipCode = it }, label = { Text("Zip Code") })
-            }
-        },
-        confirmButton = {
-            // Confirm button in the AlertDialog
-            Row() {
-                Button(
-                    onClick = {
-                        //address from input which has yet to be saved. If the address from database is not null, update old with new address.
-                        //Else just save into database with the new input address.
-                        val currentAddress = AddressData(address, city, zipCode)
-                        if (editedAddress != null) {
-                            // address from current database
-                            val addressIndex = viewModel.getAddressIndex(editedAddress.address, editedAddress.city, editedAddress.zipCode)
-                            viewModel.updateAddress( addressIndex,currentAddress!!)
-                        } else {
-                            viewModel.saveAddress(currentAddress)
-                        }
+    val primaryButtonText: String = if (selectedAddress != null) {
+        "Edit"
+    } else {
+        "Add"
+    }
 
-                        onDismissRequest()
+    val titleText = if (selectedAddress != null) {
+        "Edit address"
+    } else {
+        "Add address"
+    }
+
+
+    Dialog(onDismissRequest = { onDismissRequest() }) {
+        Card(
+            modifier = Modifier
+//                .fillMaxWidth()
+                .wrapContentSize(),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 12.dp
+            )
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(25.dp),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column {
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 15.dp)
+                    ) {
+                        Text(text = titleText, style = Typography.titleSmall)
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Close button",
+                            tint = BrandDark,
+                            modifier = Modifier
+                                .size(20.dp)
+                                .clickable { onDismissRequest() }
+                        )
                     }
-                ) {
-                    if (editedAddress != null) {
-                        Text("Edit",  modifier = Modifier.padding(start = 16.dp, end = 16.dp),)
-                    } else {
-                        Text("Add",  modifier = Modifier.padding(start = 16.dp, end = 16.dp),)
-                    }
+                    OutlinedTextField(
+                        value = address,
+                        onValueChange = { address = it },
+                        label = { Text("Street") },
+                        textStyle = TextStyle(fontWeight = FontWeight.Normal)
+                    )
+                    OutlinedTextField(
+                        value = city,
+                        onValueChange = { city = it },
+                        label = { Text("City") },
+                        textStyle = TextStyle(fontWeight = FontWeight.Normal)
+                    )
+                    OutlinedTextField(
+                        value = zipCode,
+                        onValueChange = { zipCode = it },
+                        label = { Text("Zip Code") },
+                        textStyle = TextStyle(fontWeight = FontWeight.Normal)
+                    )
                 }
 
-                Spacer(modifier = Modifier.padding(4.dp))
-                Button(
-                    onClick = {
-                        //address from input which has yet to be saved. If the address from database is not null, update old with new address.
-                        //Else just save into database with the new input address.
-                        viewModel.removeAddress(AddressData(address, city, zipCode))
-//                        viewModel.viewModelScope.launch {
-//                            viewModel.addresses.collect { addresses ->
-//                                println(addresses)
-//                            }
-                            onDismissRequest()
-                        }
-//                    }
-                ) {
-                    Text("Remove")
+                Spacer(modifier = Modifier.size(20.dp))
+                PrimaryButton(
+                    name = primaryButtonText,
+                    width = null) {
+                    val newAddress = AddressData(address, city, zipCode)
+                    if (selectedAddress != null) {
+                        viewModel.updateAddress(selectedAddress, newAddress)
+                    } else {
+                        viewModel.saveAddress(newAddress)
+                    }
+                    onDismissRequest()
                 }
             }
 
         }
-    )
+    }
+
+//    AlertDialog(
+//        onDismissRequest = { onDismissRequest() },
+//        title = {
+//            // Title of the AlertDialog
+//            Text("Add / Edit your address here.", fontSize = 15.sp)
+//        },
+//        text = {
+//            // Content of the AlertDialog
+//            Column {
+//                OutlinedTextField(value = address, onValueChange = { address = it }, label = { Text("Street") })
+//                OutlinedTextField(value = city, onValueChange = { city = it }, label = { Text("City") })
+//                OutlinedTextField(value = zipCode, onValueChange = { zipCode = it }, label = { Text("Zip Code") })
+//            }
+//        },
+//        confirmButton = {
+//            // Confirm button in the AlertDialog
+//            Row() {
+//                Button(
+//                    onClick = {
+//                        //address from input which has yet to be saved. If the address from database is not null, update old with new address.
+//                        //Else just save into database with the new input address.
+//                        val newAddress = AddressData(address, city, zipCode)
+//                        if (selectedAddress != null) {
+//                            viewModel.updateAddress(selectedAddress, newAddress)
+//                        } else {
+//                            viewModel.saveAddress(newAddress)
+//                        }
+//
+//                        onDismissRequest()
+//                    }
+//                ) {
+//                    if (selectedAddress != null) {
+//                        Text("Edit", modifier = Modifier.padding(start = 16.dp, end = 16.dp))
+//                    } else {
+//                        Text("Add", modifier = Modifier.padding(start = 16.dp, end = 16.dp))
+//                    }
+//                }
+//
+//                Spacer(modifier = Modifier.padding(4.dp))
+//                Button(
+//                    onClick = {
+//                        //address from input which has yet to be saved. If the address from database is not null, update old with new address.
+//                        //Else just save into database with the new input address.
+//                        viewModel.removeAddress(AddressData(address, city, zipCode))
+//                        onDismissRequest()
+//                    }
+//                ) {
+//                    Text("Remove")
+//                }
+//            }
+//
+//        }
+//    )
 }
 
 @Composable
 fun RoundCheckBoxWithText(
     index: Int, // Added index parameter
-    address: String,
-    city: String,
-    zipCode: String,
-    selectedAddress: String?,
+    address: AddressData,
+    isAddressSelected: Boolean,
     viewModel: AddressViewModel,
     editedAddress: AddressData?,
     toggleBottomSheet: () -> Unit, // Added toggleBottomSheet paramet
-    setAddressOnAppbar: (String, String, String) -> Unit,
-    onAddressSelected: (String) -> Unit,
+    setAddressOnAppbar: (String?, String?, String?) -> Unit,
 ) {
     val context = LocalContext.current
+
+    var isAddressInputFormVisible by remember { mutableStateOf(false) }
+    var editAddress by remember { mutableStateOf(editedAddress) }
+
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(start = 0.dp, top = 0.dp, end = 10.dp, bottom = 20.dp),
+        verticalAlignment = CenterVertically,
     ) {
-        val isChecked = selectedAddress == address
-        var isAddressInputFormVisible by remember { mutableStateOf(false) }
-        var editAddress by remember { mutableStateOf(editedAddress) }
-        var currentAddress by remember { mutableStateOf(selectedAddress) }
-
-        Box(
+        Row(
             modifier = Modifier
-                .size(24.dp)
-                .clip(CircleShape)
+                .weight(0.9f)
                 .clickable {
-                    onAddressSelected(address)
-                    currentAddress = address
+                    viewModel.selectAddress(address)
+                    toggleBottomSheet()
+                    setAddressOnAppbar(address.address, address.city, address.zipCode)
                 }
-                .background(Color.White)
-                .border(2.dp, BrandPrimary, shape = CircleShape)
         ) {
-            if (isChecked) {
-                Icon(
-                    imageVector = Icons.Default.RadioButtonChecked,
-                    contentDescription = "Checked",
-                    tint = BrandPrimary,
-                    modifier = Modifier
-                        .size(24.dp)
+            RadioButton(
+                selected = isAddressSelected,
+                onClick = {
+                    viewModel.selectAddress(address)
+                    toggleBottomSheet()
+                    setAddressOnAppbar(address.address, address.city, address.zipCode)
+                }
+            )
+            Column(
+                modifier = Modifier.weight(0.8f)
+            ) {
+                Text(
+                    text = "Street: ${address.address}",
+                    style = Typography.bodyLarge
                 )
-                toggleBottomSheet()
-                setAddressOnAppbar(address, city, zipCode)
-                context.setSharedPreferenceAddressData(address, city,zipCode)
-
-
+                Text(
+                    text = "City: ${address.city}",
+                    style = Typography.bodyLarge
+                )
+                Text(
+                    text = "Zip Code: ${address.zipCode}",
+                    style = Typography.bodyLarge
+                )
             }
         }
-
-        Spacer(modifier = Modifier.width(24.dp))
-
-        Column(
-            modifier = Modifier
-                .align(CenterVertically)
-                .weight(1f)
+        Row (
+            modifier = Modifier.weight(0.2f)
         ) {
-            Text(
-                text = "Address: $address",
-                style = MaterialTheme.typography.bodySmall,
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = "Edit Address",
+                modifier = Modifier
+                    .weight(0.1f)
+                    .size(20.dp)
+                    .clickable {
+                        viewModel.removeAddress(AddressData(address.address, address.city, address.zipCode))
+                        setAddressOnAppbar(null, null, null)
+//                        onDismissRequest()
+                    }
             )
-            Text(
-                text = "City: $city",
-                style = MaterialTheme.typography.bodySmall,
+            Icon(
+                imageVector = Icons.Default.Edit,
+                contentDescription = "Edit Address",
+                modifier = Modifier
+                    .weight(0.1f)
+                    .size(20.dp)
+                    .clickable {
+                        editAddress = AddressData(address.address, address.city, address.zipCode)
+                        isAddressInputFormVisible = true
+                    }
             )
-            Text(
-                text = "Zip Code: $zipCode",
-                style = MaterialTheme.typography.bodySmall,
-            )
-        }
-        Icon(
-            imageVector = Icons.Default.Edit,
-            contentDescription = "Edit Address",
-            modifier = Modifier
-//                .fillMaxWidth()
-                .size(24.dp)
-                .clickable {
-                    editAddress = AddressData(address, city, zipCode)
-                    isAddressInputFormVisible = true
-                }
-        )
-        if (isAddressInputFormVisible) {
-            AddressInputForm(
-                viewModel = viewModel,
-                onDismissRequest = { isAddressInputFormVisible = false },
-                editedAddress = editAddress,
-                toggleBottomSheet= toggleBottomSheet,
-                setAddressOnAppbar = setAddressOnAppbar,
-            )
-        }
-    }
-}
 
-//@Preview
-//@Composable
-//fun AddressFormScreenPreview() {
-//    val viewModel = AddressViewModel(AddressRepository())
-////    AddressFormScreen(navController(),viewModel)
-//}
+        }
+
+
+
+    }
+
+    if (isAddressInputFormVisible) {
+        AddressInputForm(
+            viewModel = viewModel,
+            onDismissRequest = { isAddressInputFormVisible = false },
+            selectedAddress = editAddress,
+            toggleBottomSheet = toggleBottomSheet,
+            setAddressOnAppbar = setAddressOnAppbar,
+        )
+    }
+
+}

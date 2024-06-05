@@ -1,12 +1,10 @@
 package com.example.foodpanda_capstone.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.foodpanda_capstone.model.Playlist
 import com.example.foodpanda_capstone.model.PlaylistOverview
 import com.example.foodpanda_capstone.model.PlaylistRepository
+import com.example.foodpanda_capstone.utils.logErrorMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,6 +20,9 @@ class AllPlaylistViewModel(private val repository: PlaylistRepository) : ViewMod
     private val _userPlaylists = MutableStateFlow<List<PlaylistOverview>>(emptyList())
     val userPlaylists: StateFlow<List<PlaylistOverview>> = _userPlaylists
 
+    private val _cancelledPlaylist = MutableStateFlow<List<PlaylistOverview>>(emptyList())
+    val cancelledPlaylist: StateFlow<List<PlaylistOverview>> = _cancelledPlaylist
+
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
@@ -36,6 +37,7 @@ class AllPlaylistViewModel(private val repository: PlaylistRepository) : ViewMod
                     repository.fetchAllPlaylist(userId).collect { playlists ->
                         _publicPlaylists.value = playlists.publicPlaylist.filter { it.status != "Cancelled" }
                         _userPlaylists.value = playlists.userPlaylist.filter { it.status != "Cancelled" }
+                        _cancelledPlaylist.value = playlists.userPlaylist.filter { it.status == "Cancelled" }
                     }
                 } catch (e: Exception) {
                     logErrorMsg("getAllPlaylist", e)

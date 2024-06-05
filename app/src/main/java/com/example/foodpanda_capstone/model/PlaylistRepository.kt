@@ -2,7 +2,6 @@ package com.example.foodpanda_capstone.model
 
 import android.util.Log
 import com.example.foodpanda_capstone.model.api.PlaylistApiService
-import com.example.foodpanda_capstone.viewmodel.logErrorMsg
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -61,6 +60,7 @@ class PlaylistRepository(private val apiService: PlaylistApiService) {
         val result = apiService.getSearchResults(userId, keyword)
         emit(result)
     }.catch { e ->
+        throw e
         Log.e("PdError", "Error at fetchSearchResults - ${e.message}")
     }
 
@@ -68,6 +68,7 @@ class PlaylistRepository(private val apiService: PlaylistApiService) {
         val result = apiService.getRandomPlaylist(cuisine, numOfDish, maxBudget)
         emit(result)
     }.catch { e ->
+        throw e
         Log.e("PdError", "Error at fetchRandomPlaylist - ${e.message}")
     }
 

@@ -22,9 +22,6 @@ class AddressRepository {
         return index
     }
 
-
-
-
     fun updateAddressUsingIndex(addressIndex: Int, updatedAddress: AddressData) {
         print(updatedAddress)
         if (addressIndex != -1 && addressIndex < _addresses.size) {
