@@ -99,7 +99,7 @@ fun HomeAppBar(navController: NavController) {
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Image(
-                            painter = painterResource(id = R.drawable.food_delivery),
+                            painter = painterResource(id = R.drawable.people),
                             contentDescription = "profile pic",
                             modifier = Modifier
                                 .size(130.dp)
@@ -186,46 +186,8 @@ fun HomeAppBar(navController: NavController) {
                 }
             )
         }){
-
-
         }
-
-//        {
-//
-//                paddingValues ->
-//            Box(modifier = Modifier
-//                .fillMaxSize()
-//                .padding(paddingValues),
-//                contentAlignment = Alignment.Center){
-//                Button(onClick = {
-//                    scope.launch {
-//                        drawerState.open()
-//                    }
-//                }) {
-//                    Text(text = "Open drawer")
-//                }
-//            }
-//        }
-
-
     }
-
-//    TopAppBar(
-//        title = {
-//            Text(text = stringResource(id = R.string.app_name))
-//        },
-//
-//        navigationIcon = {
-//            IconButton(onClick = onNavigationIconClick) {
-//                Icon(
-//                    imageVector = Icons.Default.Menu,
-//                    contentDescription = "Toggle drawer"
-//                )
-//            }
-//        }
-//    )
-
-
 }
 
 data class DrawerItems(

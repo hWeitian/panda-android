@@ -72,8 +72,8 @@ fun HomeScreen(navController: NavController) {
                 CardContent(
                     text = "Food Delivery",
                     content = "Big savings on delivery!",
-                    imgResource = R.drawable.food_delivery,
-                    imgHeight = 95.dp,
+                    imgResource = R.drawable.hamburger,
+                    imgHeight = 70.dp,
                     modifier = Modifier
                 )
             },
@@ -81,14 +81,14 @@ fun HomeScreen(navController: NavController) {
                 CardContent(
                     text = "Dine-in",
                     content = "Up to 50% off entire bill",
-                    imgResource = R.drawable.dine_in,
-                    imgHeight = 250.dp,
-                    modifier = Modifier.aspectRatio(1f)
+                    imgResource = R.drawable.dine_in_2,
+                    imgHeight = 75.dp,
+                    modifier = Modifier
                 )
             },
             navController = navController,
-            leftCardHeight = 180.dp,
-            rightCardHeight = 180.dp
+            leftCardHeight = 170.dp,
+            rightCardHeight = 170.dp
         )
 
         CardRow(
@@ -96,8 +96,8 @@ fun HomeScreen(navController: NavController) {
                 CardContent(
                     text = "pandamart",
                     content = "Fresh groceries & more",
-                    imgResource = R.drawable.panda_mart,
-                    imgHeight = 85.dp,
+                    imgResource = R.drawable.wicker_basket,
+                    imgHeight = 70.dp,
                     modifier = Modifier,
                 )
             },
@@ -105,14 +105,14 @@ fun HomeScreen(navController: NavController) {
                 CardContent(
                     text = "Shops",
                     content = "Giant, CS Fresh & More",
-                    imgResource = R.drawable.shops,
-                    imgHeight = 90.dp,
+                    imgResource = R.drawable.groceries,
+                    imgHeight = 70.dp,
                     modifier = Modifier,
                 )
             },
             navController = navController,
-            leftCardHeight = 180.dp,
-            rightCardHeight = 180.dp
+            leftCardHeight = 170.dp,
+            rightCardHeight = 170.dp
         )
 
         CardRow(
@@ -120,8 +120,8 @@ fun HomeScreen(navController: NavController) {
                 HorizontalCardContent(
                     text = "Pick-up",
                     content = "Up to 50% off",
-                    imgResource = R.drawable.pick_up,
-                    imgHeight = 120.dp,
+                    imgResource = R.drawable.take_away,
+                    imgHeight = 55.dp,
                     modifier = Modifier,
                 )
             },
@@ -129,8 +129,8 @@ fun HomeScreen(navController: NavController) {
                 HorizontalCardContent(
                     text = "pandago",
                     content = "Send parcels",
-                    imgResource = R.drawable.panda_go,
-                    imgHeight = 100.dp,
+                    imgResource = R.drawable.pickup_car,
+                    imgHeight = 35.dp,
                     modifier = Modifier,
                 )
             },
@@ -317,13 +317,4 @@ fun DrawerBody(
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenPreview() {
-    Surface {
-//        HomeScreen(navController)
-    }
-
 }

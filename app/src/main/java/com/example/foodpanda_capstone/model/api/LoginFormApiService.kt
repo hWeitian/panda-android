@@ -13,7 +13,4 @@ interface LoginFormApiService {
     @GET("users/{userId}")
     suspend fun getUser(@Path("userid") userId: String): LoginForm
 
-
-
-
 }

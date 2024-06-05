@@ -28,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -63,12 +64,15 @@ fun signUpForm(viewModel: AuthViewModel, navController: NavController) {
 
     Column(modifier = Modifier
         .fillMaxSize()
-        .padding(8.dp)) {
+        .padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    )
+    {
         Image(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth(0.5f)
                 .weight(1f),
-            painter = painterResource(id = R.drawable.signup_profile), contentDescription = "onboard image"
+            painter = painterResource(id = R.drawable.sign_up), contentDescription = "onboard image"
         )
 
         Spacer(modifier = Modifier.padding(bottom = 16.dp))

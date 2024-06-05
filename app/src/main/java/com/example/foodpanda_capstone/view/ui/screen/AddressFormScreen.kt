@@ -230,60 +230,6 @@ fun AddressInputForm(
 
         }
     }
-
-//    AlertDialog(
-//        onDismissRequest = { onDismissRequest() },
-//        title = {
-//            // Title of the AlertDialog
-//            Text("Add / Edit your address here.", fontSize = 15.sp)
-//        },
-//        text = {
-//            // Content of the AlertDialog
-//            Column {
-//                OutlinedTextField(value = address, onValueChange = { address = it }, label = { Text("Street") })
-//                OutlinedTextField(value = city, onValueChange = { city = it }, label = { Text("City") })
-//                OutlinedTextField(value = zipCode, onValueChange = { zipCode = it }, label = { Text("Zip Code") })
-//            }
-//        },
-//        confirmButton = {
-//            // Confirm button in the AlertDialog
-//            Row() {
-//                Button(
-//                    onClick = {
-//                        //address from input which has yet to be saved. If the address from database is not null, update old with new address.
-//                        //Else just save into database with the new input address.
-//                        val newAddress = AddressData(address, city, zipCode)
-//                        if (selectedAddress != null) {
-//                            viewModel.updateAddress(selectedAddress, newAddress)
-//                        } else {
-//                            viewModel.saveAddress(newAddress)
-//                        }
-//
-//                        onDismissRequest()
-//                    }
-//                ) {
-//                    if (selectedAddress != null) {
-//                        Text("Edit", modifier = Modifier.padding(start = 16.dp, end = 16.dp))
-//                    } else {
-//                        Text("Add", modifier = Modifier.padding(start = 16.dp, end = 16.dp))
-//                    }
-//                }
-//
-//                Spacer(modifier = Modifier.padding(4.dp))
-//                Button(
-//                    onClick = {
-//                        //address from input which has yet to be saved. If the address from database is not null, update old with new address.
-//                        //Else just save into database with the new input address.
-//                        viewModel.removeAddress(AddressData(address, city, zipCode))
-//                        onDismissRequest()
-//                    }
-//                ) {
-//                    Text("Remove")
-//                }
-//            }
-//
-//        }
-//    )
 }
 
 @Composable
