@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedButton
@@ -22,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -40,35 +42,24 @@ import com.example.foodpanda_capstone.view.ui.theme.Typography
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
+import com.google.zxing.qrcode.detector.AlignmentPattern
 
 @Composable
-//fun onBoardingScreen(onSignedIn: () -> Unit) {
-fun onBoardingScreen(navController: NavController) {
+fun OnBoardingScreen(navController: NavController) {
 
     var isButtonClicked by remember { mutableStateOf(false) }
 
-//    val signInLauncher = rememberLauncherForActivityResult(
-//        contract = ActivityResultContracts.StartActivityForResult()
-//    ) { result ->
-//        val response = IdpResponse.fromResultIntent(result.data)
-//        if (result.resultCode == Activity.RESULT_OK) {
-//            // Successfully signed in
-//            onSignedIn()
-//        } else {
-//            // Handle sign-in failure
-//            response?.error?.let {
-//                // Handle error
-//            }
-//        }
-//    }
-
-
-    Column(modifier = Modifier.background(BrandPrimary).fillMaxWidth()) {
+    Column(
+        modifier = Modifier
+            .background(BrandPrimary)
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Image(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth(0.9f)
                 .weight(0.55f),
-            painter = painterResource(id = R.drawable.panda_onboard_pic), contentDescription = "onboard image"
+            painter = painterResource(id = R.drawable.onboarding_2), contentDescription = "onboard image"
         )
 
         ElevatedCard(
@@ -95,28 +86,6 @@ fun onBoardingScreen(navController: NavController) {
 
                 Spacer(modifier = Modifier.weight(1f))
 
-
-//                ElevatedButton(
-//                    // FirebaseUI sign-in button
-//                    onClick = {
-//                        val providers = arrayListOf(
-//                            AuthUI.IdpConfig.EmailBuilder().build(),
-//                            AuthUI.IdpConfig.GoogleBuilder().build()
-//                            // Add more providers as needed
-//                        )
-//
-//                        signInLauncher.launch(
-//                            AuthUI.getInstance()
-//                                .createSignInIntentBuilder()
-//                                .setAvailableProviders(providers)
-//                                .build()
-//                        )
-//
-//                    }
-//                ) {
-//                    Text(text = "Sign in to your account")
-//                }
-
                 PrimaryButton(name = "Login to your account", width = null ) {
                     isButtonClicked = true
                     navController.navigate("Login Form")
@@ -138,8 +107,6 @@ fun onBoardingScreen(navController: NavController) {
 
 @Preview(showBackground = true)
 @Composable
-fun onBoardingScreenPreview() {
-//    onBoardingScreen(onSignedIn = {})
-    onBoardingScreen(navController = rememberNavController())
-
+fun OnBoardingScreenPreview() {
+    OnBoardingScreen(navController = rememberNavController())
 }

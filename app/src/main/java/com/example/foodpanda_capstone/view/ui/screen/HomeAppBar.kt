@@ -99,7 +99,7 @@ fun HomeAppBar(navController: NavController) {
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Image(
-                            painter = painterResource(id = R.drawable.food_delivery),
+                            painter = painterResource(id = R.drawable.people),
                             contentDescription = "profile pic",
                             modifier = Modifier
                                 .size(130.dp)

@@ -359,7 +359,7 @@ fun Navigation() {
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Image(
-                                painter = painterResource(id = R.drawable.food_delivery),
+                                painter = painterResource(id = R.drawable.profile),
                                 contentDescription = "profile pic",
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier
@@ -732,7 +732,7 @@ fun Navigation() {
                         LoginScreen(viewModel = authViewModel, navController = navController)
                     }
                     composable("Welcome") {
-                        onBoardingScreen(navController = navController)
+                        OnBoardingScreen(navController = navController)
                     }
                     composable("SignUp Form") {
                         signUpForm(authViewModel, navController = navController)
