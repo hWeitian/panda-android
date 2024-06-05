@@ -318,12 +318,3 @@ fun DrawerBody(
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenPreview() {
-    Surface {
-//        HomeScreen(navController)
-    }
-
-}

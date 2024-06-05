@@ -272,41 +272,6 @@ fun Navigation() {
 
     val selectedAddress by addressViewModel.selectedAddress.collectAsState()
 
-//    val savedAddress = context.getStringSharedPreference(PREF_KEY_CURRENT_ADDRESS)
-//    val savedZipCode = context.getStringSharedPreference(PREF_KEY_CURRENT_ZIPCODE)
-//    val savedCity = context.getStringSharedPreference(PREF_KEY_CURRENT_CITY)
-//
-//
-//    var selectedAddress = if (savedAddress != "" && savedZipCode != "" && savedCity != "") {
-//        "$savedAddress $savedZipCode $savedCity"
-//    } else {
-//        "Add your address here"
-//    }
-
-    // Define the setAddressOnUI function
-//    val setAddressOnAppbar: (String, String, String) -> Unit = { address, city, zipCode ->
-//        // Here you can use address, city, and zipCode as needed
-//        // For example, you could concatenate them into one string:
-//        if (address == "" && city == "" && zipCode = "") {
-//            selectedAddress = "Add your address here"
-//        } else {
-//            selectedAddress = "$address, $city, $zipCode"
-//        }
-//    }
-
-//    fun setAddressOnAppbar (
-//        address: String? = null,
-//        city: String? = null,
-//        zipCode: String? = null
-//    ) {
-//        if (address == null && city == null && zipCode == null) {
-//            selectedAddress = "Add your address here"
-//        } else {
-//            selectedAddress = "$address, $city, $zipCode"
-//        }
-//    }
-
-
     fun customPopBackStack() {
         when (currentRoute) {
             "Playlists" -> navController.navigate("Home")
@@ -430,19 +395,8 @@ fun Navigation() {
                                     selectedContainerColor = Color.White,
                                     unselectedContainerColor = Color.White
                                 ),
-//                                badge = {
-//                                    if (it.hasBadge) {
-//                                        BadgedBox(badge = {
-//                                            Badge {
-//                                                Text(text = it.badgeCount.toString(), fontSize = 17.sp)
-//                                            }
-//                                        }) {
-//                                        }
-//                                    }
-//                                }
                             )
                         }
-//                Log.d("Drawer", "Building Logout item")
                         Divider(
                             thickness = 1.dp,
                             color = NeutralDivider
@@ -557,17 +511,6 @@ fun Navigation() {
                                     selectedContainerColor = Color.White,
                                     unselectedContainerColor = Color.White
                                 ),
-//                                badge = {
-//                                    if (it.hasBadge) {
-//                                        BadgedBox(badge = {
-//                                            Badge {
-//                                                Text(text = it.badgeCount.toString(), fontSize = 17.sp)
-//                                            }
-//                                        }) {
-//
-//                                        }
-//                                    }
-//                                }
                             )
                         }
                         Divider(
@@ -580,7 +523,6 @@ fun Navigation() {
                                 selected = it == selectedItem,
                                 onClick = {
                                     selectedItem = it
-//
                                     scope.launch {
                                         drawerState.close()
                                     }
@@ -628,7 +570,6 @@ fun Navigation() {
                                         modifier = Modifier
                                             .fillMaxSize()
                                             .clickable {
-//                                                addressFormViewModel.getInitialAddress()
                                                 toggleAddressFormVisibility()
                                                 isAddressFormVisible = true
                                             },
@@ -640,9 +581,6 @@ fun Navigation() {
                                         } else {
                                             Text(text = "Add your address here", style = Typography.bodyLarge)
                                         }
-//                                        Text(text = currentRoute, style = Typography.titleMedium)
-//                                        Text(text = selectedAddress, style = Typography.bodyLarge)
-
                                         if (isAddressFormVisible) {
                                             AddressFormScreen(
                                                 addressViewModel = addressFormViewModel,
